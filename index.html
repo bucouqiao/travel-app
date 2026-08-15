@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -160,7 +160,69 @@ select.input { max-width: 120px; appearance: auto; }
 .route-detail .r-notes { font-size: 0.85rem; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
 .route-detail .r-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* Visa tag inline */
+/* 3-layer route detail styles */
+.dest-item { margin: 6px 0; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.dest-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; background: var(--bg); cursor: pointer;
+  -webkit-tap-highlight-color: transparent; transition: background .15s;
+}
+.dest-header:active { background: #e8e8ed; }
+.dest-header .dest-icon { font-size: 1rem; }
+.dest-header .dest-city { font-size: 0.85rem; font-weight: 600; flex: 1; }
+.dest-header .dest-transport { font-size: 0.72rem; color: var(--text3); max-width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dest-header .dest-arrow { color: var(--text3); font-size: 0.75rem; transition: transform .2s; flex-shrink: 0; }
+.dest-header.expanded .dest-arrow { transform: rotate(90deg); }
+.dest-body { display: none; padding: 8px 0; border-top: 1px solid var(--border); background: var(--card); }
+.dest-body.open { display: block; }
+
+.day-block { padding: 0 12px; margin-bottom: 4px; }
+.day-header { font-size: 0.78rem; font-weight: 700; color: var(--primary); padding: 6px 0 4px; border-bottom: 1px dashed var(--border); margin-bottom: 4px; }
+.spot-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 4px 0; font-size: 0.82rem;
+}
+.spot-time { color: var(--primary); font-weight: 600; min-width: 40px; flex-shrink: 0; font-size: 0.75rem; }
+.spot-info { flex: 1; min-width: 0; }
+.spot-name { font-weight: 500; }
+.spot-note { font-size: 0.75rem; color: var(--text3); margin-top: 1px; }
+.spot-actions { display: flex; gap: 4px; flex-shrink: 0; opacity: 0.5; }
+.spot-row:hover .spot-actions, .spot-row:active .spot-actions { opacity: 1; }
+.spot-btn {
+  border: none; background: none; cursor: pointer; font-size: 0.72rem;
+  padding: 2px 4px; border-radius: 4px; color: var(--text3);
+}
+.spot-btn:active { background: var(--bg); }
+.spot-btn.del { color: var(--red); }
+.add-spot-btn {
+  display: inline-block; font-size: 0.75rem; color: var(--primary);
+  padding: 3px 8px; border: 1px dashed var(--primary); border-radius: 6px;
+  background: none; cursor: pointer; margin: 4px 12px;
+}
+.add-spot-btn:active { background: #E3F2FD; }
+.add-dest-btn {
+  display: block; font-size: 0.78rem; color: var(--primary);
+  padding: 6px 12px; border: 1px dashed var(--primary); border-radius: 8px;
+  background: none; cursor: pointer; margin: 8px 0; width: 100%; text-align: center;
+}
+.add-dest-btn:active { background: #E3F2FD; }
+
+/* Spot edit modal */
+.spot-modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 999;
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.spot-modal {
+  background: var(--card); border-radius: 16px 16px 0 0;
+  width: 100%; max-width: 420px; padding: 20px 16px 28px;
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.spot-modal h3 { font-size: 1rem; margin-bottom: 12px; }
+.spot-modal .sm-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.spot-modal .sm-row .input { flex: 1; }
+.spot-modal .sm-actions { display: flex; gap: 8px; margin-top: 6px; }
 .visa-tag {
   display: inline-block; font-size: 0.68rem; padding: 1px 6px; border-radius: 4px; font-weight: 500;
 }
@@ -1319,17 +1381,328 @@ function getRouteIcon(name) {
 }
 
 const PRESET_ROUTE = [
-  {name:'长沙→新疆', visa:'free', days:3, budget:2000, notes:'长沙飞乌鲁木齐，再去赛里木湖玩1-2天'},
-  {name:'哈萨克斯坦', visa:'free', days:5, budget:2000, notes:'霍尔果斯出境→阿拉木图2天+恰伦峡谷+大阿拉木图湖'},
-  {name:'乌兹别克斯坦', visa:'free', days:10, budget:2500, notes:'塔什干2天→撒马尔罕3天→布哈拉3天→希瓦2天'},
-  {name:'阿塞拜疆', visa:'free', days:4, budget:2500, notes:'巴库老城+火焰塔2天+戈布斯坦+泥火山1天（塔什干飞巴库约2.5小时）'},
-  {name:'格鲁吉亚', visa:'free', days:7, budget:3000, notes:'第比利斯3天→卡兹别克2天→西格纳吉1天（巴库夜火车到第比利斯约9.5小时）'},
-  {name:'亚美尼亚', visa:'free', days:4, budget:1500, notes:'埃里温2天+Khor Virap+Geghard（第比利斯拼车去埃里温约6-7小时）'},
-  {name:'土耳其', visa:'free', days:12, budget:4000, notes:'伊斯坦布尔4天+卡帕多奇亚3天+安塔利亚/以弗所5天（第比利斯直飞伊斯坦布尔）'},
-  {name:'塞尔维亚', visa:'free', days:3, budget:1200, notes:'贝尔格莱德2天+诺维萨德1天（伊斯坦布尔飞贝尔格莱德约1小时）'},
-  {name:'波黑', visa:'free', days:3, budget:1000, notes:'萨拉热窝2天+莫斯塔尔1天（贝尔格莱德大巴约7-9小时）'},
-  {name:'埃及', visa:'evisa', days:10, budget:3000, notes:'开罗4天+卢克索3天+红海3天（从萨拉热窝飞开罗，经伊斯坦布尔中转）'},
-  {name:'泰国中转回国', visa:'free', days:2, budget:1500, notes:'开罗飞曼谷中转，顺便玩两天再飞长沙（泰国免签）'}
+  {name:'长沙→新疆', visa:'free', days:3, budget:2000, notes:'长沙飞乌鲁木齐，再去赛里木湖玩1-2天', dests:[
+    {city:'乌鲁木齐', transport:'长沙飞乌鲁木齐（约4.5小时，提前买票约800-1500元）', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'抵达乌鲁木齐', note:'落地取行李、换汇、买SIM卡'},
+        {time:'下午', name:'新疆维吾尔自治区博物馆', note:'免费，看楼兰美女干尸，2-3小时'},
+        {time:'傍晚', name:'国际大巴扎', note:'逛巴扎、吃烤肉/抓饭，夜景漂亮'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'全天', name:'赛里木湖一日游', note:'乌市包车/拼车约5-6小时，环湖拍照，果子沟大桥观景'}
+      ]}
+    ]},
+    {city:'伊宁→霍尔果斯', transport:'乌鲁木齐坐火车/大巴到伊宁（约10小时夜火车），伊宁包车到霍尔果斯口岸（约1.5小时）', days:[
+      {date:'第3天', spots:[
+        {time:'上午', name:'伊宁喀赞其民俗村', note:'蓝色小屋街拍，吃手工冰淇淋'},
+        {time:'下午', name:'前往霍尔果斯口岸', note:'准备出境材料，口岸附近住一晚，第二天出境去哈萨克斯坦'}
+      ]}
+    ]}
+  ]},
+  {name:'哈萨克斯坦', visa:'free', days:5, budget:2000, notes:'霍尔果斯出境→阿拉木图2天+恰伦峡谷+大阿拉木图湖', dests:[
+    {city:'阿拉木图', transport:'霍尔果斯口岸步行/大巴过境→阿拉木图Sayran车站（约5-6小时，票价约50-80元）', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'过境+抵达阿拉木图', note:'霍尔果斯口岸8:30开门，过境后拼车/大巴到阿拉木图'},
+        {time:'下午', name:'绿色巴扎（Zelenyy Bazar）', note:'当地最热闹的市场，干果/香料/手工艺品'},
+        {time:'傍晚', name:'升天大教堂', note:'全木结构东正教堂，公园里散步'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'大阿拉木图湖', note:'高山湖泊，蓝绿色湖水，包车往返约4小时'},
+        {time:'下午', name:'科克托别山观景台', note:'缆车往返3500坚戈，俯瞰全城+雪山'}
+      ]}
+    ]},
+    {city:'恰伦峡谷', transport:'阿拉木图拼车/一日团（约3.5小时车程，拼团约15-24美元）', days:[
+      {date:'第3天', spots:[
+        {time:'全天', name:'恰伦峡谷', note:'"中亚大峡谷"，可和科尔赛湖/凯因迪湖拼一日团'},
+        {time:'傍晚', name:'返回阿拉木图', note:'晚班大巴或拼车回城'}
+      ]}
+    ]},
+    {city:'前往乌兹别克斯坦', transport:'阿拉木图→塔什干：夜行大巴约16小时（约¥160-180）或Talgo火车约17小时', days:[
+      {date:'第4-5天', spots:[
+        {time:'全天', name:'前往塔什干', note:'建议选Talgo火车更舒适，提前bilet.railways.kz购票'}
+      ]}
+    ]}
+  ]},
+  {name:'乌兹别克斯坦', visa:'free', days:10, budget:2500, notes:'塔什干2天→撒马尔罕3天→布哈拉3天→希瓦2天', dests:[
+    {city:'塔什干', transport:'从阿拉木图抵达', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'哈兹拉特伊玛目建筑群', note:'乌兹别克伊斯兰教中心，古兰经手抄本'},
+        {time:'下午', name:'楚苏巴扎', note:'中亚最大圆顶集市，吃抓饭'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'塔什干地铁', note:'苏联风格深埋地铁，每站不同主题，拍照胜地'},
+        {time:'下午', name:'应用艺术博物馆', note:'乌兹别克传统手工艺品展示'},
+        {time:'傍晚', name:'乘Afrosiyob高铁前往撒马尔罕', note:'约2小时15分，提前在railway.uz购票'}
+      ]}
+    ]},
+    {city:'撒马尔罕', transport:'塔什干高铁约2小时15分', days:[
+      {date:'第3天', spots:[
+        {time:'上午', name:'雷吉斯坦广场', note:'三座经学院组成的壮丽广场，必去'},
+        {time:'下午', name:'古尔-埃米尔陵', note:'帖木儿大帝的陵墓，金碧辉煌'}
+      ]},
+      {date:'第4天', spots:[
+        {time:'上午', name:'沙赫静达陵墓群', note:'蓝色瓷砖长廊，拍照绝美'},
+        {time:'下午', name:'比比哈尼姆清真寺', note:'巨大的古清真寺遗址'},
+        {time:'傍晚', name:'Siab巴扎', note:'市场买干果和手信'}
+      ]},
+      {date:'第5天', spots:[
+        {time:'上午', name:'乘火车前往布哈拉', note:'高铁约1.5小时'}
+      ]}
+    ]},
+    {city:'布哈拉', transport:'撒马尔罕高铁约1.5小时', days:[
+      {date:'第6天', spots:[
+        {time:'上午', name:'波依卡扬建筑群', note:'清真寺+宣礼塔+神学院，布哈拉地标'},
+        {time:'下午', name:'雅克城堡', note:'昔班尼王朝宫殿遗址'}
+      ]},
+      {date:'第7天', spots:[
+        {time:'上午', name:'四塔穹顶', note:'四座小塔的独特建筑，拍照打卡'},
+        {time:'下午', name:'里亚比豪兹广场', note:'池塘边喝茶，拍夕阳'}
+      ]},
+      {date:'第8天', spots:[
+        {time:'上午', name:'乘火车前往希瓦', note:'约6小时，建议买卧铺'}
+      ]}
+    ]},
+    {city:'希瓦', transport:'布哈拉火车约6小时', days:[
+      {date:'第9天', spots:[
+        {time:'上午', name:'伊钦卡拉古城', note:'完整古城墙围起的露天博物馆'},
+        {time:'下午', name:'朱马清真寺+宣礼塔', note:'独特的218根木柱清真寺'},
+        {time:'傍晚', name:'古城墙日落', note:'爬上城墙看夕阳下的沙漠绿洲'}
+      ]},
+      {date:'第10天', spots:[
+        {time:'上午', name:'塔什豪利宫', note:'可汗宫殿，蓝瓷砖+审讯室'},
+        {time:'下午', name:'准备飞往巴库', note:'希瓦/乌尔根奇机场飞巴库（通常经塔什干转机）'}
+      ]}
+    ]}
+  ]},
+  {name:'阿塞拜疆', visa:'free', days:4, budget:2500, notes:'巴库老城+火焰塔+戈布斯坦', dests:[
+    {city:'巴库', transport:'塔什干飞巴库约2.5小时（经伊斯坦布尔或直飞）', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'老城（Icherisheher）', note:'迷宫般的中世纪古城，少女塔+希尔万沙宫'},
+        {time:'下午', name:'滨海大道', note:'里海海边散步，火焰塔观景'},
+        {time:'傍晚', name:'火焰塔', note:'地标三座火焰形大楼，夜景超美'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'全天', name:'戈布斯坦+泥火山一日游', note:'史前岩画+会冒泡的泥火山，拼团约30-40美元'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'上午', name:'黑达尔清真寺', note:'后现代主义清真寺，建筑独特'},
+        {time:'下午', name:'巴库购物/休息', note:'买手信、整理行李'},
+        {time:'晚上', name:'夜火车前往第比利斯', note:'约9.5小时，建议买1等卧铺'}
+      ]}
+    ]}
+  ]},
+  {name:'格鲁吉亚', visa:'free', days:7, budget:3000, notes:'第比利斯3天→卡兹别克2天→西格纳吉1天', dests:[
+    {city:'第比利斯', transport:'巴库夜火车约9.5小时', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'抵达第比利斯', note:'火车站到老城步行/打车约15分钟'},
+        {time:'下午', name:'老城漫步', note:'硫磺浴场区+和平桥+纳里卡拉要塞'},
+        {time:'傍晚', name:'母亲堡垒日落', note:'坐缆车上山看全城'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'圣三一大教堂', note:'格鲁吉亚最大东正教堂，金顶'},
+        {time:'下午', name:'旱桥市场', note:'跳蚤市场，古董/苏联旧物/手工'},
+        {time:'晚上', name:'格鲁吉亚葡萄酒馆', note:'格鲁吉亚是葡萄酒发源地，必喝！'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'全天', name:'姆茨赫塔一日游', note:'古都+Jvari修道院+生命之柱大教堂，拼车约2小时往返'}
+      ]}
+    ]},
+    {city:'卡兹别克', transport:'第比利斯拼车/小巴约2.5小时（经过军事大道，沿途超美）', days:[
+      {date:'第4天', spots:[
+        {time:'上午', name:'军事大道沿途', note:'俄格友谊纪念碑+安南努里城堡，一路拍照'},
+        {time:'下午', name:'斯特潘茨明达圣三一教堂', note:'雪山下的孤独教堂，格鲁吉亚标志'}
+      ]},
+      {date:'第5天', spots:[
+        {time:'上午', name:'冰川徒步', note:'Gergeti冰川徒步约4小时往返'},
+        {time:'下午', name:'返回第比利斯', note:'小巴约2.5小时'}
+      ]}
+    ]},
+    {city:'西格纳吉', transport:'第比利斯小巴约2小时', days:[
+      {date:'第6天', spots:[
+        {time:'上午', name:'西格纳吉小镇', note:'爱情之城，城墙环绕的美丽小镇'},
+        {time:'下午', name:'品酒', note:'附近的葡萄酒庄参观品酒'},
+        {time:'傍晚', name:'返回第比利斯', note:'小巴约2小时'}
+      ]},
+      {date:'第7天', spots:[
+        {time:'上午', name:'前往亚美尼亚', note:'第比利斯拼车去埃里温约6-7小时'}
+      ]}
+    ]}
+  ]},
+  {name:'亚美尼亚', visa:'free', days:4, budget:1500, notes:'埃里温+周边', dests:[
+    {city:'埃里温', transport:'第比利斯拼车约6-7小时（途经Dilijan/Sevan湖）', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'抵达埃里温', note:'途经塞凡湖，可中途下车拍照'},
+        {time:'下午', name:'共和广场', note:'粉色建筑+喷泉'},
+        {time:'傍晚', name:'大阶梯（Cascade）', note:'爬上去看亚拉拉特山+全城'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'Khor Virap修道院', note:'亚拉拉特山最佳观景点，修道院+地下牢房'},
+        {time:'下午', name:'埃奇米阿津大教堂', note:'世界最古老主教座堂'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'全天', name:'Geghard修道院+加尼神庙', note:'石窟修道院+希腊式神庙，拼团约15-20美元'}
+      ]},
+      {date:'第4天', spots:[
+        {time:'上午', name:'飞往伊斯坦布尔', note:'埃里温直飞伊斯坦布尔约2小时'}
+      ]}
+    ]}
+  ]},
+  {name:'土耳其', visa:'free', days:12, budget:4000, notes:'伊斯坦布尔4天+卡帕多奇亚3天+安塔利亚/以弗所5天', dests:[
+    {city:'伊斯坦布尔', transport:'埃里温直飞伊斯坦布尔约2小时', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'圣索菲亚大教堂', note:'拜占庭建筑巅峰，必去'},
+        {time:'下午', name:'蓝色清真寺', note:'6根宣礼塔，对面就是圣索菲亚'},
+        {time:'傍晚', name:'大巴扎', note:'4000+店铺的世界最古老集市'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'托普卡帕宫', note:'奥斯曼苏丹宫殿+后宫'},
+        {time:'下午', name:'地下水宫', note:'美杜莎石柱的地下蓄水池'},
+        {time:'傍晚', name:'加拉塔桥看日落', note:'桥上钓鱼+看博斯普鲁斯海峡'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'上午', name:'加拉塔塔', note:'中世纪石塔，360度观景'},
+        {time:'下午', name:'独立大街', note:'步行街+叮当车+甜品店'},
+        {time:'晚上', name:'博斯普鲁斯海峡夜游', note:'坐船看两岸灯光'}
+      ]},
+      {date:'第4天', spots:[
+        {time:'上午', name:'新清真寺+香料市场', note:'埃及香料市场买茶/土耳其软糖'},
+        {time:'下午', name:'飞往卡帕多奇亚', note:'伊斯坦布尔飞内夫谢希尔约1.5小时'}
+      ]}
+    ]},
+    {city:'卡帕多奇亚', transport:'伊斯坦布尔飞内夫谢希尔约1.5小时', days:[
+      {date:'第5天', spots:[
+        {time:'清晨', name:'热气球（如果天气允许）', note:'约150-250欧元/人，提前预订！卡帕多奇亚必做'},
+        {time:'下午', name:'格雷梅露天博物馆', note:'石窟教堂+壁画'}
+      ]},
+      {date:'第6天', spots:[
+        {time:'上午', name:'红谷/玫瑰谷徒步', note:'奇特岩石地貌，徒步约2-3小时'},
+        {time:'下午', name:'乌奇希萨尔城堡', note:'最高观景点看全景'},
+        {time:'傍晚', name:'ATV日落巡游', note:'驾驶ATV穿越山谷看日落'}
+      ]},
+      {date:'第7天', spots:[
+        {time:'上午', name:'代林库尤地下城', note:'深达85米的地下城市，可容纳2万人'},
+        {time:'下午', name:'飞往安塔利亚', note:'约1小时'}
+      ]}
+    ]},
+    {city:'安塔利亚', transport:'卡帕多奇亚飞安塔利亚约1小时', days:[
+      {date:'第8天', spots:[
+        {time:'上午', name:'老城卡勒伊奇', note:'罗马港口+奥斯曼老宅+窄巷'},
+        {time:'下午', name:'阿斯潘多斯剧场', note:'世界保存最完好的罗马剧场'},
+        {time:'傍晚', name:'海滩日落', note:'地中海蓝旗海滩'}
+      ]},
+      {date:'第9-10天', spots:[
+        {time:'全天', name:'以弗所古城', note:'从安塔利亚坐大巴约4小时，塞尔丘克下，看图书馆+大剧场'},
+        {time:'晚上', name:'返回安塔利亚或飞伊斯坦布尔', note:'准备前往塞尔维亚'}
+      ]}
+    ]},
+    {city:'飞塞尔维亚', transport:'伊斯坦布尔飞贝尔格莱德约1小时（廉航约50-80欧）', days:[
+      {date:'第11-12天', spots:[
+        {time:'上午', name:'安塔利亚→伊斯坦布尔→贝尔格莱德', note:'通常需在伊斯坦布尔中转'}
+      ]}
+    ]}
+  ]},
+  {name:'塞尔维亚', visa:'free', days:3, budget:1200, notes:'贝尔格莱德2天+诺维萨德1天', dests:[
+    {city:'贝尔格莱德', transport:'伊斯坦布尔飞贝尔格莱德约1小时', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'卡莱梅格丹城堡', note:'萨瓦河与多瑙河交汇处的古堡'},
+        {time:'下午', name:'斯卡达利亚波西米亚街', note:'老式酒馆+现场民谣'},
+        {time:'晚上', name:'萨瓦河滨夜生活', note:'塞尔维亚夜生活很有名'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'圣萨瓦教堂', note:'世界最大东正教堂之一，内部金碧辉煌'},
+        {time:'下午', name:'尼古拉·特斯拉博物馆', note:'科学迷必去'}
+      ]}
+    ]},
+    {city:'诺维萨德', transport:'贝尔格莱德火车/大巴约1.5小时', days:[
+      {date:'第3天', spots:[
+        {time:'上午', name:'彼得罗瓦拉丁城堡', note:'多瑙河上的"直布罗陀"，俯瞰全城'},
+        {time:'下午', name:'诺维萨德老城', note:'色彩丰富的巴洛克建筑'},
+        {time:'傍晚', name:'大巴前往萨拉热窝', note:'约7-9小时，建议白天出发'}
+      ]}
+    ]}
+  ]},
+  {name:'波黑', visa:'free', days:3, budget:1000, notes:'萨拉热窝2天+莫斯塔尔1天', dests:[
+    {city:'萨拉热窝', transport:'贝尔格莱德大巴约7-9小时', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'巴什查尔西亚老城', note:'奥斯曼风格集市+铜匠街'},
+        {time:'下午', name:'拉丁桥', note:'一战导火索发生地'},
+        {time:'傍晚', name:'黄堡日落', note:'俯瞰全城的最佳地点'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'战争隧道博物馆', note:'波黑战争时期的地道'},
+        {time:'下午', name:'Vrelo Bosne公园', note:'波斯尼亚河源头，绿意盎然'},
+        {time:'傍晚', name:'大巴前往莫斯塔尔', note:'约2.5小时'}
+      ]}
+    ]},
+    {city:'莫斯塔尔', transport:'萨拉热窝大巴约2.5小时', days:[
+      {date:'第3天', spots:[
+        {time:'上午', name:'莫斯塔尔老桥', note:'世界遗产，奥斯曼石桥'},
+        {time:'中午', name:'老桥跳水', note:'当地年轻人的传统，夏天可看'},
+        {time:'下午', name:'科斯基·穆罕默德帕夏清真寺', note:'爬上宣礼塔看全城'},
+        {time:'傍晚', name:'准备飞埃及', note:'莫斯塔尔/萨拉热窝→伊斯坦布尔→开罗'}
+      ]}
+    ]}
+  ]},
+  {name:'埃及', visa:'evisa', days:10, budget:3000, notes:'开罗4天+卢克索3天+红海3天', dests:[
+    {city:'开罗', transport:'萨拉热窝飞开罗（经伊斯坦布尔中转，约6-8小时含转机）', days:[
+      {date:'第1天', spots:[
+        {time:'全天', name:'抵达开罗', note:'机场办落地签/电子签，换埃镑，打车到市区'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'吉萨金字塔+狮身人面像', note:'世界七大奇迹，必去！骑骆驼拍照'},
+        {time:'下午', name:'埃及博物馆', note:'图坦卡蒙黄金面具+木乃伊'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'上午', name:'哈利利市场', note:'开罗最大传统市场，香精/纸莎草/铜器'},
+        {time:'下午', name:'萨拉丁城堡+穆罕默德阿里清真寺', note:'开罗天际线地标'},
+        {time:'傍晚', name:'尼罗河游船', note:'含晚餐+肚皮舞表演'}
+      ]},
+      {date:'第4天', spots:[
+        {time:'上午', name:'阶梯金字塔（塞加拉）', note:'比吉萨更古老的金字塔'},
+        {time:'下午', name:'孟菲斯古城遗址', note:'拉美西斯二世巨像'},
+        {time:'晚上', name:'夜火车前往卢克索', note:'卧铺约10小时'}
+      ]}
+    ]},
+    {city:'卢克索', transport:'开罗夜火车约10小时/飞约1小时', days:[
+      {date:'第5天', spots:[
+        {time:'上午', name:'帝王谷', note:'图坦卡蒙墓+拉美西斯墓，限制人数'},
+        {time:'下午', name:'哈特谢普苏特神庙', note:'女法老的阶梯式神庙'}
+      ]},
+      {date:'第6天', spots:[
+        {time:'上午', name:'卡尔纳克神庙', note:'世界最大古神庙群，震撼'},
+        {time:'下午', name:'卢克索神庙', note:'市中心的神庙，傍晚光影好看'},
+        {time:'傍晚', name:'尼罗河帆船（Felucca）', note:'传统三角帆船，看日落'}
+      ]},
+      {date:'第7天', spots:[
+        {time:'上午', name:'大巴前往红海', note:'约3-4小时到赫尔加达/达哈卜'}
+      ]}
+    ]},
+    {city:'红海（赫尔加达/达哈卜）', transport:'卢克索大巴约3-4小时', days:[
+      {date:'第8天', spots:[
+        {time:'全天', name:'浮潜/深潜', note:'红海世界顶级潜水地，珊瑚+热带鱼'}
+      ]},
+      {date:'第9天', spots:[
+        {time:'全天', name:'沙漠摩托/贝都因人村落', note:'冲沙+骑骆驼+星空晚餐'}
+      ]},
+      {date:'第10天', spots:[
+        {time:'上午', name:'红海休整/最后浮潜', note:'收尾'},
+        {time:'下午', name:'飞往曼谷中转', note:'红海→开罗→曼谷'}
+      ]}
+    ]}
+  ]},
+  {name:'泰国中转回国', visa:'free', days:2, budget:1500, notes:'开罗飞曼谷中转', dests:[
+    {city:'曼谷', transport:'开罗飞曼谷（约8-9小时，经多哈/迪拜中转）', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'抵达曼谷', note:'素万那普机场到市区约40分钟'},
+        {time:'下午', name:'大皇宫+玉佛寺', note:'曼谷必去，注意着装'},
+        {time:'傍晚', name:'考山路夜市', note:'背包客圣地，小吃+马杀鸡'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'上午', name:'四面佛+暹罗广场', note:'拜四面佛+购物'},
+        {time:'下午', name:'曼谷飞长沙', note:'约3小时，回家！'}
+      ]}
+    ]}
+  ]}
 ];
 
 // ===== 行李预设数据 =====
@@ -1631,7 +2004,7 @@ function renderMapRoute() {
   if (mapSummaryEl) mapSummaryEl.textContent = state.route.length + ' 站 · ' + totalDays + ' 天';
 }
 
-// ===== 路线规划（时间线样式）=====
+// ===== 路线规划（3层展开：站→子目的地→每日景点）=====
 function renderRoute() {
   var list = document.getElementById('routeList');
   var totalDays = 0, totalBudget = 0, visited = 0, countries = new Set();
@@ -1670,13 +2043,62 @@ function renderRoute() {
         '<div class="r-arrow">›</div>' +
       '</div>' +
       '<div class="route-detail" id="routeDetail' + i + '">' +
-        '<div class="r-notes">' + (r.notes || '暂无备注') + '</div>' +
-        '<div class="r-actions">' +
-          '<button class="btn btn-sm ' + (r.visited ? 'btn-green' : 'btn-outline') + '" onclick="toggleVisited(' + i + ')">' + (r.visited ? '✓ 已到访' : '标记到访') + '</button>' +
-          '<button class="btn btn-sm btn-outline" onclick="delRoute(' + i + ')" style="color:var(--red);border-color:var(--red)">删除</button>' +
+        '<div class="r-notes">' + (r.notes || '暂无备注') + '</div>';
+
+    // 第2层：子目的地列表
+    var dests = r.dests || [];
+    html += '<div class="dest-list">';
+    dests.forEach(function(dest, di) {
+      html += '<div class="dest-item">' +
+        '<div class="dest-header" onclick="toggleDest(' + i + ',' + di + ')">' +
+          '<span class="dest-icon">🏙</span>' +
+          '<span class="dest-city">' + (dest.city || '未命名') + '</span>' +
+          '<span class="dest-transport">' + (dest.transport || '') + '</span>' +
+          '<span class="dest-arrow" id="destArrow' + i + '_' + di + '">›</span>' +
         '</div>' +
+        '<div class="dest-body" id="destBody' + i + '_' + di + '">';
+
+      // 第3层：每日行程
+      var days = dest.days || [];
+      days.forEach(function(day, dayi) {
+        html += '<div class="day-block">' +
+          '<div class="day-header">📅 ' + day.date + '</div>';
+        var spots = day.spots || [];
+        spots.forEach(function(spot, spoti) {
+          html += '<div class="spot-row">' +
+            '<span class="spot-time">' + (spot.time || '') + '</span>' +
+            '<div class="spot-info">' +
+              '<div class="spot-name">' + (spot.name || '') + '</div>' +
+              (spot.note ? '<div class="spot-note">' + spot.note + '</div>' : '') +
+            '</div>' +
+            '<div class="spot-actions">' +
+              '<button class="spot-btn" onclick="editSpot(' + i + ',' + di + ',' + dayi + ',' + spoti + ')" title="编辑">✏️</button>' +
+              '<button class="spot-btn del" onclick="delSpot(' + i + ',' + di + ',' + dayi + ',' + spoti + ')" title="删除">✕</button>' +
+            '</div>' +
+          '</div>';
+        });
+        // 添加景点按钮
+        html += '<button class="add-spot-btn" onclick="addSpot(' + i + ',' + di + ',' + dayi + ')">+ 添加景点</button>';
+        html += '</div>'; // day-block
+      });
+
+      // 删除子目的地
+      html += '<div style="padding:4px 12px">' +
+        '<button class="btn btn-sm btn-outline" onclick="delDest(' + i + ',' + di + ')" style="color:var(--red);border-color:var(--red);font-size:0.72rem">删除此目的地</button>' +
+      '</div>';
+      html += '</div></div>'; // dest-body, dest-item
+    });
+    html += '</div>'; // dest-list
+
+    // 添加子目的地按钮
+    html += '<button class="add-dest-btn" onclick="addDest(' + i + ')">+ 添加子目的地</button>';
+
+    // 站点操作按钮
+    html += '<div class="r-actions" style="margin-top:8px">' +
+        '<button class="btn btn-sm ' + (r.visited ? 'btn-green' : 'btn-outline') + '" onclick="toggleVisited(' + i + ')">' + (r.visited ? '✓ 已到访' : '标记到访') + '</button>' +
+        '<button class="btn btn-sm btn-outline" onclick="delRoute(' + i + ')" style="color:var(--red);border-color:var(--red)">删除站点</button>' +
       '</div>' +
-    '</div>';
+    '</div></div>'; // route-detail, route-item
     return html;
   }).join('');
 
@@ -1695,13 +2117,114 @@ function toggleRouteDetail(i) {
   }
 }
 
+// 第2层：子目的地展开/收起
+function toggleDest(routeIdx, destIdx) {
+  var body = document.getElementById('destBody' + routeIdx + '_' + destIdx);
+  var arrow = document.getElementById('destArrow' + routeIdx + '_' + destIdx);
+  if (!body) return;
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    if (arrow) arrow.style.transform = '';
+  } else {
+    body.classList.add('open');
+    if (arrow) arrow.style.transform = 'rotate(90deg)';
+  }
+}
+
+// 添加子目的地
+function addDest(routeIdx) {
+  var city = prompt('请输入子目的地名称（如城市名）：');
+  if (!city || !city.trim()) return;
+  var transport = prompt('到达交通方式（可选）：') || '';
+  if (!state.route[routeIdx].dests) state.route[routeIdx].dests = [];
+  state.route[routeIdx].dests.push({ city: city.trim(), transport: transport.trim(), days: [{ date: '第1天', spots: [] }] });
+  saveState(); renderRoute();
+  showToast('已添加子目的地：' + city.trim());
+}
+
+// 删除子目的地
+function delDest(routeIdx, destIdx) {
+  if (!confirm('确定删除此子目的地？')) return;
+  state.route[routeIdx].dests.splice(destIdx, 1);
+  saveState(); renderRoute(); showToast('已删除子目的地');
+}
+
+// 添加景点
+function addSpot(routeIdx, destIdx, dayIdx) {
+  showSpotModal(routeIdx, destIdx, dayIdx, -1);
+}
+
+// 编辑景点
+function editSpot(routeIdx, destIdx, dayIdx, spotIdx) {
+  showSpotModal(routeIdx, destIdx, dayIdx, spotIdx);
+}
+
+// 删除景点
+function delSpot(routeIdx, destIdx, dayIdx, spotIdx) {
+  state.route[routeIdx].dests[destIdx].days[dayIdx].spots.splice(spotIdx, 1);
+  saveState(); renderRoute(); showToast('已删除景点');
+}
+
+// 景点编辑弹窗
+function showSpotModal(routeIdx, destIdx, dayIdx, spotIdx) {
+  var isEdit = spotIdx >= 0;
+  var spot = isEdit ? state.route[routeIdx].dests[destIdx].days[dayIdx].spots[spotIdx] : { time: '', name: '', note: '' };
+
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>' + (isEdit ? '编辑景点' : '添加景点') + '</h3>' +
+      '<div class="sm-row">' +
+        '<input class="input" id="smTime" type="text" placeholder="时间（如：上午/下午/全天）" value="' + (spot.time || '') + '">' +
+      '</div>' +
+      '<div class="sm-row">' +
+        '<input class="input" id="smName" type="text" placeholder="景点名称" value="' + (spot.name || '') + '">' +
+      '</div>' +
+      '<div class="sm-row">' +
+        '<input class="input" id="smNote" type="text" placeholder="备注（可选）" value="' + (spot.note || '') + '">' +
+      '</div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveSpotModal(' + routeIdx + ',' + destIdx + ',' + dayIdx + ',' + spotIdx + ')">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  document.getElementById('smName').focus();
+}
+
+function closeSpotModal() {
+  var modal = document.querySelector('.spot-modal-overlay');
+  if (modal) modal.remove();
+}
+
+function saveSpotModal(routeIdx, destIdx, dayIdx, spotIdx) {
+  var time = document.getElementById('smTime').value.trim();
+  var name = document.getElementById('smName').value.trim();
+  var note = document.getElementById('smNote').value.trim();
+  if (!name) { showToast('请输入景点名称'); return; }
+
+  var spot = { time: time, name: name, note: note };
+  var day = state.route[routeIdx].dests[destIdx].days[dayIdx];
+  if (!day.spots) day.spots = [];
+
+  if (spotIdx >= 0) {
+    day.spots[spotIdx] = spot;
+  } else {
+    day.spots.push(spot);
+  }
+  saveState(); closeSpotModal(); renderRoute();
+  showToast(spotIdx >= 0 ? '景点已更新' : '景点已添加');
+}
+
 function addRoute() {
   const name = document.getElementById('routeName').value.trim();
   if (!name) { showToast('请输入名称'); return; }
   const visa = document.getElementById('routeVisa').value;
   const days = document.getElementById('routeDays').value;
   const budget = document.getElementById('routeBudget').value;
-  state.route.push({ name, visa, days, budget, notes:'', visited:false });
+  state.route.push({ name, visa, days, budget, notes:'', visited:false, dests:[{ city: name, transport:'', days:[{ date:'第1天', spots:[] }] }] });
   document.getElementById('routeName').value = '';
   document.getElementById('routeDays').value = '';
   document.getElementById('routeBudget').value = '';
@@ -1720,7 +2243,7 @@ function delRoute(i) {
 
 function loadPresetRoute() {
   state.route = PRESET_ROUTE.map(r => ({...r, visited:false}));
-  saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（8站）');
+  saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（11站）');
 }
 
 // ===== 攻略参考 =====
