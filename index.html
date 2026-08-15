@@ -31,7 +31,7 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
   overscroll-behavior-y: contain;
@@ -458,15 +458,18 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 
 /* ===== Mobile ===== */
 @media (max-width:480px) {
-  .page { padding:12px; }
+  .page { padding:12px; padding-bottom:80px; }
   .route-summary { grid-template-columns:repeat(2,1fr); }
   .add-row { flex-direction:column; }
   .add-row .input { width:100%; min-width:0; }
   .add-row .btn { width:100%; }
   .exchange-row { flex-direction:column; gap:6px; }
   .exchange-row .input { width:100%; min-width:0; flex:none; }
-  .exchange-row select.input { max-width:none; }
+  .exchange-row select.input { max-width:none; width:100%; }
   .ex-arrow { transform:rotate(90deg); text-align:center; width:100%; }
+  .exchange-block select.input { width:100%; }
+  /* 汇率select手机端显示完整 */
+  #exFromCurrency, #exToCurrency { width:100%; max-width:none; }
   .guide-grid { grid-template-columns:repeat(3,1fr); }
 }
 </style>
