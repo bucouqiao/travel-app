@@ -9,6 +9,8 @@
 <title>追寻旅迹 · 亚欧非大环线</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12/dist/pptxgen.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5/build/index.umd.js"></script>
 <style>
 :root {
   --bg: #F5F5F7;
@@ -721,6 +723,13 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
         <button class="share-btn" onclick="exportShareImage()">导出图片</button>
         <button class="share-btn" onclick="exportShareJSON()">导出备份</button>
         <button class="share-btn" onclick="importShareJSON()">导入备份</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+      <div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">导出文档</div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="exportPPT()" style="border-color:#D04423;color:#D04423">导出PPT</button>
+        <button class="share-btn" onclick="exportWord()" style="border-color:#2B579A;color:#2B579A">导出Word</button>
       </div>
     </div>
   </div>
@@ -3330,6 +3339,192 @@ function importShareJSON() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ===== 导出PPT =====
+function exportPPT() {
+  if (typeof PptxGenJS === 'undefined') { showToast('PPT库加载中，请稍后再试'); return; }
+  try {
+    var pptx = new PptxGenJS();
+    pptx.layout = 'LAYOUT_16x9';
+    pptx.author = '追寻旅迹';
+    pptx.subject = '亚欧非大环线';
+
+    // 封面页
+    var slide0 = pptx.addSlide();
+    slide0.background = { color: '1A365D' };
+    slide0.addText('追寻旅迹', { x:0.5, y:1.5, w:8, h:1.2, fontSize:40, color:'FFFFFF', bold:true, align:'center' });
+    slide0.addText('亚欧非大环线', { x:0.5, y:2.6, w:8, h:0.6, fontSize:22, color:'90CDF4', align:'center' });
+    var summary = (state.route.length || 0) + '站 · ' + (state.route.reduce(function(s,r){return s+(parseInt(r.days)||0)},0)) + '天 · ¥' + state.route.reduce(function(s,r){return s+(parseInt(r.budget)||0)},0);
+    slide0.addText(summary, { x:0.5, y:3.3, w:8, h:0.5, fontSize:16, color:'A0AEC0', align:'center' });
+
+    // 每站一页
+    state.route.forEach(function(r, i) {
+      var slide = pptx.addSlide();
+      var visaText = r.visa==='free'?'免签':r.visa==='evisa'?'电子签':r.visa==='conditional'?'有条件免签':'其他';
+      // 标题
+      slide.addText((i+1) + '. ' + r.name, { x:0.5, y:0.3, w:8.5, h:0.7, fontSize:26, color:'1A365D', bold:true });
+      // 基本信息条
+      slide.addText((r.days?r.days+'天':'') + ' | ¥' + (r.budget||0) + ' | ' + visaText, { x:0.5, y:1.0, w:8.5, h:0.4, fontSize:14, color:'718096' });
+      // 备注
+      if (r.notes) {
+        slide.addText(r.notes, { x:0.5, y:1.5, w:8.5, h:0.4, fontSize:12, color:'A0AEC0', italic:true });
+      }
+      // 子目的地
+      var y = 2.0;
+      if (r.dests && r.dests.length) {
+        r.dests.forEach(function(dest) {
+          if (y > 4.8) return; // 防止溢出
+          slide.addText('🏙 ' + dest.city, { x:0.5, y:y, w:8.5, h:0.35, fontSize:14, color:'2D3748', bold:true });
+          y += 0.35;
+          if (dest.transport) {
+            slide.addText('🚌 ' + dest.transport, { x:0.8, y:y, w:8.2, h:0.3, fontSize:11, color:'718096' });
+            y += 0.3;
+          }
+          if (dest.notes) {
+            slide.addText(dest.notes, { x:0.8, y:y, w:8.2, h:0.25, fontSize:10, color:'A0AEC0' });
+            y += 0.25;
+          }
+          // 每日景点
+          if (dest.days && dest.days.length) {
+            dest.days.forEach(function(day) {
+              if (y > 4.9) return;
+              slide.addText('📅 ' + day.date, { x:0.8, y:y, w:8, h:0.28, fontSize:11, color:'2B6CB0', bold:true });
+              y += 0.28;
+              if (day.spots && day.spots.length) {
+                day.spots.forEach(function(spot) {
+                  if (y > 5.0) return;
+                  var spotStr = (spot.time ? spot.time + ' ' : '') + spot.name + (spot.note ? ' — ' + spot.note : '');
+                  slide.addText('  · ' + spotStr, { x:1.0, y:y, w:7.8, h:0.25, fontSize:10, color:'4A5568' });
+                  y += 0.25;
+                });
+              }
+            });
+          }
+          y += 0.15;
+        });
+      }
+      // 页码
+      slide.addText((i+1) + '/' + state.route.length, { x:8.5, y:5.0, w:1, h:0.3, fontSize:9, color:'A0AEC0', align:'right' });
+    });
+
+    // 尾页
+    var slideEnd = pptx.addSlide();
+    slideEnd.background = { color: '1A365D' };
+    slideEnd.addText('追寻旅迹 · 由「追寻旅迹」生成', { x:0.5, y:2.5, w:8, h:0.8, fontSize:20, color:'FFFFFF', align:'center' });
+    slideEnd.addText('攻略整合自环线SILKLOOP · 数据保存在本地浏览器', { x:0.5, y:3.3, w:8, h:0.5, fontSize:12, color:'A0AEC0', align:'center' });
+
+    pptx.writeFile({ fileName: '追寻旅迹_亚欧非大环线.pptx' });
+    showToast('PPT已导出！');
+  } catch(err) {
+    showToast('导出PPT失败：' + err.message);
+  }
+}
+
+// ===== 导出Word =====
+function exportWord() {
+  if (typeof docx === 'undefined') { showToast('Word库加载中，请稍后再试'); return; }
+  try {
+    var children = [];
+
+    // 标题
+    children.push(new docx.Paragraph({ text: '追寻旅迹 · 亚欧非大环线', heading: docx.HeadingLevel.TITLE, spacing: { after: 200 } }));
+    var summary = (state.route.length||0) + '站 · ' + state.route.reduce(function(s,r){return s+(parseInt(r.days)||0)},0) + '天 · ¥' + state.route.reduce(function(s,r){return s+(parseInt(r.budget)||0)},0);
+    children.push(new docx.Paragraph({ text: summary, spacing: { after: 400 }, color: '666666' }));
+
+    // 每站
+    state.route.forEach(function(r, i) {
+      var visaText = r.visa==='free'?'免签':r.visa==='evisa'?'电子签':r.visa==='conditional'?'有条件免签':'其他';
+      // 站点标题
+      children.push(new docx.Paragraph({
+        text: (i+1) + '. ' + r.name,
+        heading: docx.HeadingLevel.HEADING_2,
+        spacing: { before: 300, after: 100 }
+      }));
+      children.push(new docx.Paragraph({
+        text: (r.days?r.days+'天':'') + ' | ¥' + (r.budget||0) + ' | ' + visaText,
+        spacing: { after: 100 }, color: '666666'
+      }));
+      if (r.notes) {
+        children.push(new docx.Paragraph({ text: r.notes, spacing: { after: 100 }, italics: true, color: '888888' }));
+      }
+
+      // 子目的地
+      if (r.dests && r.dests.length) {
+        r.dests.forEach(function(dest) {
+          children.push(new docx.Paragraph({
+            text: '🏙 ' + dest.city,
+            heading: docx.HeadingLevel.HEADING_3,
+            spacing: { before: 200, after: 80 }
+          }));
+          if (dest.transport) {
+            children.push(new docx.Paragraph({ text: '交通：' + dest.transport, spacing: { after: 60 }, color: '555555' }));
+          }
+          if (dest.notes) {
+            children.push(new docx.Paragraph({ text: dest.notes, spacing: { after: 60 }, color: '777777', italics: true }));
+          }
+          // 每日
+          if (dest.days && dest.days.length) {
+            dest.days.forEach(function(day) {
+              children.push(new docx.Paragraph({
+                text: '📅 ' + day.date,
+                bold: true, spacing: { before: 120, after: 40 }, color: '2B6CB0'
+              }));
+              if (day.spots && day.spots.length) {
+                day.spots.forEach(function(spot) {
+                  var line = (spot.time ? spot.time + ' ' : '') + spot.name + (spot.note ? ' — ' + spot.note : '');
+                  children.push(new docx.Paragraph({ text: '· ' + line, spacing: { after: 30 }, indent: { left: 400 } }));
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+
+    // 行李清单
+    if (state.luggage && state.luggage.length) {
+      children.push(new docx.Paragraph({ text: '行李清单', heading: docx.HeadingLevel.HEADING_2, spacing: { before: 400 } }));
+      var checked = state.luggage.filter(function(l){return l.checked}).length;
+      children.push(new docx.Paragraph({ text: '已打包：' + checked + '/' + state.luggage.length, color: '666666', spacing: { after: 100 } }));
+      state.luggage.forEach(function(l) {
+        children.push(new docx.Paragraph({ text: (l.checked?'[x] ':'[ ] ') + l.name, spacing: { after: 20 } }));
+      });
+    }
+
+    // 购物清单
+    if (state.shopping && state.shopping.length) {
+      children.push(new docx.Paragraph({ text: '购物清单', heading: docx.HeadingLevel.HEADING_2, spacing: { before: 400 } }));
+      state.shopping.forEach(function(s) {
+        children.push(new docx.Paragraph({ text: (s.checked?'[x] ':'[ ] ') + s.name + ' ¥' + (s.price||0), spacing: { after: 20 } }));
+      });
+    }
+
+    // 旅行笔记
+    if (state.notes) {
+      children.push(new docx.Paragraph({ text: '旅行笔记', heading: docx.HeadingLevel.HEADING_2, spacing: { before: 400 } }));
+      children.push(new docx.Paragraph({ text: state.notes, spacing: { after: 100 } }));
+    }
+
+    // 尾注
+    children.push(new docx.Paragraph({ text: '—— 由「追寻旅迹」生成 · 攻略整合自环线SILKLOOP ——', spacing: { before: 600 }, color: '999999', alignment: docx.AlignmentType.CENTER }));
+
+    var doc = new docx.Document({
+      sections: [{ children: children }],
+      creator: '追寻旅迹'
+    });
+
+    docx.Packer.toBlob(doc).then(function(blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = '追寻旅迹_亚欧非大环线.docx';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Word文档已导出！');
+    });
+  } catch(err) {
+    showToast('导出Word失败：' + err.message);
+  }
 }
 
 // ===== 云同步（GitHub） =====
