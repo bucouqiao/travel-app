@@ -2058,6 +2058,11 @@ function renderRoute() {
         '</div>' +
         '<div class="dest-body" id="destBody' + i + '_' + di + '">';
 
+      // 子目的地备注
+      if (dest.notes) {
+        html += '<div class="dest-notes" style="font-size:0.82rem;color:var(--text2);padding:6px 12px 2px;line-height:1.5">' + dest.notes + '</div>';
+      }
+
       // 第3层：每日行程
       var days = dest.days || [];
       days.forEach(function(day, dayi) {
@@ -2082,8 +2087,9 @@ function renderRoute() {
         html += '</div>'; // day-block
       });
 
-      // 删除子目的地
-      html += '<div style="padding:4px 12px">' +
+      // 子目的地备注+删除按钮
+      html += '<div style="padding:4px 12px;display:flex;gap:6px;flex-wrap:wrap">' +
+        '<button class="btn btn-sm btn-outline" onclick="editDestNotes(' + i + ',' + di + ')" style="font-size:0.72rem">' + (dest.notes ? '编辑备注' : '+ 添加备注') + '</button>' +
         '<button class="btn btn-sm btn-outline" onclick="delDest(' + i + ',' + di + ')" style="color:var(--red);border-color:var(--red);font-size:0.72rem">删除此目的地</button>' +
       '</div>';
       html += '</div></div>'; // dest-body, dest-item
@@ -2114,6 +2120,37 @@ function toggleRouteDetail(i) {
   } else {
     el.classList.add('open');
     header.classList.add('expanded');
+    // 地图飞到该站点
+    flyToRoute(i);
+  }
+}
+
+// 地图飞到指定站点
+function flyToRoute(routeIdx) {
+  if (!travelMap || !mapInitialized) return;
+  var r = state.route[routeIdx];
+  if (!r) return;
+  // 先尝试从子目的地获取坐标，再从站点名获取
+  var coords = [];
+  if (r.dests && r.dests.length) {
+    r.dests.forEach(function(d) {
+      var c = getRouteCoord(d.city);
+      if (c) coords.push(c);
+    });
+  }
+  if (!coords.length) {
+    var c = getRouteCoord(r.name);
+    if (c) coords.push(c);
+  }
+  if (coords.length > 1) {
+    travelMap.flyToBounds(L.latLngBounds(coords), { padding: [60, 60], maxZoom: 10, duration: 1.2 });
+  } else if (coords.length === 1) {
+    travelMap.flyTo(coords[0], 8, { duration: 1.0 });
+  }
+  // 展开地图（如果收起了）
+  var container = document.getElementById('mapContainer');
+  if (container.classList.contains('collapsed')) {
+    toggleMap();
   }
 }
 
@@ -2128,6 +2165,27 @@ function toggleDest(routeIdx, destIdx) {
   } else {
     body.classList.add('open');
     if (arrow) arrow.style.transform = 'rotate(90deg)';
+    // 地图飞到该子目的地
+    flyToDest(routeIdx, destIdx);
+  }
+}
+
+// 地图飞到指定子目的地
+function flyToDest(routeIdx, destIdx) {
+  if (!travelMap || !mapInitialized) return;
+  var dest = state.route[routeIdx] && state.route[routeIdx].dests && state.route[routeIdx].dests[destIdx];
+  if (!dest) return;
+  var c = getRouteCoord(dest.city);
+  if (c) {
+    travelMap.flyTo(c, 11, { duration: 1.0 });
+  } else {
+    // 子目的地城市没坐标，飞到站点
+    flyToRoute(routeIdx);
+  }
+  // 展开地图（如果收起了）
+  var container = document.getElementById('mapContainer');
+  if (container.classList.contains('collapsed')) {
+    toggleMap();
   }
 }
 
@@ -2147,6 +2205,44 @@ function delDest(routeIdx, destIdx) {
   if (!confirm('确定删除此子目的地？')) return;
   state.route[routeIdx].dests.splice(destIdx, 1);
   saveState(); renderRoute(); showToast('已删除子目的地');
+}
+
+// 编辑子目的地备注
+function editDestNotes(routeIdx, destIdx) {
+  var dest = state.route[routeIdx].dests[destIdx];
+  showDestNotesModal(routeIdx, destIdx, dest);
+}
+
+// 子目的地备注编辑弹窗
+function showDestNotesModal(routeIdx, destIdx, dest) {
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>子目的地备注：' + (dest.city || '未命名') + '</h3>' +
+      '<div class="sm-row">' +
+        '<input class="input" id="dmTransport" type="text" placeholder="交通方式" value="' + (dest.transport || '') + '">' +
+      '</div>' +
+      '<div class="sm-row">' +
+        '<textarea class="input" id="dmNotes" type="text" placeholder="备注（如住宿信息、注意事项等）" rows="3" style="resize:vertical;min-height:60px">' + (dest.notes || '') + '</textarea>' +
+      '</div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveDestNotesModal(' + routeIdx + ',' + destIdx + ')">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  document.getElementById('dmNotes').focus();
+}
+
+function saveDestNotesModal(routeIdx, destIdx) {
+  var transport = document.getElementById('dmTransport').value.trim();
+  var notes = document.getElementById('dmNotes').value.trim();
+  state.route[routeIdx].dests[destIdx].transport = transport;
+  state.route[routeIdx].dests[destIdx].notes = notes;
+  saveState(); closeSpotModal(); renderRoute();
+  showToast('备注已保存');
 }
 
 // 添加景点
