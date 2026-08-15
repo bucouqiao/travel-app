@@ -662,6 +662,124 @@ footer {
   transition: all .2s; font-weight: 500;
 }
 .share-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(59,125,216,0.06); }
+
+/* ===== AI Assistant ===== */
+.ai-assistant-box {
+  background: var(--card-bg); border-radius: 14px; padding: 16px 18px;
+  margin-top: 16px; box-shadow: var(--shadow-md);
+}
+.ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.ai-header .ai-icon { font-size: 1.3rem; }
+.ai-header .ai-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+.ai-header .ai-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; background: rgba(59,125,216,0.1); color: var(--primary); font-weight: 600; }
+.ai-chat-area { max-height: 320px; overflow-y: auto; margin-bottom: 12px; -webkit-overflow-scrolling: touch; }
+.ai-msg { margin-bottom: 10px; font-size: 0.88rem; line-height: 1.65; }
+.ai-msg.user { text-align: right; }
+.ai-msg.user .ai-msg-bubble {
+  display: inline-block; max-width: 85%; text-align: left;
+  background: var(--primary); color: white; padding: 10px 14px;
+  border-radius: 16px 16px 4px 16px;
+}
+.ai-msg.bot .ai-msg-bubble {
+  display: inline-block; max-width: 90%;
+  background: var(--bg); color: var(--text); padding: 10px 14px;
+  border-radius: 16px 16px 16px 4px; white-space: pre-wrap;
+}
+.ai-msg.bot .ai-msg-bubble a { color: var(--primary); }
+.ai-quick-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.ai-quick-btn {
+  padding: 5px 12px; border: 1.5px solid var(--border); border-radius: 16px;
+  font-size: 0.78rem; background: white; color: var(--text-light); cursor: pointer;
+  transition: all .2s; white-space: nowrap;
+}
+.ai-quick-btn:hover { border-color: var(--primary); color: var(--primary); }
+.ai-input-row { display: flex; gap: 8px; }
+.ai-input-row textarea {
+  flex: 1; padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.88rem; resize: none; height: 44px;
+  line-height: 1.5; font-family: inherit;
+}
+.ai-input-row textarea:focus { outline: none; border-color: var(--primary); }
+.ai-send-btn {
+  background: var(--primary); color: white; border: none; padding: 0 18px;
+  border-radius: 12px; cursor: pointer; font-size: 0.88rem; white-space: nowrap;
+  font-weight: 600; align-self: stretch; transition: opacity .2s;
+}
+.ai-send-btn:hover { opacity: .9; }
+.ai-send-btn:disabled { opacity: .5; cursor: not-allowed; }
+.ai-typing { display: inline-block; font-size: 0.85rem; color: var(--text-light); padding: 10px 14px; }
+.ai-typing span { animation: aiBlink 1.4s infinite; }
+.ai-typing span:nth-child(2) { animation-delay: .2s; }
+.ai-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes aiBlink { 0%,60%,100% { opacity: .3; } 30% { opacity: 1; } }
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 480px) {
+  header { padding: 24px 16px 18px; }
+  header h1 { font-size: 1.4rem; letter-spacing: 2px; }
+  header p { font-size: 0.75rem; }
+  .trip-info { margin: -12px 12px 0; padding: 12px 14px; gap: 6px 14px; }
+  .trip-field input { width: 100px; font-size: 0.85rem; }
+  .trip-field label { font-size: 0.75rem; }
+  .countdown { margin: 12px; padding: 14px; }
+  .countdown .cd-num { font-size: 1.3rem; }
+  .countdown .cd-colon { font-size: 1.1rem; }
+  .sub-tabs { margin: 14px 12px 0; padding: 3px; }
+  .sub-tab-btn { font-size: 0.78rem; padding: 7px 4px; min-width: 56px; }
+  main { padding: 14px 12px; }
+  .section-title { font-size: 1rem; margin: 4px 0 12px; }
+  .route-summary { padding: 14px 12px; }
+  .route-summary .rs-item .rs-num { font-size: 1.2rem; }
+  .route-summary .rs-item .rs-label { font-size: 0.68rem; }
+  .route-card { padding: 12px 14px; gap: 10px; }
+  .route-card .route-name { font-size: 0.9rem; }
+  .route-card .route-meta { font-size: 0.72rem; gap: 8px; }
+  .route-card .route-notes { font-size: 0.78rem; padding: 6px 10px; }
+  .route-add-row input, .route-add-row select { font-size: 0.82rem; padding: 8px 12px; }
+  .route-add-row .btn-add { padding: 8px 14px; font-size: 0.85rem; }
+  .add-row input { padding: 8px 12px; font-size: 0.85rem; }
+  .add-row select { padding: 8px 10px; font-size: 0.8rem; }
+  .add-row .btn-add { padding: 8px 14px; font-size: 0.85rem; }
+  .list-item, .shop-item { padding: 10px 14px; gap: 10px; }
+  .list-item .item-name, .shop-item .shop-name { font-size: 0.88rem; }
+  .savings-card { padding: 20px 16px; }
+  .savings-card .amount { font-size: 2rem; }
+  .guide-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+  .guide-chip { padding: 8px 12px; font-size: 0.82rem; }
+  .guide-content { padding: 16px 14px; font-size: 0.86rem; }
+  .guide-content h3 { font-size: 1.05rem; }
+  .guide-content h4 { font-size: 0.9rem; }
+  .weather-card { padding: 16px; }
+  .weather-card .wc-temp { font-size: 2.2rem; }
+  .weather-forecast-day { min-width: 64px; padding: 8px 10px; }
+  .visa-card { padding: 14px; }
+  .visa-card .vc-name { font-size: 0.92rem; }
+  .exchange-row input, .exchange-row select { font-size: 0.85rem; padding: 8px 10px; }
+  .ex-result { font-size: 1rem; }
+  .preset-chip { font-size: 0.76rem; padding: 4px 10px; }
+  .filter-btn { font-size: 0.76rem; padding: 4px 12px; }
+  .bottom-nav-item { font-size: 0.68rem; padding: 5px 6px; }
+  .bottom-nav-item .nav-icon { font-size: 1.2rem; }
+  .share-btn { font-size: 0.78rem; padding: 8px 14px; }
+  .notes-area { min-height: 200px; padding: 14px; font-size: 0.88rem; }
+  .ai-chat-area { max-height: 280px; }
+  .ai-msg { font-size: 0.84rem; }
+  .ai-input-row textarea { font-size: 0.84rem; height: 40px; }
+  .prepare-card { padding: 14px 16px; }
+  .prepare-card h4 { font-size: 0.92rem; }
+  .prepare-card li { font-size: 0.82rem; }
+  .season-table { font-size: 0.68rem; }
+  .trans-table { font-size: 0.76rem; }
+  .currency-table { font-size: 0.78rem; }
+  .sim-table { font-size: 0.76rem; }
+  footer { font-size: 0.72rem; padding: 16px 12px 20px; }
+}
+@media (max-width: 360px) {
+  .trip-field input { width: 80px; }
+  .guide-grid { grid-template-columns: 1fr 1fr; }
+  .weather-forecast-day { min-width: 56px; }
+  .bottom-nav-item { font-size: 0.64rem; padding: 4px 4px; }
+}
 </style>
 </head>
 <body>
@@ -878,6 +996,28 @@ footer {
 
   <!-- ===== Notes Page ===== -->
   <div class="page" id="page-notes" style="display:none">
+    <!-- AI Assistant -->
+    <div class="ai-assistant-box">
+      <div class="ai-header">
+        <span class="ai-icon">🤖</span>
+        <span class="ai-title">旅行AI助手</span>
+        <span class="ai-badge">攻略整理</span>
+      </div>
+      <div class="ai-chat-area" id="aiChatArea">
+        <div class="ai-msg bot"><div class="ai-msg-bubble">你好！我是你的旅行AI助手。你可以把网上看到的攻略、游记、注意事项直接粘贴给我，我会帮你整理成结构化的旅行笔记。试试看吧！</div></div>
+      </div>
+      <div class="ai-quick-row">
+        <button class="ai-quick-btn" onclick="aiQuickAction('summarize')">整理攻略</button>
+        <button class="ai-quick-btn" onclick="aiQuickAction('checklist')">提取行李清单</button>
+        <button class="ai-quick-btn" onclick="aiQuickAction('budget')">估算预算</button>
+        <button class="ai-quick-btn" onclick="aiQuickAction('route')">规划路线</button>
+      </div>
+      <div class="ai-input-row">
+        <textarea id="aiInput" placeholder="粘贴攻略内容或输入问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+        <button class="ai-send-btn" id="aiSendBtn" onclick="sendAI()">发送</button>
+      </div>
+    </div>
+
     <div class="panel active" id="panel-notes">
       <div class="section-title">旅行笔记</div>
       <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
@@ -1625,7 +1765,8 @@ let state = {
   savings: { target:0, current:0, history:[] },
   notes: '',
   visa: [],
-  weatherCache: []
+  weatherCache: [],
+  aiChat: []
 };
 
 let currentLuggageFilter = 'all';
@@ -2676,6 +2817,341 @@ function importShareJSON() {
   input.click();
 }
 
+// ===== AI 助手 =====
+let aiChatHistory = [];
+
+function appendAIMsg(role, text) {
+  const area = document.getElementById('aiChatArea');
+  const cls = role === 'user' ? 'user' : 'bot';
+  const div = document.createElement('div');
+  div.className = 'ai-msg ' + cls;
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-msg-bubble';
+  bubble.innerHTML = text;
+  div.appendChild(bubble);
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function showAITyping() {
+  const area = document.getElementById('aiChatArea');
+  const div = document.createElement('div');
+  div.className = 'ai-msg bot';
+  div.id = 'aiTypingIndicator';
+  div.innerHTML = '<div class="ai-typing"><span>●</span><span>●</span><span>●</span></div>';
+  area.appendChild(div);
+  area.scrollTop = area.scrollHeight;
+}
+
+function removeAITyping() {
+  const t = document.getElementById('aiTypingIndicator');
+  if (t) t.remove();
+}
+
+function aiQuickAction(action) {
+  const tips = {
+    summarize: '请粘贴你看到的攻略内容，我来帮你整理成结构化笔记。',
+    checklist: '请粘贴攻略内容，我帮你提取行李清单和建议。',
+    budget: '请告诉我你的目的地和大致天数，我帮你估算预算。',
+    route: '请告诉我你想去哪些地方，我帮你规划路线。'
+  };
+  document.getElementById('aiInput').value = tips[action] || '';
+  document.getElementById('aiInput').focus();
+}
+
+function sendAI() {
+  const input = document.getElementById('aiInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  appendAIMsg('user', text.replace(/</g, '&lt;').replace(/>/g, '&gt;'));
+  aiChatHistory.push({ role: 'user', content: text });
+  input.value = '';
+
+  showAITyping();
+  setTimeout(() => {
+    removeAITyping();
+    const reply = generateAIReply(text);
+    appendAIMsg('bot', reply);
+    aiChatHistory.push({ role: 'bot', content: reply });
+    // 保存AI聊天记录到state（只保留最近20条）
+    state.aiChat = aiChatHistory.slice(-20);
+    saveState();
+  }, 600 + Math.random() * 400);
+}
+
+function generateAIReply(input) {
+  // 判断意图
+  const lower = input.toLowerCase();
+
+  // 如果是很长的文本（>100字），认为是粘贴攻略，进行整理
+  if (input.length > 80) {
+    return organizeGuide(input);
+  }
+
+  // 包含关键词的短文本
+  if (lower.match(/预算|多少钱|花费|费用|开支/)) {
+    return estimateBudget(input);
+  }
+  if (lower.match(/路线|怎么走|行程|规划|路线图/)) {
+    return suggestRoute(input);
+  }
+  if (lower.match(/行李|带什么|装备|准备/)) {
+    return suggestChecklist(input);
+  }
+  if (lower.match(/签证|签|怎么办/)) {
+    return visaInfo(input);
+  }
+  if (lower.match(/天气|气候|温度|几月去|什么时候/)) {
+    return weatherInfo(input);
+  }
+  if (lower.match(/汇率|换算|货币|钱怎么换/)) {
+    return exchangeInfo(input);
+  }
+  if (lower.match(/你好|hi|hello|hey/)) {
+    return '你好！我可以帮你做这些事：\n1. 粘贴攻略，我帮你整理成结构化笔记\n2. 输入"预算"帮你估算费用\n3. 输入"路线"帮你规划行程\n4. 输入"行李"帮你列清单\n5. 输入"签证"查看签证信息\n直接把内容发给我就行！';
+  }
+
+  // 默认：尝试整理
+  if (input.length > 20) {
+    return organizeGuide(input);
+  }
+
+  return '我可以帮你做这些事：\n1. 直接粘贴攻略内容，我帮你整理\n2. 问"去XX国预算多少"帮你估算\n3. 问"XX到XX怎么走"帮你规划路线\n4. 问"去XX需要带什么"帮你列行李清单\n试试看吧！';
+}
+
+function organizeGuide(text) {
+  // 提取关键信息
+  var lines = text.split(/\n/).filter(function(l) { return l.trim(); });
+  var cities = [];
+  var foods = [];
+  var tips = [];
+  var warnings = [];
+  var costs = [];
+  var transport = [];
+
+  lines.forEach(function(line) {
+    var l = line.trim();
+    // 城市提取
+    if (l.match(/城市|景点|打卡|必去|推荐去/)) {
+      var matches = l.match(/[一-龥]{2,4}(市|城|镇|村)/g);
+      if (matches) cities = cities.concat(matches);
+    }
+    // 美食
+    if (l.match(/吃|美食|餐厅|小吃|特产|特色/)) {
+      foods.push(l.replace(/^[·•\-\d.\s]+/, ''));
+    }
+    // 费用
+    if (l.match(/¥|￥|\$|美元|欧元|元|块|cost|price/i)) {
+      costs.push(l.replace(/^[·•\-\d.\s]+/, ''));
+    }
+    // 注意事项
+    if (l.match(/注意|小心|别|不要|切记|避坑|踩雷|警告/)) {
+      warnings.push(l.replace(/^[·•\-\d.\s]+/, ''));
+    }
+    // 贴士
+    if (l.match(/建议|贴士|tip|推荐|可以试试/)) {
+      tips.push(l.replace(/^[·•\-\d.\s]+/, ''));
+    }
+    // 交通
+    if (l.match(/火车|飞机|大巴|巴士|地铁|出租车|打车|拼车|渡轮|轮渡/)) {
+      transport.push(l.replace(/^[·•\-\d.\s]+/, ''));
+    }
+  });
+
+  // 如果没提取到结构化信息，就做摘要
+  if (!cities.length && !foods.length && !tips.length && !warnings.length && !costs.length && !transport.length) {
+    // 简单摘要：取前3个有意义的段落
+    var summary = lines.slice(0, 3).join('\n');
+    if (lines.length > 3) summary += '\n...(共' + lines.length + '行，已截取主要部分)';
+    var result = '📝 已整理（摘要）：\n\n' + summary + '\n\n——你可以点"添加到笔记"保存这段内容。';
+    return addNoteButton(result);
+  }
+
+  var result = '📝 已整理成结构化笔记：\n\n';
+  if (cities.length) result += '🏙 提到的城市：' + cities.slice(0, 8).join('、') + '\n\n';
+  if (foods.length) {
+    result += '🍴 美食推荐：\n' + foods.slice(0, 5).map(function(f) { return '· ' + f; }).join('\n') + '\n\n';
+  }
+  if (transport.length) {
+    result += '🚌 交通信息：\n' + transport.slice(0, 5).map(function(t) { return '· ' + t; }).join('\n') + '\n\n';
+  }
+  if (costs.length) {
+    result += '💰 费用参考：\n' + costs.slice(0, 5).map(function(c) { return '· ' + c; }).join('\n') + '\n\n';
+  }
+  if (tips.length) {
+    result += '💡 实用建议：\n' + tips.slice(0, 5).map(function(t) { return '· ' + t; }).join('\n') + '\n\n';
+  }
+  if (warnings.length) {
+    result += '⚠️ 注意事项：\n' + warnings.slice(0, 5).map(function(w) { return '· ' + w; }).join('\n') + '\n\n';
+  }
+  result += '——点击下方按钮可保存到旅行笔记。';
+  return addNoteButton(result);
+}
+
+function addNoteButton(text) {
+  // 编码文本用于按钮传递
+  var encoded = text.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+  return text + '\n\n<button class="ai-quick-btn" style="margin-top:8px;background:var(--primary);color:white;border-color:var(--primary)" onclick="saveAIToNotes(this)" data-text="' + btoa(unescape(encodeURIComponent(text))) + '">添加到笔记</button>';
+}
+
+function saveAIToNotes(btn) {
+  var encoded = btn.getAttribute('data-text');
+  var text = decodeURIComponent(escape(atob(encoded)));
+  // 去掉按钮部分的HTML
+  text = text.replace(/\n\n<button[\s\S]*$/, '');
+  var area = document.getElementById('notesArea');
+  if (area.value) {
+    area.value += '\n\n---\n' + text;
+  } else {
+    area.value = text;
+  }
+  state.notes = area.value;
+  saveState();
+  showToast('已添加到旅行笔记');
+}
+
+function estimateBudget(input) {
+  // 尝试提取国家和天数
+  var country = null;
+  var days = 0;
+  Object.keys(GUIDES).forEach(function(k) {
+    var g = GUIDES[k];
+    if (input.indexOf(g.name) >= 0) country = g;
+  });
+  var dayMatch = input.match(/(\d+)\s*天/);
+  if (dayMatch) days = parseInt(dayMatch[1]);
+
+  if (!country) {
+    return '告诉我你想去哪个国家和几天，比如"哈萨克斯坦7天预算多少？"\n\n我可以估算这些国家的预算：哈萨克斯坦、乌兹别克斯坦、阿塞拜疆、格鲁吉亚、亚美尼亚、土耳其、塞尔维亚、波黑、埃及等。';
+  }
+
+  if (!days) days = parseInt(country.days) || 5;
+
+  // 粗略估算
+  var dailyBudget = {
+    '哈萨克斯坦': 200, '乌兹别克斯坦': 150, '阿塞拜疆': 250, '格鲁吉亚': 200,
+    '亚美尼亚': 180, '土耳其': 250, '塞尔维亚': 200, '波黑': 150, '埃及': 200,
+    '泰国': 200
+  };
+  var daily = dailyBudget[country.name] || 200;
+  var total = daily * days;
+  var visaCost = country.visa === 'free' ? 0 : (country.visa === 'evisa' ? 200 : 0);
+  var flightCost = 1500; // 粗估机票
+  var grandTotal = total + visaCost + flightCost;
+
+  var result = '💰 ' + country.name + ' ' + days + '天预算估算：\n\n';
+  result += '· 日常开销（食宿行）：约 ¥' + (daily * days) + '（¥' + daily + '/天）\n';
+  result += '· 签证费用：' + (visaCost > 0 ? '约 ¥' + visaCost : '免签') + '\n';
+  result += '· 往返交通：约 ¥' + flightCost + '\n';
+  result += '· 合计约：¥' + grandTotal + ' ～ ¥' + (grandTotal + 1000) + '\n\n';
+  result += '注：以上为经济旅行参考价，实际取决于住宿标准和消费习惯。建议预算上浮15%作为应急。';
+  return result;
+}
+
+function suggestRoute(input) {
+  // 提取提到的国家
+  var mentioned = [];
+  Object.keys(GUIDES).forEach(function(k) {
+    if (input.indexOf(GUIDES[k].name) >= 0) mentioned.push(GUIDES[k]);
+  });
+
+  if (mentioned.length === 0) {
+    return '你已经有了预设的大环线路线：\n长沙→新疆→哈萨克斯坦→乌兹别克斯坦→阿塞拜疆→格鲁吉亚→亚美尼亚→土耳其→塞尔维亚→波黑→埃及→泰国→长沙\n\n共11站约63天，预算约2.5万。可以在"首页"一键导入！\n\n或者告诉我你想去哪些国家，我帮你规划。';
+  }
+
+  var result = '🗺 根据你提到的国家，建议路线：\n\n';
+  mentioned.forEach(function(g, i) {
+    result += (i + 1) + '. ' + g.name + '（建议' + g.days + '）— ' + g.visaText + '\n';
+    if (g.cities && g.cities.length) {
+      result += '   城市：' + g.cities.map(function(c) { return c.name; }).join('→') + '\n';
+    }
+  });
+  result += '\n总天数约' + mentioned.reduce(function(s, g) {
+    var m = g.days.match(/(\d+)/);
+    return s + (m ? parseInt(m[1]) : 5);
+  }, 0) + '天。可以在首页"一键导入"完整路线。';
+  return result;
+}
+
+function suggestChecklist(input) {
+  // 根据提到的国家给出建议
+  var mentioned = [];
+  Object.keys(GUIDES).forEach(function(k) {
+    if (input.indexOf(GUIDES[k].name) >= 0) mentioned.push(GUIDES[k]);
+  });
+
+  var result = '🎒 旅行行李建议：\n\n';
+  result += '【必带通用】\n';
+  result += '· 护照（有效期>6个月）、身份证、签证复印件\n';
+  result += '· 充电宝、多国转换插头、手机充电器\n';
+  result += '· 速干衣裤、抓绒衣、薄羽绒服（温差大）\n';
+  result += '· 防晒霜SPF50、唇膏、墨镜、遮阳帽\n';
+  result += '· 感冒药、止泻药、创可贴、蚊虫药\n';
+  result += '· 水杯、收纳袋、晾衣绳\n\n';
+
+  if (mentioned.length) {
+    result += '【目的地特别提醒】\n';
+    mentioned.forEach(function(g) {
+      if (g.warnings && g.warnings.length) {
+        result += '· ' + g.name + '：' + g.warnings[0] + '\n';
+      }
+    });
+    result += '\n';
+  }
+
+  result += '你可以在"准备→行李清单"里一键添加推荐清单，还可以自动分类哦！';
+  return result;
+}
+
+function visaInfo(input) {
+  var mentioned = [];
+  Object.keys(GUIDES).forEach(function(k) {
+    if (input.indexOf(GUIDES[k].name) >= 0) mentioned.push(GUIDES[k]);
+  });
+
+  if (!mentioned.length) {
+    return '大环线各国签证情况：\n\n· 哈萨克斯坦 — 免签\n· 乌兹别克斯坦 — 免签\n· 阿塞拜疆 — 免签\n· 格鲁吉亚 — 免签\n· 亚美尼亚 — 免签\n· 土耳其 — 电子签约$60\n· 塞尔维亚 — 免签\n· 波黑 — 免签\n· 埃及 — 电子签$25或落地签$25\n· 泰国 — 免签\n\n大部分国家免签，只需土耳其和埃及需要提前办。去"工具→签证进度"可以追踪办理进度！';
+  }
+
+  var result = '签证信息：\n\n';
+  mentioned.forEach(function(g) {
+    result += '· ' + g.name + ' — ' + g.visaText + '（建议' + g.days + '）\n';
+  });
+  return result;
+}
+
+function weatherInfo(input) {
+  var mentioned = [];
+  Object.keys(GUIDES).forEach(function(k) {
+    if (input.indexOf(GUIDES[k].name) >= 0) mentioned.push(GUIDES[k]);
+  });
+
+  var result = '🌤 季节建议：\n\n';
+  result += '· 4-5月和9-10月是走大环线的最佳窗口，除埃及外各国大多适宜\n';
+  result += '· 埃及冬季（11-2月）才是好季节，夏天太热\n';
+  result += '· 中亚夏季（7-8月）部分地区超35°C，注意防暑\n\n';
+
+  if (mentioned.length) {
+    result += '你提到的国家：\n';
+    mentioned.forEach(function(g) {
+      result += '· ' + g.name + '：' + g.timezone + '\n';
+    });
+    result += '\n';
+  }
+
+  result += '去"工具→天气查询"可以查看沿途城市的实时天气和5天预报！';
+  return result;
+}
+
+function exchangeInfo(input) {
+  var result = '💰 汇率换算：\n\n';
+  result += '可以在"准备→汇率换算器"里实时换算13种货币！\n\n主要汇率参考（1外币≈人民币）：\n';
+  result += '· 美元 1≈¥7.25\n· 欧元 1≈¥7.85\n· 哈萨克坚戈 1≈¥0.015\n· 乌兹苏姆 1≈¥0.00057\n· 土耳其里拉 1≈¥0.21\n· 埃及镑 1≈¥0.15\n· 泰国铢 1≈¥0.20\n\n';
+  result += '建议在中亚带美元现金兑换，很多地方不接受刷卡。';
+  return result;
+}
+
 // ===== 旅行笔记 =====
 function bindNotes() {
   const area = document.getElementById('notesArea');
@@ -2708,6 +3184,12 @@ function init() {
   renderWeatherCache();
   initExchangeRate();
   bindNotes();
+  // 恢复AI聊天记录
+  if (state.aiChat && state.aiChat.length) {
+    var area = document.getElementById('aiChatArea');
+    area.innerHTML = '';
+    state.aiChat.forEach(function(m) { appendAIMsg(m.role, m.content); });
+  }
 }
 
 init();
