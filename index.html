@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>追寻旅迹 · 亚欧非大环线</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
   --primary: #33C2FF;
@@ -787,6 +789,173 @@ footer {
   .weather-forecast-day { min-width: 56px; }
   .bottom-nav-item { font-size: 0.64rem; padding: 4px 4px; }
 }
+
+/* ===== Map Panel ===== */
+.map-section {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+.map-header {
+  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.map-header .map-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.map-header .map-toggle { font-size: 0.8rem; color: var(--text-light); }
+.map-container {
+  width: 100%;
+  height: 320px;
+  transition: height .3s ease;
+}
+.map-container.collapsed { height: 0; }
+#travelMap { width: 100%; height: 100%; }
+.map-info-bar {
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  color: var(--text-light);
+  border-top: 1px solid var(--border);
+  display: flex; gap: 12px; flex-wrap: wrap;
+}
+.map-info-bar .mi-item { display: flex; align-items: center; gap: 4px; }
+.map-info-bar .mi-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ===== Day Timeline (圆周旅迹风格) ===== */
+.day-sections { margin-bottom: 16px; }
+.day-item {
+  margin-bottom: 4px;
+}
+.day-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 0 6px;
+}
+.day-tag {
+  font-size: 0.75rem; font-weight: 600;
+  padding: 3px 8px; border-radius: 8px;
+  color: #000; white-space: nowrap;
+}
+.day-title {
+  font-size: 0.92rem; font-weight: 700; color: var(--text);
+}
+.day-events {
+  padding-left: 12px;
+  border-left: 2px solid var(--border);
+  margin-left: 8px;
+}
+.event-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border);
+  transition: all .2s;
+}
+.event-card:hover { background: var(--bg); }
+.event-card .event-main {
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.event-card .event-cover {
+  width: 52px; height: 52px; border-radius: 8px;
+  overflow: hidden; flex-shrink: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+}
+.event-card .event-body { flex: 1; min-width: 0; }
+.event-card .event-cat-tag {
+  font-size: 0.72rem; padding: 1px 6px; border-radius: 6px;
+  background: var(--bg); color: var(--text-light);
+  display: inline-block; margin-bottom: 2px;
+}
+.event-card .event-name {
+  font-size: 0.88rem; font-weight: 600; color: var(--text);
+  margin-bottom: 2px;
+}
+.event-card .event-note-text {
+  font-size: 0.8rem; color: var(--text-light); line-height: 1.5;
+}
+.event-card .event-meta {
+  font-size: 0.75rem; color: var(--text-lighter);
+  margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap;
+}
+.event-transport {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  color: var(--text);
+  display: flex; align-items: center; gap: 6px;
+}
+.event-transport .trans-icon { font-size: 1rem; }
+.event-transport .trans-text { flex: 1; }
+.event-transport .trans-detail { font-size: 0.76rem; color: var(--text-light); }
+
+/* Day tag colors - 每站不同颜色 */
+.day-tag.c0 { background: #33C2FF; }
+.day-tag.c1 { background: #FF9B54; }
+.day-tag.c2 { background: #7B74FF; }
+.day-tag.c3 { background: #22C55E; }
+.day-tag.c4 { background: #FFD93D; }
+.day-tag.c5 { background: #FF6B6B; }
+.day-tag.c6 { background: #14B8A6; }
+.day-tag.c7 { background: #FF8F3F; }
+.day-tag.c8 { background: #A78BFA; }
+.day-tag.c9 { background: #36CFC9; }
+.day-tag.c10 { background: #FF85C0; }
+
+/* Route actions in timeline */
+.event-actions {
+  display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;
+}
+.event-actions button {
+  font-size: 0.72rem; padding: 3px 12px; border: 1px solid var(--border);
+  border-radius: 24px; background: white; color: var(--text-light);
+  cursor: pointer; transition: all .2s;
+}
+.event-actions button:hover { border-color: var(--text); color: var(--text); }
+.event-actions button.btn-visited { border-color: var(--success); color: var(--success); }
+.event-actions button.btn-del:hover { border-color: var(--danger); color: var(--danger); }
+
+/* Route add row in timeline style */
+.route-add-area {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+.route-add-area .add-title {
+  font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--text);
+}
+.route-add-area .add-row {
+  margin-bottom: 0;
+}
+.route-add-area .add-buttons {
+  display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+}
+.route-add-area .btn-preset {
+  width: 100%; padding: 10px; border: 1px solid var(--border);
+  border-radius: 24px; background: var(--bg);
+  color: var(--text); font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all .2s; margin-top: 10px;
+}
+.route-add-area .btn-preset:hover { background: white; border-color: var(--text); }
+
+/* ===== Mobile map ===== */
+@media (max-width: 480px) {
+  .map-container { height: 260px; }
+  .map-header .map-title { font-size: 0.82rem; }
+  .event-card { padding: 8px 10px; }
+  .event-card .event-cover { width: 44px; height: 44px; font-size: 1.2rem; }
+  .event-card .event-name { font-size: 0.84rem; }
+  .event-card .event-note-text { font-size: 0.76rem; }
+  .day-title { font-size: 0.86rem; }
+  .day-tag { font-size: 0.7rem; padding: 2px 6px; }
+}
 </style>
 </head>
 <body>
@@ -825,25 +994,48 @@ footer {
   <div class="page" id="page-home">
     <!-- Route Panel -->
     <div class="panel active" id="panel-route">
-      <div class="section-title">路线规划 <span class="badge" id="routeBadge">0 站</span></div>
+      <!-- 地图区域 -->
+      <div class="map-section">
+        <div class="map-header" onclick="toggleMap()">
+          <span class="map-title">🗺️ 行程地图</span>
+          <span class="map-toggle" id="mapToggleText">收起</span>
+        </div>
+        <div class="map-container" id="mapContainer">
+          <div id="travelMap"></div>
+        </div>
+        <div class="map-info-bar" id="mapInfoBar">
+          <div class="mi-item"><span class="mi-dot" style="background:#33C2FF"></span>已规划</div>
+          <div class="mi-item"><span class="mi-dot" style="background:#22C55E"></span>已到访</div>
+          <div class="mi-item" id="mapRouteSummary">0 站 · 0 天</div>
+        </div>
+      </div>
+
+      <!-- 路线摘要 -->
       <div class="route-summary" id="routeSummary">
         <div class="rs-item"><div class="rs-num" id="rsCountries">0</div><div class="rs-label">国家/地区</div></div>
         <div class="rs-item"><div class="rs-num" id="rsDays">0</div><div class="rs-label">预计天数</div></div>
         <div class="rs-item"><div class="rs-num" id="rsVisited">0</div><div class="rs-label">已到访</div></div>
         <div class="rs-item"><div class="rs-num" id="rsBudget">¥0</div><div class="rs-label">预算</div></div>
       </div>
-      <button class="preset-btn" onclick="loadPresetRoute()">一键导入「我的亚欧非大环线」路线（11站约63天 · 预算约2.5万）</button>
-      <div class="route-add-row">
-        <input type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
-        <select id="routeVisa">
-          <option value="free">免签</option><option value="evisa">电子签</option>
-          <option value="conditional">有条件免签</option><option value="other">其他</option>
-        </select>
-        <input type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
-        <input type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
-        <button class="btn-add" onclick="addRoute()">添加</button>
+
+      <!-- 添加路线 -->
+      <div class="route-add-area">
+        <div class="add-title">添加站点</div>
+        <div class="route-add-row">
+          <input type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
+          <select id="routeVisa">
+            <option value="free">免签</option><option value="evisa">电子签</option>
+            <option value="conditional">有条件免签</option><option value="other">其他</option>
+          </select>
+          <input type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
+          <input type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
+          <button class="btn-add" onclick="addRoute()">添加</button>
+        </div>
+        <button class="btn-preset" onclick="loadPresetRoute()">一键导入「我的亚欧非大环线」路线（11站约63天 · 预算约2.5万）</button>
       </div>
-      <div class="route-list" id="routeList"></div>
+
+      <!-- 时间线 -->
+      <div class="day-sections" id="routeList"></div>
     </div>
 
     <!-- Savings Panel -->
@@ -1664,6 +1856,82 @@ const SEASON_DATA = {
 };
 
 // ===== 预设路线 =====
+// ===== 路线城市坐标（用于地图标记）=====
+const ROUTE_COORDS = {
+  '长沙': [28.23, 112.94],
+  '新疆': [43.83, 87.62],
+  '乌鲁木齐': [43.83, 87.62],
+  '赛里木湖': [44.60, 81.17],
+  '伊宁': [43.91, 81.33],
+  '霍尔果斯': [44.20, 80.42],
+  '哈萨克斯坦': [43.27, 76.93],
+  '阿拉木图': [43.27, 76.93],
+  '乌兹别克斯坦': [41.31, 69.24],
+  '塔什干': [41.31, 69.24],
+  '撒马尔罕': [39.65, 66.97],
+  '布哈拉': [39.77, 64.42],
+  '希瓦': [41.38, 60.36],
+  '阿塞拜疆': [40.37, 49.83],
+  '巴库': [40.37, 49.83],
+  '格鲁吉亚': [41.69, 44.80],
+  '第比利斯': [41.69, 44.80],
+  '卡兹别克': [42.55, 44.64],
+  '西格纳吉': [41.63, 45.93],
+  '亚美尼亚': [40.18, 44.51],
+  '埃里温': [40.18, 44.51],
+  '土耳其': [41.01, 28.98],
+  '伊斯坦布尔': [41.01, 28.98],
+  '卡帕多奇亚': [38.64, 34.83],
+  '安塔利亚': [36.90, 30.71],
+  '以弗所': [37.94, 27.34],
+  '塞尔丘克': [37.95, 27.36],
+  '塞尔维亚': [44.79, 20.46],
+  '贝尔格莱德': [44.79, 20.46],
+  '诺维萨德': [45.26, 19.83],
+  '波黑': [43.85, 18.41],
+  '萨拉热窝': [43.85, 18.41],
+  '莫斯塔尔': [43.34, 17.81],
+  '埃及': [30.04, 31.24],
+  '开罗': [30.04, 31.24],
+  '卢克索': [25.69, 32.64],
+  '红海': [27.25, 33.84],
+  '泰国': [13.76, 100.50],
+  '曼谷': [13.76, 100.50]
+};
+
+// 从站点名中提取坐标
+function getRouteCoord(name) {
+  // 尝试直接匹配
+  if (ROUTE_COORDS[name]) return ROUTE_COORDS[name];
+  // 尝试模糊匹配
+  for (var key in ROUTE_COORDS) {
+    if (name.includes(key) || key.includes(name)) return ROUTE_COORDS[key];
+  }
+  return null;
+}
+
+// 站点emoji图标
+const ROUTE_ICONS = {
+  '长沙': '🏙️', '新疆': '🏔️', '乌鲁木齐': '🏙️', '赛里木湖': '🌊', '伊宁': '🏘️',
+  '哈萨克斯坦': '⛰️', '阿拉木图': '⛰️',
+  '乌兹别克斯坦': '🕌', '塔什干': '🕌', '撒马尔罕': '🕌', '布哈拉': '🕌', '希瓦': '🕌',
+  '阿塞拜疆': '🔥', '巴库': '🔥',
+  '格鲁吉亚': '🍷', '第比利斯': '🍷', '卡兹别克': '⛰️', '西格纳吉': '🏰',
+  '亚美尼亚': '⛪', '埃里温': '⛪',
+  '土耳其': '🇹🇷', '伊斯坦布尔': '🕌', '卡帕多奇亚': '🎈', '安塔利亚': '🏖️', '以弗所': '🏛️',
+  '塞尔维亚': '🏰', '贝尔格莱德': '🏰', '诺维萨德': '🏘️',
+  '波黑': '🌉', '萨拉热窝': '🌉', '莫斯塔尔': '🌉',
+  '埃及': '🏺', '开罗': '🏺', '卢克索': '🏺', '红海': '🌊',
+  '泰国': '🛕', '曼谷': '🛕'
+};
+
+function getRouteIcon(name) {
+  for (var key in ROUTE_ICONS) {
+    if (name.includes(key)) return ROUTE_ICONS[key];
+  }
+  return '📍';
+}
+
 const PRESET_ROUTE = [
   {name:'长沙→新疆', visa:'free', days:3, budget:2000, notes:'长沙飞乌鲁木齐，再去赛里木湖玩1-2天'},
   {name:'哈萨克斯坦', visa:'free', days:5, budget:2000, notes:'霍尔果斯出境→阿拉木图2天+恰伦峡谷+大阿拉木图湖'},
@@ -1840,6 +2108,10 @@ document.querySelectorAll('.bottom-nav-item').forEach(item => {
     }
     // 滚到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 刷新地图大小
+    if (page === 'home' && travelMap) {
+      setTimeout(function() { travelMap.invalidateSize(); }, 300);
+    }
   });
 });
 
@@ -1906,13 +2178,101 @@ function updateCountdown() {
   document.getElementById('cdSec').textContent = String(s).padStart(2,'0');
 }
 
-// ===== 路线规划 =====
+// ===== 地图管理 =====
+let travelMap = null;
+let mapMarkers = [];
+let mapPolyline = null;
+let mapInitialized = false;
+
+function initMap() {
+  if (mapInitialized) return;
+  if (typeof L === 'undefined') return;
+  travelMap = L.map('travelMap', {
+    zoomControl: true,
+    attributionControl: false,
+    scrollWheelZoom: true
+  }).setView([35, 60], 3);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    subdomains: ['a','b','c']
+  }).addTo(travelMap);
+
+  mapInitialized = true;
+  renderMapRoute();
+}
+
+function toggleMap() {
+  const container = document.getElementById('mapContainer');
+  const toggleText = document.getElementById('mapToggleText');
+  if (container.classList.contains('collapsed')) {
+    container.classList.remove('collapsed');
+    toggleText.textContent = '收起';
+    setTimeout(function() { if (travelMap) travelMap.invalidateSize(); }, 300);
+  } else {
+    container.classList.add('collapsed');
+    toggleText.textContent = '展开';
+  }
+}
+
+function renderMapRoute() {
+  if (!travelMap || !mapInitialized) return;
+
+  // 清除旧标记
+  mapMarkers.forEach(function(m) { travelMap.removeLayer(m); });
+  mapMarkers = [];
+  if (mapPolyline) { travelMap.removeLayer(mapPolyline); mapPolyline = null; }
+
+  var coords = [];
+  state.route.forEach(function(r, i) {
+    var c = getRouteCoord(r.name);
+    if (!c) return;
+    coords.push(c);
+    var color = r.visited ? '#22C55E' : '#33C2FF';
+    var icon = L.divIcon({
+      className: 'custom-map-marker',
+      html: '<div style="width:24px;height:24px;border-radius:50%;background:' + color +
+            ';border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;">' +
+            (i + 1) + '</div>',
+      iconSize: [24, 24],
+      iconAnchor: [12, 12]
+    });
+    var marker = L.marker(c, { icon: icon }).addTo(travelMap);
+    var visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
+    var popupHtml = '<div style="font-size:13px;line-height:1.6;">' +
+      '<strong style="font-size:14px;">' + getRouteIcon(r.name) + ' ' + r.name + '</strong><br>' +
+      '<span style="color:#666;">' + visaText + (r.days ? ' · ' + r.days + '天' : '') + (r.budget ? ' · ¥' + r.budget : '') + '</span>' +
+      (r.notes ? '<br><span style="color:#999;font-size:12px;">' + r.notes + '</span>' : '') +
+      '</div>';
+    marker.bindPopup(popupHtml);
+    mapMarkers.push(marker);
+  });
+
+  // 画路线连线
+  if (coords.length >= 2) {
+    mapPolyline = L.polyline(coords, {
+      color: '#33C2FF',
+      weight: 2,
+      opacity: 0.6,
+      dashArray: '6, 6'
+    }).addTo(travelMap);
+    // 自适应缩放
+    travelMap.fitBounds(L.latLngBounds(coords), { padding: [30, 30] });
+  } else if (coords.length === 1) {
+    travelMap.setView(coords[0], 6);
+  }
+
+  // 更新地图信息栏
+  var totalDays = 0;
+  state.route.forEach(function(r) { totalDays += parseInt(r.days) || 0; });
+  document.getElementById('mapRouteSummary').textContent = state.route.length + ' 站 · ' + totalDays + ' 天';
+}
+
+// ===== 路线规划（时间线样式）=====
 function renderRoute() {
-  const list = document.getElementById('routeList');
-  const badge = document.getElementById('routeBadge');
-  badge.textContent = state.route.length + ' 站';
-  let totalDays = 0, totalBudget = 0, visited = 0, countries = new Set();
-  state.route.forEach(r => {
+  var list = document.getElementById('routeList');
+  var totalDays = 0, totalBudget = 0, visited = 0, countries = new Set();
+  state.route.forEach(function(r) {
     totalDays += parseInt(r.days) || 0;
     totalBudget += parseInt(r.budget) || 0;
     if (r.visited) visited++;
@@ -1923,28 +2283,47 @@ function renderRoute() {
   document.getElementById('rsVisited').textContent = visited;
   document.getElementById('rsBudget').textContent = '¥' + totalBudget;
 
-  list.innerHTML = state.route.map((r, i) => {
-    const visaClass = r.visa === 'free' ? 'free' : r.visa === 'evisa' ? 'evisa' : r.visa === 'conditional' ? 'conditional' : '';
-    const visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
-    return `<div class="route-card${r.visited ? ' visited' : ''}">
-      <div class="route-num">${i + 1}</div>
-      <div class="route-info">
-        <div class="route-header">
-          <span class="route-name">${r.name}</span>
-          <span class="route-visa ${visaClass}">${visaText}</span>
-        </div>
-        <div class="route-meta">
-          ${r.days ? `<span>📅 ${r.days}天</span>` : ''}
-          ${r.budget ? `<span>💰 ¥${r.budget}</span>` : ''}
-        </div>
-        ${r.notes ? `<div class="route-notes">${r.notes}</div>` : ''}
-        <div class="route-actions">
-          <button class="btn-visited" onclick="toggleVisited(${i})">${r.visited ? '✓ 已到访' : '标记到访'}</button>
-          <button class="btn-del" onclick="delRoute(${i})">删除</button>
-        </div>
-      </div>
-    </div>`;
+  list.innerHTML = state.route.map(function(r, i) {
+    var visaClass = r.visa === 'free' ? 'free' : r.visa === 'evisa' ? 'evisa' : r.visa === 'conditional' ? 'conditional' : '';
+    var visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
+    var colorClass = 'c' + (i % 11);
+    var icon = getRouteIcon(r.name);
+    var dayTag = '第' + (i + 1) + '站';
+    var visitedBadge = r.visited ? ' ✓' : '';
+
+    var html = '<div class="day-item">' +
+      '<div class="day-header">' +
+        '<span class="day-tag ' + colorClass + '">' + dayTag + '</span>' +
+        '<span class="day-title">' + r.name + visitedBadge + '</span>' +
+        '<span class="route-visa ' + visaClass + '">' + visaText + '</span>' +
+      '</div>' +
+      '<div class="day-events">' +
+        '<div class="event-card' + (r.visited ? ' visited' : '') + '">' +
+          '<div class="event-main">' +
+            '<div class="event-cover">' + icon + '</div>' +
+            '<div class="event-body">' +
+              '<div class="event-name">' + r.name + '</div>' +
+              '<div class="event-note-text">' +
+                (r.notes ? r.notes : '') +
+              '</div>' +
+              '<div class="event-meta">' +
+                (r.days ? '<span>📅 ' + r.days + '天</span>' : '') +
+                (r.budget ? '<span>💰 ¥' + r.budget + '</span>' : '') +
+              '</div>' +
+              '<div class="event-actions">' +
+                '<button class="btn-visited" onclick="toggleVisited(' + i + ')">' + (r.visited ? '✓ 已到访' : '标记到访') + '</button>' +
+                '<button class="btn-del" onclick="delRoute(' + i + ')">删除</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    return html;
   }).join('');
+
+  // 更新地图
+  renderMapRoute();
 }
 
 function addRoute() {
@@ -3336,6 +3715,7 @@ function init() {
   updateCountdown();
   setInterval(updateCountdown, 1000);
   renderRoute();
+  initMap();
   renderGuideGrid();
   renderPrepare();
   renderLuggage();
