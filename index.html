@@ -2,977 +2,408 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
 <title>追寻旅迹 · 亚欧非大环线</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root {
-  --primary: #33C2FF;
-  --primary-light: #66D9FF;
-  --primary-dark: #1A9BD8;
-  --accent: #FF9B54;
-  --success: #22C55E;
-  --danger: #EF4444;
-  --purple: #7B74FF;
-  --teal: #14B8A6;
-  --bg: #F3F6F7;
-  --card-bg: #FFFFFF;
-  --text: #1A1A1A;
-  --text-light: #666666;
-  --text-lighter: #999999;
-  --border: #E8EDF3;
-  --radius: 16px;
-  --shadow: none;
-  --shadow-md: none;
-  --shadow-lg: none;
-  --gradient-main: linear-gradient(135deg, #33C2FF, #33C2FF);
-  --gradient-warm: linear-gradient(135deg, #FF9B54, #FF9B54);
-  --gradient-purple: linear-gradient(135deg, #7B74FF, #7B74FF);
+  --bg: #F5F5F7;
+  --card: #FFFFFF;
+  --text: #1D1D1F;
+  --text2: #86868B;
+  --text3: #AEAEB2;
+  --border: #E5E5EA;
+  --primary: #007AFF;
+  --green: #34C759;
+  --orange: #FF9500;
+  --red: #FF3B30;
+  --purple: #AF52DE;
+  --radius: 12px;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
-  padding-bottom: 64px;
+  padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: contain;
 }
 
 /* ===== Header ===== */
-header {
-  background: var(--card-bg);
-  color: var(--text);
-  padding: 16px 20px 12px;
-  text-align: left;
-  border-radius: 0;
-  box-shadow: none;
+.app-header {
+  background: var(--card);
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) 20px 12px;
   border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
 }
-header h1 { font-size: 1.15rem; letter-spacing: 1px; font-weight: 600; }
-header p { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; letter-spacing: 0; }
-
-/* ===== Trip Info ===== */
-.trip-info {
-  background: var(--card-bg);
-  margin: 0;
-  border-radius: 0;
-  padding: 12px 16px;
-  box-shadow: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 16px;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-  border-bottom: 1px solid var(--border);
-}
-.trip-field { display: flex; align-items: center; gap: 4px; }
-.trip-field label { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; }
-.trip-field input {
-  border: none; border-bottom: 2px solid var(--border);
-  padding: 4px 6px; font-size: 0.88rem; width: 130px;
-  color: var(--text); background: transparent; transition: border-color .2s;
-}
-.trip-field input:focus { outline: none; border-color: var(--primary); }
-
-/* ===== Sub Tabs ===== */
-.sub-tabs {
-  display: flex;
-  margin: 0;
-  background: var(--card-bg);
-  border-radius: 0;
-  padding: 0 16px;
-  gap: 0;
-  box-shadow: none;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  border-bottom: 1px solid var(--border);
-}
-.sub-tabs::-webkit-scrollbar { display: none; }
-.sub-tab-btn {
-  flex: 1; padding: 12px 6px; border: none; background: none;
-  cursor: pointer; font-size: 0.85rem; color: var(--text-light);
-  border-radius: 0; transition: all .2s; white-space: nowrap;
-  min-width: 60px; font-weight: 500;
-  border-bottom: 2px solid transparent;
-}
-.sub-tab-btn.active {
-  color: var(--text); font-weight: 600;
-  border-bottom: 2px solid var(--primary);
-  background: none; box-shadow: none;
-}
+.app-header h1 { font-size: 1.1rem; font-weight: 700; }
+.app-header .subtitle { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
 
 /* ===== Bottom Nav ===== */
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
-  background: var(--card-bg);
-  display: flex; justify-content: space-around;
-  padding: 4px 4px; z-index: 100;
-  box-shadow: none;
+  background: var(--card);
+  display: flex;
   border-top: 1px solid var(--border);
-  max-width: 750px; margin: 0 auto;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 100;
 }
-.bottom-nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 8px 10px; border: none; background: none;
-  cursor: pointer; font-size: 0.72rem; color: var(--text-lighter);
-  transition: color .2s; flex: 1;
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 6px 0 4px; border: none; background: none;
+  font-size: 0.65rem; color: var(--text3); cursor: pointer;
+  min-height: 50px; -webkit-tap-highlight-color: transparent;
+  transition: color .15s;
 }
-.bottom-nav-item .nav-icon { font-size: 1.25rem; line-height: 1; }
-.bottom-nav-item.active { color: var(--text); font-weight: 600; }
-.bottom-nav-item.active .nav-icon { transform: scale(1.1); transition: transform .2s; }
+.nav-btn .nav-icon { font-size: 1.25rem; line-height: 1.3; }
+.nav-btn.active { color: var(--primary); font-weight: 600; }
 
-/* ===== Main ===== */
-main { padding: 0; max-width: 750px; margin: 0 auto; }
-.page { animation: fadeIn .25s; }
-.panel { display: none; animation: fadeIn .25s; padding: 16px; }
-.panel.active { display: block; }
-@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+/* ===== Pages ===== */
+.page { display: none; max-width: 640px; margin: 0 auto; padding: 16px; }
+.page.active { display: block; }
 
 /* ===== Section Title ===== */
-.section-title {
-  font-size: 1.05rem; font-weight: 700; margin: 0 0 14px;
-  display: flex; align-items: center; gap: 8px;
-  color: var(--text);
+.sec-title {
+  font-size: 0.92rem; font-weight: 700; margin: 0 0 12px;
+  display: flex; align-items: center; gap: 6px;
 }
-.section-title .badge {
-  background: var(--bg); color: var(--text-light); font-size: 0.75rem;
-  padding: 2px 10px; border-radius: 8px; font-weight: 500;
+.sec-title .badge {
+  font-size: 0.72rem; font-weight: 500; padding: 2px 8px;
+  background: var(--bg); border-radius: 6px; color: var(--text2);
 }
 
-/* Add row */
-.add-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.add-row input {
-  flex: 1; min-width: 100px;
-  padding: 10px 14px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.9rem; transition: border-color .2s;
-}
-.add-row input:focus { outline: none; border-color: var(--primary); }
-.add-row select {
-  padding: 10px 10px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.85rem; background: white; cursor: pointer; max-width: 100px;
-}
-.add-row .btn-add {
-  background: var(--text); color: white; border: none; padding: 10px 18px;
-  border-radius: 24px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; transition: opacity .2s;
-}
-.add-row .btn-add:hover { opacity: .8; }
-
-/* List items */
-.list-item {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--card-bg); padding: 12px 16px;
-  border-radius: 12px; margin-bottom: 8px; box-shadow: none; transition: all .2s;
+/* ===== Cards ===== */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
   border: 1px solid var(--border);
 }
-.list-item:hover { background: var(--bg); }
+.card-sm { padding: 12px 14px; }
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 8px 16px; border-radius: 20px; border: none;
+  font-size: 0.85rem; cursor: pointer; font-weight: 500;
+  min-height: 40px; -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+}
+.btn:active { opacity: .7; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-dark { background: var(--text); color: #fff; }
+.btn-outline { background: var(--card); color: var(--text); border: 1px solid var(--border); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-red { background: var(--red); color: #fff; }
+.btn-sm { padding: 5px 12px; font-size: 0.78rem; min-height: 32px; }
+.btn-full { width: 100%; }
+
+/* ===== Inputs ===== */
+.input {
+  flex: 1; padding: 10px 14px; border: 1px solid var(--border);
+  border-radius: 20px; font-size: 0.88rem; background: var(--card);
+  min-height: 42px; transition: border-color .2s;
+}
+.input:focus { outline: none; border-color: var(--primary); }
+select.input { max-width: 120px; appearance: auto; }
+
+/* ===== Route Overview ===== */
+.route-summary {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  margin-bottom: 16px;
+}
+.rs-box {
+  background: var(--card); border-radius: var(--radius); padding: 12px 8px;
+  text-align: center; border: 1px solid var(--border);
+}
+.rs-box .rs-val { font-size: 1.3rem; font-weight: 800; }
+.rs-box .rs-lbl { font-size: 0.7rem; color: var(--text2); margin-top: 2px; }
+
+/* Route item - collapsible */
+.route-item { margin-bottom: 8px; }
+.route-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; background: var(--card);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: background .15s;
+}
+.route-header:active { background: var(--bg); }
+.route-header .r-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700; flex-shrink: 0;
+}
+.route-header .r-num.visited { background: var(--green); }
+.route-header .r-info { flex: 1; min-width: 0; }
+.route-header .r-name { font-size: 0.9rem; font-weight: 600; }
+.route-header .r-meta { font-size: 0.75rem; color: var(--text2); }
+.route-header .r-arrow { color: var(--text3); font-size: 0.8rem; transition: transform .2s; }
+.route-header.expanded .r-arrow { transform: rotate(90deg); }
+.route-detail {
+  display: none; padding: 12px 14px; margin-top: -4px;
+  border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: var(--card);
+}
+.route-detail.open { display: block; }
+.route-detail .r-notes { font-size: 0.85rem; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
+.route-detail .r-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Visa tag inline */
+.visa-tag {
+  display: inline-block; font-size: 0.68rem; padding: 1px 6px; border-radius: 4px; font-weight: 500;
+}
+.visa-tag.free { background: #E8F5E9; color: var(--green); }
+.visa-tag.evisa { background: #FFF3E0; color: var(--orange); }
+.visa-tag.conditional { background: #E3F2FD; color: var(--primary); }
+.visa-tag.other { background: var(--bg); color: var(--text2); }
+
+/* ===== Map ===== */
+.map-section { margin-bottom: 16px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.map-header {
+  padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+  background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.map-header .map-title { font-size: 0.85rem; font-weight: 600; }
+.map-header .map-toggle { font-size: 0.78rem; color: var(--text2); }
+.map-container { width: 100%; height: 300px; transition: height .3s; }
+.map-container.collapsed { height: 0; }
+#travelMap { width: 100%; height: 100%; }
+
+/* ===== Guide ===== */
+.guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.guide-chip {
+  padding: 10px 8px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--card); text-align: center; cursor: pointer;
+  font-size: 0.82rem; font-weight: 500; transition: all .15s;
+  min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.guide-chip:active { background: var(--bg); }
+.guide-chip.active { background: var(--text); color: #fff; border-color: var(--text); }
+.guide-chip .visa-tag { margin-top: 4px; }
+
+.guide-content {
+  background: var(--card); border-radius: var(--radius); padding: 16px;
+  border: 1px solid var(--border); line-height: 1.75; font-size: 0.88rem;
+}
+.guide-content h3 { font-size: 1.05rem; margin-bottom: 6px; }
+.guide-content h4 { font-size: 0.92rem; margin: 14px 0 6px; }
+.guide-content ul { padding-left: 20px; }
+.guide-content li { margin-bottom: 4px; }
+.guide-content .city-card { background: var(--bg); border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+.guide-content .city-card .city-name { font-weight: 700; font-size: 0.85rem; }
+.guide-content .city-card .city-desc { font-size: 0.8rem; color: var(--text2); }
+.guide-content .city-card .city-spots { font-size: 0.78rem; color: var(--primary); margin-top: 2px; }
+.guide-content .food-box { background: #E8F8F5; border-radius: 8px; padding: 8px 12px; margin: 8px 0; font-size: 0.84rem; color: #14B8A6; }
+.guide-content .souvenir-box { background: #F3E5F5; border-radius: 8px; padding: 8px 12px; margin: 8px 0; font-size: 0.82rem; color: var(--purple); }
+.guide-content .tip-box { background: #FFF8E1; border-left: 3px solid var(--orange); padding: 8px 12px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 0.84rem; }
+.guide-content .warn-box { background: #FFEBEE; border-left: 3px solid var(--red); padding: 8px 12px; border-radius: 0 8px 8px 0; margin: 8px 0; font-size: 0.84rem; }
+.guide-content .section-divider { border: none; border-top: 1px dashed var(--border); margin: 12px 0; }
+.guide-source { font-size: 0.75rem; color: var(--text2); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; }
+.guide-source a { color: var(--primary); }
+
+/* Season/Transport/Currency tables */
+.season-table { width:100%; border-collapse:collapse; font-size:0.68rem; margin:8px 0; }
+.season-table th,.season-table td { text-align:center; padding:2px 1px; border:1px solid var(--border); }
+.season-table th { background:var(--bg); font-weight:600; }
+.season-table td.good { background:#C8E6C9; }
+.season-table td.hot { background:#FFCDD2; color:var(--red); }
+.season-table td.cold { background:#BBDEFB; color:var(--primary); }
+
+.trans-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin:8px 0; }
+.trans-table th,.trans-table td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--border); }
+.trans-table th { color:var(--text2); font-weight:600; }
+
+.currency-table { width:100%; border-collapse:collapse; font-size:0.8rem; margin-top:6px; }
+.currency-table th,.currency-table td { text-align:left; padding:4px 8px; border-bottom:1px solid var(--border); }
+.currency-table th { color:var(--text2); }
+.currency-table .cur-code { color:var(--primary); font-weight:600; }
+
+.sim-table { width:100%; border-collapse:collapse; font-size:0.78rem; margin-top:6px; }
+.sim-table th,.sim-table td { text-align:left; padding:4px 6px; border-bottom:1px solid var(--border); }
+.sim-table th { color:var(--text2); }
+
+.emergency-box { background:#FFEBEE; border-radius:var(--radius); padding:12px 14px; margin-bottom:12px; font-size:0.84rem; }
+.emergency-box .em-phone { font-size:1.1rem; font-weight:800; color:var(--red); }
+
+/* ===== Luggage ===== */
+.luggage-presets { margin-bottom: 12px; }
+.preset-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.preset-chip {
+  padding: 4px 10px; border: 1px solid var(--border); border-radius: 16px;
+  font-size: 0.78rem; cursor: pointer; background: var(--card); white-space: nowrap;
+  min-height: 30px; -webkit-tap-highlight-color: transparent;
+}
+.preset-chip:active { background: var(--bg); }
+.preset-chip.added { background: var(--green); color: #fff; border-color: var(--green); }
+
+.list-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.list-item:last-child { border-bottom: none; }
 .list-item .checkbox {
   width: 22px; height: 22px; border: 2px solid var(--border);
   border-radius: 50%; cursor: pointer; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; transition: all .15s;
 }
-.list-item .checkbox.checked { background: var(--success); border-color: var(--success); }
-.list-item .checkbox.checked::after {
-  content: ''; width: 7px; height: 4px;
-  border-left: 2px solid white; border-bottom: 2px solid white;
-  transform: rotate(-45deg); margin-top: -2px;
-}
-.list-item .item-name { flex: 1; font-size: 0.92rem; }
-.list-item.checked .item-name { text-decoration: line-through; color: var(--text-light); }
-.list-item .item-cat {
-  font-size: 0.72rem; padding: 2px 8px; border-radius: 8px;
-  background: var(--bg); color: var(--text-light); white-space: nowrap;
-}
-.list-item .item-del {
-  background: none; border: none; color: var(--text-light);
-  cursor: pointer; font-size: 1.1rem; padding: 4px 6px;
-  border-radius: 8px; transition: all .2s;
-}
-.list-item .item-del:hover { color: var(--danger); background: rgba(231,76,60,0.08); }
-
-/* Filter buttons */
-.filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
-.filter-btn {
-  padding: 5px 14px; border: 1px solid var(--border); background: white;
-  border-radius: 24px; cursor: pointer; font-size: 0.8rem;
-  color: var(--text-light); transition: all .2s;
-}
-.filter-btn.active { border-color: var(--text); background: var(--text); color: white; }
-
-/* Progress bar */
-.progress-bar { height: 10px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
-.progress-bar .fill { height: 100%; border-radius: 10px; transition: width .4s ease; }
+.list-item .checkbox.checked { background: var(--green); border-color: var(--green); }
+.list-item .checkbox.checked::after { content:''; width:6px; height:3px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg); margin-top:-2px; }
+.list-item .item-name { flex: 1; font-size: 0.88rem; }
+.list-item.checked .item-name { text-decoration: line-through; color: var(--text3); }
+.list-item .item-cat { font-size: 0.68rem; padding: 1px 6px; border-radius: 4px; background: var(--bg); color: var(--text2); }
+.list-item .item-del { background:none; border:none; color:var(--text3); cursor:pointer; font-size:1rem; padding:6px; min-width:32px; min-height:32px; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
 
 /* ===== Shopping ===== */
-.shop-item {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--card-bg); padding: 12px 16px;
-  border-radius: 12px; margin-bottom: 8px; box-shadow: none;
-  border: 1px solid var(--border);
-}
-.shop-item .shop-checkbox {
-  width: 22px; height: 22px; border: 2px solid var(--border);
-  border-radius: 6px; cursor: pointer; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center; transition: all .2s;
-}
-.shop-item .shop-checkbox.checked { background: var(--success); border-color: var(--success); }
-.shop-item .shop-checkbox.checked::after {
-  content: ''; width: 7px; height: 4px;
-  border-left: 2px solid white; border-bottom: 2px solid white;
-  transform: rotate(-45deg); margin-top: -2px;
-}
-.shop-item .shop-name { flex:1; font-size: 0.92rem; }
-.shop-item.checked .shop-name { text-decoration: line-through; color: var(--text-light); }
-.shop-item .shop-price { font-size: 0.9rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
-.shop-item .shop-del {
-  background: none; border: none; color: var(--text-light);
-  cursor: pointer; font-size: 1.1rem; padding: 4px 6px;
-  border-radius: 8px; transition: all .2s;
-}
-.shop-item .shop-del:hover { color: var(--danger); background: rgba(231,76,60,0.08); }
-
-.shop-summary {
-  background: var(--bg);
-  border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.shop-summary .total-label { font-size: 0.85rem; color: var(--text-light); }
-.shop-summary .total-amount { font-size: 1.3rem; font-weight: 800; color: var(--text); }
+.shop-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.shop-item:last-child { border-bottom:none; }
+.shop-item .shop-cb { width:20px; height:20px; border:2px solid var(--border); border-radius:4px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.shop-item .shop-cb.checked { background:var(--green); border-color:var(--green); }
+.shop-item .shop-cb.checked::after { content:''; width:6px; height:3px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg); margin-top:-2px; }
+.shop-item .shop-name { flex:1; font-size:0.88rem; }
+.shop-item.checked .shop-name { text-decoration:line-through; color:var(--text3); }
+.shop-item .shop-price { font-size:0.88rem; font-weight:700; color:var(--orange); white-space:nowrap; }
+.shop-item .shop-del { background:none; border:none; color:var(--text3); cursor:pointer; font-size:1rem; padding:6px; min-width:32px; min-height:32px; display:flex; align-items:center; justify-content:center; }
+.shop-summary { display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-weight:600; }
+.shop-summary .total-amount { font-size:1.1rem; }
 
 /* ===== Savings ===== */
-.savings-card {
-  background: var(--card-bg);
-  border-radius: 16px; padding: 24px 20px; color: var(--text);
-  text-align: center; margin-bottom: 16px; box-shadow: none;
-  border: 1px solid var(--border);
-}
-.savings-card .label { font-size: 0.85rem; color: var(--text-light); }
-.savings-card .amount { font-size: 2.4rem; font-weight: 800; margin: 6px 0; color: var(--text); }
-.savings-card .target { font-size: 0.85rem; color: var(--text-light); }
-.savings-card .percent { font-size: 1.1rem; font-weight: 700; margin-top: 8px; color: var(--accent); }
-.savings-card .percent.complete { color: var(--success); }
-.savings-bar { height: 12px; background: var(--border); border-radius: 16px; overflow: hidden; margin-top: 12px; }
-.savings-bar .fill { height: 100%; background: var(--accent); border-radius: 16px; transition: width .5s ease; }
+.savings-card { text-align:center; }
+.savings-card .amount { font-size:2.2rem; font-weight:800; margin:4px 0; }
+.savings-card .target { font-size:0.85rem; color:var(--text2); }
+.savings-bar { height:8px; background:var(--border); border-radius:8px; overflow:hidden; margin:10px 0; }
+.savings-bar .fill { height:100%; background:var(--orange); border-radius:8px; transition:width .4s; }
+.savings-card .percent { font-size:1rem; font-weight:700; color:var(--orange); }
+.savings-card .percent.complete { color:var(--green); }
+.history-item { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--border); font-size:0.85rem; }
+.history-item:last-child { border-bottom:none; }
+.h-amount.add { color:var(--green); } .h-amount.sub { color:var(--red); }
+.h-note { color:var(--text2); font-size:0.8rem; margin-left:6px; }
+.h-date { color:var(--text3); font-size:0.75rem; }
+.h-del { background:none; border:none; color:var(--text3); cursor:pointer; font-size:0.85rem; padding:4px 6px; }
 
-.target-section, .add-money-section, .money-history {
-  background: var(--card-bg); border-radius: 12px; padding: 16px 18px;
-  box-shadow: none; margin-bottom: 16px; border: 1px solid var(--border);
-}
-.target-section .row, .add-money-section .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.target-section input, .add-money-section input {
-  flex: 1; min-width: 80px; padding: 10px 14px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.9rem;
-}
-.target-section input:focus, .add-money-section input:focus { outline: none; border-color: var(--primary); }
-.target-section .btn, .add-money-section .btn {
-  padding: 10px 16px; border: none; border-radius: 24px;
-  cursor: pointer; font-size: 0.88rem; white-space: nowrap;
-}
-.target-section .btn-set { background: var(--text); color: white; }
-.target-section .btn-reset { background: var(--bg); color: var(--text-light); }
-.add-money-section .btn-add-money { background: var(--success); color: white; }
-.add-money-section .btn-sub-money { background: var(--danger); color: white; }
+/* ===== Weather ===== */
+.weather-card .wc-city { font-size:1.1rem; font-weight:700; }
+.weather-card .wc-temp { font-size:2.2rem; font-weight:800; color:var(--primary); margin:4px 0; }
+.weather-card .wc-desc { color:var(--text2); }
+.weather-card .wc-meta { font-size:0.78rem; color:var(--text2); margin-top:6px; display:flex; gap:14px; }
+.weather-forecast { display:flex; gap:6px; overflow-x:auto; margin-top:12px; }
+.weather-forecast-day { background:var(--bg); border-radius:8px; padding:8px 10px; text-align:center; min-width:60px; flex-shrink:0; }
+.weather-forecast-day .wfd-day { font-size:0.72rem; color:var(--text2); }
+.weather-forecast-day .wfd-icon { font-size:1.3rem; }
+.weather-forecast-day .wfd-temp { font-size:0.82rem; font-weight:700; }
+.weather-forecast-day .wfd-low { font-size:0.72rem; color:var(--text2); }
+.weather-quick-cities { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+.weather-quick-city { padding:4px 10px; border:1px solid var(--border); border-radius:16px; font-size:0.78rem; cursor:pointer; color:var(--text2); background:var(--card); min-height:32px; display:flex; align-items:center; }
+.weather-cache-box { margin-top:12px; }
+.weather-cache-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+.wc-cache-name { cursor:pointer; color:var(--primary); }
 
-.money-history h3 { font-size: 1rem; margin-bottom: 12px; }
-.history-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
-}
-.history-item:last-child { border-bottom: none; }
-.history-item .h-date { color: var(--text-light); font-size: 0.8rem; }
-.history-item .h-amount { font-weight: 700; }
-.history-item .h-amount.add { color: var(--success); }
-.history-item .h-amount.sub { color: var(--danger); }
-.history-item .h-note { color: var(--text-light); font-size: 0.82rem; }
-.history-item .h-del {
-  background: none; border: none; color: var(--text-light);
-  cursor: pointer; font-size: 0.9rem; padding: 2px 6px;
-  border-radius: 6px; transition: all .2s;
-}
-.history-item .h-del:hover { color: var(--danger); }
-.empty-hint { text-align: center; color: var(--text-light); font-size: 0.85rem; padding: 16px 0; }
+/* ===== Visa ===== */
+.visa-card { margin-bottom:10px; }
+.visa-card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.visa-card .vc-name { font-weight:700; }
+.visa-status-bar { display:flex; gap:3px; margin-bottom:6px; }
+.visa-status-step { flex:1; height:5px; border-radius:3px; background:var(--border); }
+.visa-status-step.done { background:var(--green); }
+.visa-status-step.current { background:var(--orange); }
+.visa-status-labels { display:flex; gap:3px; font-size:0.68rem; color:var(--text2); margin-bottom:8px; }
+.visa-status-label { flex:1; text-align:center; }
+.visa-status-label.done { color:var(--green); font-weight:600; }
+.visa-status-label.current { color:var(--orange); font-weight:600; }
+.vc-note { font-size:0.82rem; color:var(--text2); background:var(--bg); padding:6px 10px; border-radius:6px; margin-bottom:8px; min-height:20px; }
+.vc-actions { display:flex; gap:6px; flex-wrap:wrap; }
+
+/* ===== Exchange ===== */
+.exchange-row { display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
+.ex-arrow { font-size:1.2rem; cursor:pointer; color:var(--text2); padding:0 4px; }
+.ex-result { font-size:1rem; font-weight:700; margin-top:8px; }
+
+/* ===== Travel Apps ===== */
+.app-section { margin-bottom:16px; }
+.app-section h4 { font-size:0.88rem; font-weight:600; margin-bottom:8px; }
+.app-row { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--border); font-size:0.82rem; }
+.app-row:last-child { border-bottom:none; }
+.app-row .app-name { font-weight:600; color:var(--primary); white-space:nowrap; min-width:80px; }
+.app-row .app-desc { color:var(--text2); flex:1; }
+
+/* ===== AI ===== */
+.ai-chat-area { max-height:280px; overflow-y:auto; margin-bottom:10px; -webkit-overflow-scrolling:touch; }
+.ai-msg { margin-bottom:8px; font-size:0.85rem; line-height:1.6; }
+.ai-msg.user { text-align:right; }
+.ai-msg.user .ai-bubble { display:inline-block; max-width:85%; text-align:left; background:var(--text); color:#fff; padding:8px 12px; border-radius:12px 12px 4px 12px; }
+.ai-msg.bot .ai-bubble { display:inline-block; max-width:90%; background:var(--bg); padding:8px 12px; border-radius:12px 12px 12px 4px; white-space:pre-wrap; }
+.ai-quick-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.ai-quick-btn { padding:5px 10px; border:1px solid var(--border); border-radius:16px; background:var(--card); font-size:0.75rem; cursor:pointer; color:var(--text2); min-height:32px; }
+.ai-input-row { display:flex; gap:6px; }
+.ai-input-row textarea { flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:12px; font-size:0.85rem; resize:none; height:40px; font-family:inherit; }
+.ai-input-row textarea:focus { outline:none; border-color:var(--primary); }
 
 /* ===== Notes ===== */
-.notes-area {
-  width: 100%; min-height: 300px; padding: 16px;
-  border: 1px solid var(--border); border-radius: 16px;
-  font-size: 0.92rem; resize: vertical; font-family: inherit;
-  line-height: 1.7; transition: border-color .2s;
-}
-.notes-area:focus { outline: none; border-color: var(--primary); }
-.notes-hint { font-size: 0.8rem; color: var(--text-light); margin-top: 8px; text-align: right; }
+.notes-area { width:100%; min-height:200px; padding:12px; border:1px solid var(--border); border-radius:var(--radius); font-size:0.88rem; resize:vertical; font-family:inherit; line-height:1.7; }
+.notes-area:focus { outline:none; border-color:var(--primary); }
+
+/* ===== Sync/Export ===== */
+.share-btns { display:flex; gap:6px; flex-wrap:wrap; }
+.share-btn { padding:7px 14px; border:1px solid var(--border); border-radius:16px; background:var(--card); font-size:0.8rem; cursor:pointer; color:var(--text); min-height:36px; -webkit-tap-highlight-color:transparent; }
 
 /* ===== Countdown ===== */
-.countdown {
-  display: flex; gap: 10px; justify-content: center;
-  margin: 0; background: var(--card-bg); border-radius: 0;
-  padding: 12px 16px; box-shadow: none;
-  border-bottom: 1px solid var(--border);
-}
-.countdown .cd-box { text-align: center; flex: 1; }
-.countdown .cd-num { font-size: 1.5rem; font-weight: 800; color: var(--text); }
-.countdown .cd-label { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
-.countdown .cd-colon { font-size: 1.3rem; font-weight: 800; color: var(--border); display: flex; align-items: center; }
-
-footer {
-  text-align: center; padding: 20px 16px 24px; font-size: 0.76rem; color: var(--text-lighter);
-}
+.countdown { display:flex; gap:8px; justify-content:center; padding:8px 0; margin-bottom:8px; }
+.cd-box { text-align:center; flex:1; }
+.cd-num { font-size:1.3rem; font-weight:800; }
+.cd-label { font-size:0.65rem; color:var(--text3); }
+.cd-colon { font-size:1.1rem; font-weight:800; color:var(--border); display:flex; align-items:center; }
 
 /* ===== Toast ===== */
-#toast {
-  position: fixed; bottom: 72px; left: 50%;
-  transform: translateX(-50%) translateY(60px);
-  background: var(--text); color: white; padding: 10px 24px;
-  border-radius: 24px; font-size: 0.85rem; opacity: 0;
-  transition: all .3s; z-index: 999; pointer-events: none;
-  box-shadow: none;
-}
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast { position:fixed; bottom:calc(72px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(60px); background:var(--text); color:#fff; padding:8px 20px; border-radius:20px; font-size:0.82rem; opacity:0; transition:all .3s; z-index:999; pointer-events:none; max-width:90vw; }
+#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-/* ===== Route Panel ===== */
-.route-summary {
-  background: var(--card-bg);
-  border-radius: 12px; padding: 14px 20px; color: var(--text);
-  margin-bottom: 16px; display: flex; justify-content: space-around; text-align: center;
-  box-shadow: none; border: 1px solid var(--border);
-}
-.route-summary .rs-item .rs-num { font-size: 1.4rem; font-weight: 800; }
-.route-summary .rs-item .rs-label { font-size: 0.75rem; color: var(--text-light); }
+/* ===== Misc ===== */
+.empty-hint { text-align:center; color:var(--text3); font-size:0.82rem; padding:20px 0; }
+.add-row { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.filters { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.filter-btn { padding:4px 12px; border:1px solid var(--border); background:var(--card); border-radius:16px; font-size:0.78rem; color:var(--text2); cursor:pointer; min-height:32px; }
+.filter-btn.active { background:var(--text); color:#fff; border-color:var(--text); }
+footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3); }
 
-.route-list { position: relative; }
-.route-list::before {
-  content: ''; position: absolute; left: 19px; top: 0; bottom: 0;
-  width: 2px; background: var(--border); border-radius: 3px;
-}
-.route-card {
-  background: var(--card-bg); border-radius: 16px; padding: 12px 14px;
-  margin-bottom: 8px; box-shadow: none; position: relative;
-  display: flex; gap: 14px; align-items: flex-start; transition: all .2s;
-  border: none;
-}
-.route-card:hover { background: var(--bg); }
-.route-card .route-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: var(--text); color: white; display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem; font-weight: 700; flex-shrink: 0; z-index: 1;
-}
-.route-card.visited .route-num { background: var(--success); }
-.route-card .route-info { flex: 1; }
-.route-card .route-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 4px; }
-.route-card .route-name { font-size: 0.95rem; font-weight: 700; }
-.route-card .route-visa { font-size: 0.7rem; padding: 2px 8px; border-radius: 8px; white-space: nowrap; }
-.route-card .route-visa.free { background: #E8F5E9; color: var(--success); }
-.route-card .route-visa.evisa { background: #FFF3E0; color: var(--accent); }
-.route-card .route-visa.conditional { background: #E3F2FD; color: var(--primary-dark); }
-.route-card .route-meta { font-size: 0.78rem; color: var(--text-light); display: flex; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
-.route-card .route-notes { font-size: 0.82rem; color: var(--text); background: var(--bg); padding: 8px 12px; border-radius: 10px; line-height: 1.5; }
-.route-card .route-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.route-card .route-actions button {
-  font-size: 0.75rem; padding: 4px 14px; border: 1px solid var(--border);
-  border-radius: 24px; background: white; color: var(--text-light);
-  cursor: pointer; transition: all .2s;
-}
-.route-card .route-actions button:hover { border-color: var(--text); color: var(--text); }
-.route-card .route-actions button.btn-visited { border-color: var(--success); color: var(--success); }
-.route-card .route-actions button.btn-del:hover { border-color: var(--danger); color: var(--danger); }
+/* Leaflet mobile */
+.leaflet-container { font-family:inherit !important; }
+.leaflet-control-zoom a { width:34px!important; height:34px!important; line-height:34px!important; font-size:16px!important; }
+.leaflet-popup-content-wrapper { border-radius:10px!important; }
+.leaflet-popup-content { margin:8px 12px!important; font-size:13px!important; }
 
-.route-add-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
-.route-add-row input, .route-add-row select {
-  padding: 10px 14px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.88rem;
-}
-.route-add-row input { flex: 1; min-width: 120px; }
-.route-add-row select { max-width: 110px; }
-.route-add-row input:focus { outline: none; border-color: var(--primary); }
-.route-add-row .btn-add {
-  background: var(--text); color: white; border: none; padding: 10px 18px;
-  border-radius: 24px; cursor: pointer; font-size: 0.9rem; white-space: nowrap;
-}
-.route-add-row .btn-add:hover { opacity: .8; }
-
-.preset-btn {
-  width: 100%; padding: 12px; border: 1px solid var(--border);
-  border-radius: 24px; background: var(--bg);
-  color: var(--text); font-size: 0.88rem; font-weight: 600;
-  cursor: pointer; margin-bottom: 16px; transition: all .2s;
-}
-.preset-btn:hover { background: var(--card-bg); border-color: var(--text); }
-
-/* ===== Guide Panel ===== */
-.guide-search { margin-bottom: 14px; }
-.guide-search input {
-  width: 100%; padding: 10px 16px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.9rem; transition: border-color .2s;
-}
-.guide-search input:focus { outline: none; border-color: var(--primary); }
-
-.guide-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 10px; margin-bottom: 16px;
-}
-.guide-chip {
-  padding: 10px 14px; border: 1px solid var(--border); border-radius: 24px;
-  background: white; cursor: pointer; font-size: 0.85rem; transition: all .2s;
-  display: flex; align-items: center; justify-content: space-between; gap: 6px;
-}
-.guide-chip:hover { border-color: var(--text); }
-.guide-chip.active {
-  border-color: var(--text); background: var(--text); color: white;
-  font-weight: 700;
-}
-.guide-chip .visa-tag { font-size: 0.68rem; padding: 1px 6px; border-radius: 6px; white-space: nowrap; }
-.guide-chip .visa-tag.free { background: #E8F5E9; color: var(--success); }
-.guide-chip .visa-tag.evisa { background: #FFF3E0; color: var(--accent); }
-.guide-chip .visa-tag.conditional { background: #E3F2FD; color: var(--primary); }
-
-.guide-content {
-  background: var(--card-bg); border-radius: 16px; padding: 18px 20px;
-  box-shadow: none; line-height: 1.75; font-size: 0.9rem; border: 1px solid var(--border);
-}
-.guide-content h3 { font-size: 1.15rem; margin-bottom: 6px; color: var(--text); }
-.guide-content h4 { font-size: 0.95rem; margin: 14px 0 6px; color: var(--text); }
-.guide-content .guide-tag { display: inline-block; font-size: 0.72rem; padding: 2px 10px; border-radius: 8px; margin-bottom: 10px; }
-.guide-content .guide-tag.free { background: #E8F5E9; color: var(--success); }
-.guide-content .guide-tag.evisa { background: #FFF3E0; color: var(--accent); }
-.guide-content .guide-tag.conditional { background: #E3F2FD; color: var(--primary); }
-.guide-content ul { padding-left: 20px; }
-.guide-content li { margin-bottom: 4px; }
-.guide-content .tip-box {
-  background: #FFF8E1; border-left: 3px solid var(--accent);
-  padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 10px 0; font-size: 0.85rem;
-}
-.guide-content .warn-box {
-  background: #FFEBEE; border-left: 3px solid var(--danger);
-  padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 10px 0; font-size: 0.85rem;
-}
-.guide-content .section-divider { border: none; border-top: 1px dashed var(--border); margin: 14px 0; }
-.guide-content .city-card {
-  background: var(--bg); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
-}
-.guide-content .city-card .city-name { font-weight: 700; font-size: 0.88rem; }
-.guide-content .city-card .city-desc { font-size: 0.82rem; color: var(--text-light); margin-top: 2px; }
-.guide-content .city-card .city-spots { font-size: 0.8rem; color: var(--primary-dark); margin-top: 4px; }
-.guide-content .food-box {
-  background: #E8F8F5; border-radius: 10px; padding: 8px 14px; margin: 8px 0;
-  font-size: 0.85rem; color: var(--teal);
-}
-.guide-content .souvenir-box {
-  background: #F3E5F5; border-radius: 10px; padding: 8px 14px; margin: 8px 0;
-  font-size: 0.82rem; color: var(--purple);
-}
-.guide-source { font-size: 0.78rem; color: var(--text-light); margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); }
-.guide-source a { color: var(--primary); text-decoration: none; }
-.guide-source a:hover { text-decoration: underline; }
-
-/* Season table */
-.season-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin: 10px 0; }
-.season-table th, .season-table td { text-align: center; padding: 3px 2px; border: 1px solid var(--border); }
-.season-table th { background: var(--bg); font-weight: 600; }
-.season-table td.good { background: #C8E6C9; }
-.season-table td.hot { background: #FFCDD2; color: var(--danger); }
-.season-table td.cold { background: #BBDEFB; color: var(--primary); }
-
-/* Transport table */
-.trans-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin: 10px 0; }
-.trans-table th, .trans-table td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); }
-.trans-table th { color: var(--text-light); font-weight: 600; }
-.trans-table .trans-from, .trans-table .trans-to { font-weight: 600; }
-
-/* Prepare panel */
-.prepare-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-.prepare-card {
-  background: var(--card-bg); border-radius: 16px; padding: 16px 18px;
-  box-shadow: none; font-size: 0.9rem; border: 1px solid var(--border);
-}
-.prepare-card h4 { font-size: 0.95rem; margin-bottom: 10px; color: var(--text); }
-.prepare-card ul { padding-left: 20px; }
-.prepare-card li { margin-bottom: 5px; font-size: 0.85rem; }
-.prepare-card .app-row {
-  display: flex; align-items: flex-start; gap: 10px; padding: 6px 0;
-  border-bottom: 1px solid var(--border); font-size: 0.84rem;
-}
-.prepare-card .app-row:last-child { border-bottom: none; }
-.prepare-card .app-name { font-weight: 700; color: var(--primary); white-space: nowrap; min-width: 120px; }
-.prepare-card .app-desc { color: var(--text-light); flex: 1; }
-
-.emergency-box {
-  background: #FFEBEE; border-radius: 16px; padding: 14px 18px; margin-bottom: 12px; font-size: 0.85rem;
-}
-.emergency-box .em-phone { font-size: 1.1rem; font-weight: 800; color: var(--danger); }
-
-.currency-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
-.currency-table th, .currency-table td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); }
-.currency-table th { color: var(--text-light); font-weight: 600; }
-.currency-table .cur-code { color: var(--primary); font-weight: 600; font-size: 0.78rem; }
-
-.sim-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
-.sim-table th, .sim-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
-.sim-table th { color: var(--text-light); font-weight: 600; }
-/* ===== Luggage Presets ===== */
-.luggage-presets {
-  background: var(--card-bg); border-radius: 16px; padding: 14px 16px;
-  margin-bottom: 12px; box-shadow: none; border: 1px solid var(--border);
-}
-.luggage-presets .preset-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
-.preset-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.preset-chip {
-  padding: 5px 12px; border: 1px solid var(--border); border-radius: 24px;
-  font-size: 0.8rem; cursor: pointer; transition: all .2s; background: white;
-  color: var(--text); white-space: nowrap;
-}
-.preset-chip:hover { border-color: var(--text); color: var(--text); }
-.preset-chip.added { background: var(--success); color: white; border-color: var(--success); }
-.preset-all-btn, .preset-clear-btn {
-  padding: 10px 16px; border-radius: 24px; border: none; cursor: pointer;
-  font-size: 0.85rem; font-weight: 600; margin-right: 8px; margin-bottom: 12px; transition: opacity .2s;
-}
-.preset-all-btn { background: var(--text); color: white; }
-.preset-clear-btn { background: var(--bg); color: var(--text-light); }
-.preset-all-btn:hover { opacity: .8; }
-.preset-clear-btn:hover { background: var(--border); }
-.auto-cat-hint {
-  font-size: 0.8rem; color: var(--primary); padding: 4px 10px;
-  background: rgba(74,144,217,0.06); border-radius: 8px; margin-bottom: 8px;
-}
-
-/* ===== Weather Panel ===== */
-.weather-search-row { display: flex; gap: 8px; margin-bottom: 12px; }
-.weather-search-row input {
-  flex: 1; padding: 10px 14px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.9rem;
-}
-.weather-search-row input:focus { outline: none; border-color: var(--primary); }
-.weather-quick-cities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-.weather-quick-city {
-  padding: 4px 12px; border: 1px solid var(--border); border-radius: 24px;
-  font-size: 0.8rem; cursor: pointer; background: white; color: var(--text-light);
-  transition: all .2s;
-}
-.weather-quick-city:hover { border-color: var(--text); color: var(--text); }
-.weather-card {
-  background: var(--card-bg);
-  border-radius: 16px; padding: 20px; color: var(--text); margin-bottom: 12px;
-  box-shadow: none; border: 1px solid var(--border);
-}
-.weather-card .wc-city { font-size: 1.2rem; font-weight: 700; }
-.weather-card .wc-temp { font-size: 2.5rem; font-weight: 800; margin: 8px 0; color: var(--primary); }
-.weather-card .wc-desc { font-size: 0.95rem; color: var(--text-light); }
-.weather-card .wc-meta { font-size: 0.8rem; color: var(--text-light); margin-top: 8px; display: flex; gap: 16px; flex-wrap: wrap; }
-.weather-forecast { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 16px; }
-.weather-forecast-day {
-  background: var(--card-bg); border-radius: 12px; padding: 10px 12px;
-  text-align: center; min-width: 72px; box-shadow: none; border: 1px solid var(--border);
-}
-.weather-forecast-day .wfd-day { font-size: 0.75rem; color: var(--text-light); }
-.weather-forecast-day .wfd-icon { font-size: 1.5rem; margin: 4px 0; }
-.weather-forecast-day .wfd-temp { font-size: 0.85rem; font-weight: 700; }
-.weather-forecast-day .wfd-low { font-size: 0.75rem; color: var(--text-light); }
-.weather-cache-box {
-  background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: none; border: 1px solid var(--border);
-}
-.weather-cache-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
-.weather-cache-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem;
-}
-.weather-cache-item:last-child { border-bottom: none; }
-.weather-cache-item .wc-cache-name { cursor: pointer; color: var(--primary); }
-.weather-cache-item .wc-cache-del { color: var(--text-light); cursor: pointer; font-size: 0.9rem; }
-.weather-cache-item .wc-cache-del:hover { color: var(--danger); }
-
-/* ===== Visa Panel ===== */
-.visa-overview {
-  background: var(--card-bg);
-  border-radius: 12px; padding: 16px 20px; color: var(--text);
-  margin-bottom: 16px; display: flex; justify-content: space-around; text-align: center;
-  box-shadow: none; border: 1px solid var(--border);
-}
-.visa-overview .vo-item .vo-num { font-size: 1.4rem; font-weight: 800; }
-.visa-overview .vo-item .vo-label { font-size: 0.75rem; color: var(--text-light); }
-.visa-add-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-.visa-add-row input {
-  flex: 1; min-width: 120px; padding: 10px 14px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.9rem;
-}
-.visa-add-row input:focus { outline: none; border-color: var(--primary); }
-.visa-add-row select {
-  padding: 10px 10px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.85rem; background: white; max-width: 120px;
-}
-.visa-card {
-  background: var(--card-bg); border-radius: 16px; padding: 16px;
-  margin-bottom: 10px; box-shadow: none; transition: all .2s; border: 1px solid var(--border);
-}
-.visa-card:hover { background: var(--bg); }
-.visa-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 4px; }
-.visa-card .vc-name { font-size: 1rem; font-weight: 700; }
-.visa-card .vc-type { font-size: 0.72rem; padding: 2px 10px; border-radius: 8px; white-space: nowrap; }
-.visa-card .vc-type.free { background: #E8F5E9; color: var(--success); }
-.visa-card .vc-type.evisa { background: #FFF3E0; color: var(--accent); }
-.visa-card .vc-type.conditional { background: #E3F2FD; color: var(--primary); }
-.visa-card .vc-type.other { background: var(--bg); color: var(--text-light); }
-.visa-status-bar { display: flex; gap: 4px; margin-bottom: 8px; }
-.visa-status-step {
-  flex: 1; height: 6px; border-radius: 3px; background: var(--border);
-  transition: background .2s;
-}
-.visa-status-step.done { background: var(--success); }
-.visa-status-step.current { background: var(--accent); }
-.visa-status-labels { display: flex; gap: 4px; font-size: 0.7rem; color: var(--text-light); margin-bottom: 8px; }
-.visa-status-label { flex: 1; text-align: center; }
-.visa-status-label.done { color: var(--success); font-weight: 600; }
-.visa-status-label.current { color: var(--accent); font-weight: 600; }
-.visa-card .vc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.visa-card .vc-actions button {
-  font-size: 0.78rem; padding: 4px 14px; border: 1px solid var(--border);
-  border-radius: 24px; background: white; color: var(--text-light);
-  cursor: pointer; transition: all .2s;
-}
-.visa-card .vc-actions button:hover { border-color: var(--text); color: var(--text); }
-.visa-card .vc-actions button.btn-next { border-color: var(--success); color: var(--success); }
-.visa-card .vc-actions button.btn-del:hover { border-color: var(--danger); color: var(--danger); }
-.visa-card .vc-note {
-  font-size: 0.82rem; color: var(--text); background: var(--bg); padding: 8px 12px;
-  border-radius: 10px; margin-bottom: 8px; min-height: 20px;
-}
-
-/* ===== Exchange Rate ===== */
-.exchange-box {
-  background: var(--card-bg); border-radius: 16px; padding: 16px 18px;
-  box-shadow: none; margin-top: 16px; border: 1px solid var(--border);
-}
-.exchange-row {
-  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
-}
-.exchange-row input, .exchange-row select {
-  padding: 10px 12px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.9rem;
-}
-.exchange-row input { flex: 1; min-width: 80px; }
-.exchange-row input:focus, .exchange-row select:focus { outline: none; border-color: var(--primary); }
-.ex-arrow { font-size: 1.4rem; cursor: pointer; color: var(--text-light); padding: 0 4px; transition: color .2s; }
-.ex-arrow:hover { color: var(--text); }
-.ex-result { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-top: 10px; }
-
-/* ===== Share / Export ===== */
-.share-export-box {
-  background: var(--card-bg); border-radius: 16px; padding: 16px 18px;
-  margin-top: 16px; box-shadow: none; border: 1px solid var(--border);
-}
-.share-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-.share-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-.share-btn {
-  padding: 9px 16px; border: 1px solid var(--border); border-radius: 24px;
-  background: var(--bg); color: var(--text); font-size: 0.82rem; cursor: pointer;
-  transition: all .2s; font-weight: 500;
-}
-.share-btn:hover { border-color: var(--text); color: var(--text); background: white; }
-
-/* ===== AI Assistant ===== */
-.ai-assistant-box {
-  background: var(--card-bg); border-radius: 16px; padding: 16px 18px;
-  margin-top: 16px; box-shadow: none; border: 1px solid var(--border);
-}
-.ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.ai-header .ai-icon { font-size: 1.3rem; }
-.ai-header .ai-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
-.ai-header .ai-badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 8px; background: var(--bg); color: var(--text-light); font-weight: 600; }
-.ai-chat-area { max-height: 320px; overflow-y: auto; margin-bottom: 12px; -webkit-overflow-scrolling: touch; }
-.ai-msg { margin-bottom: 10px; font-size: 0.88rem; line-height: 1.65; }
-.ai-msg.user { text-align: right; }
-.ai-msg.user .ai-msg-bubble {
-  display: inline-block; max-width: 85%; text-align: left;
-  background: var(--text); color: white; padding: 10px 14px;
-  border-radius: 16px 16px 4px 16px;
-}
-.ai-msg.bot .ai-msg-bubble {
-  display: inline-block; max-width: 90%;
-  background: var(--bg); color: var(--text); padding: 10px 14px;
-  border-radius: 16px 16px 16px 4px; white-space: pre-wrap;
-}
-.ai-msg.bot .ai-msg-bubble a { color: var(--primary-dark); }
-.ai-quick-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
-.ai-quick-btn {
-  padding: 5px 12px; border: 1px solid var(--border); border-radius: 24px;
-  font-size: 0.78rem; background: white; color: var(--text-light); cursor: pointer;
-  transition: all .2s; white-space: nowrap;
-}
-.ai-quick-btn:hover { border-color: var(--text); color: var(--text); }
-.ai-input-row { display: flex; gap: 8px; }
-.ai-input-row textarea {
-  flex: 1; padding: 10px 14px; border: 1px solid var(--border);
-  border-radius: 24px; font-size: 0.88rem; resize: none; height: 44px;
-  line-height: 1.5; font-family: inherit;
-}
-.ai-input-row textarea:focus { outline: none; border-color: var(--primary); }
-.ai-send-btn {
-  background: var(--text); color: white; border: none; padding: 0 18px;
-  border-radius: 24px; cursor: pointer; font-size: 0.88rem; white-space: nowrap;
-  font-weight: 600; align-self: stretch; transition: opacity .2s;
-}
-.ai-send-btn:hover { opacity: .9; }
-.ai-send-btn:disabled { opacity: .5; cursor: not-allowed; }
-.ai-typing { display: inline-block; font-size: 0.85rem; color: var(--text-light); padding: 10px 14px; }
-.ai-typing span { animation: aiBlink 1.4s infinite; }
-.ai-typing span:nth-child(2) { animation-delay: .2s; }
-.ai-typing span:nth-child(3) { animation-delay: .4s; }
-@keyframes aiBlink { 0%,60%,100% { opacity: .3; } 30% { opacity: 1; } }
-
-/* ===== Mobile Responsive ===== */
-@media (max-width: 480px) {
-  header { padding: 14px 16px 10px; }
-  header h1 { font-size: 1.1rem; }
-  header p { font-size: 0.76rem; }
-  .trip-info { padding: 10px 14px; gap: 4px 12px; }
-  .trip-field input { width: 100px; font-size: 0.85rem; }
-  .trip-field label { font-size: 0.75rem; }
-  .countdown { padding: 10px 14px; }
-  .countdown .cd-num { font-size: 1.3rem; }
-  .countdown .cd-colon { font-size: 1.1rem; }
-  .sub-tabs { padding: 0 14px; }
-  .sub-tab-btn { font-size: 0.78rem; padding: 10px 4px; min-width: 56px; }
-  .panel { padding: 14px 12px; }
-  .section-title { font-size: 1rem; margin: 0 0 12px; }
-  .route-summary { padding: 14px 12px; }
-  .route-summary .rs-item .rs-num { font-size: 1.2rem; }
-  .route-summary .rs-item .rs-label { font-size: 0.68rem; }
-  .route-card { padding: 12px 14px; gap: 10px; }
-  .route-card .route-name { font-size: 0.9rem; }
-  .route-card .route-meta { font-size: 0.72rem; gap: 8px; }
-  .route-card .route-notes { font-size: 0.78rem; padding: 6px 10px; }
-  .route-add-row input, .route-add-row select { font-size: 0.82rem; padding: 8px 12px; }
-  .route-add-row .btn-add { padding: 8px 14px; font-size: 0.85rem; }
-  .add-row input { padding: 8px 12px; font-size: 0.85rem; }
-  .add-row select { padding: 8px 10px; font-size: 0.8rem; }
-  .add-row .btn-add { padding: 8px 14px; font-size: 0.85rem; }
-  .list-item, .shop-item { padding: 10px 14px; gap: 10px; }
-  .list-item .item-name, .shop-item .shop-name { font-size: 0.88rem; }
-  .savings-card { padding: 20px 16px; }
-  .savings-card .amount { font-size: 2rem; }
-  .guide-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
-  .guide-chip { padding: 8px 12px; font-size: 0.82rem; }
-  .guide-content { padding: 16px 14px; font-size: 0.86rem; }
-  .guide-content h3 { font-size: 1.05rem; }
-  .guide-content h4 { font-size: 0.9rem; }
-  .weather-card { padding: 16px; }
-  .weather-card .wc-temp { font-size: 2.2rem; }
-  .weather-forecast-day { min-width: 64px; padding: 8px 10px; }
-  .visa-card { padding: 14px; }
-  .visa-card .vc-name { font-size: 0.92rem; }
-  .exchange-row input, .exchange-row select { font-size: 0.85rem; padding: 8px 10px; }
-  .ex-result { font-size: 1rem; }
-  .preset-chip { font-size: 0.76rem; padding: 4px 10px; }
-  .filter-btn { font-size: 0.76rem; padding: 4px 12px; }
-  .bottom-nav-item { font-size: 0.68rem; padding: 6px 6px; }
-  .bottom-nav-item .nav-icon { font-size: 1.2rem; }
-  .share-btn { font-size: 0.78rem; padding: 8px 14px; }
-  .notes-area { min-height: 200px; padding: 14px; font-size: 0.88rem; }
-  .ai-chat-area { max-height: 280px; }
-  .ai-msg { font-size: 0.84rem; }
-  .ai-input-row textarea { font-size: 0.84rem; height: 40px; }
-  .prepare-card { padding: 14px 16px; }
-  .prepare-card h4 { font-size: 0.92rem; }
-  .prepare-card li { font-size: 0.82rem; }
-  .season-table { font-size: 0.68rem; }
-  .trans-table { font-size: 0.76rem; }
-  .currency-table { font-size: 0.78rem; }
-  .sim-table { font-size: 0.76rem; }
-  footer { font-size: 0.72rem; padding: 16px 12px 20px; }
-}
-@media (max-width: 360px) {
-  .trip-field input { width: 80px; }
-  .guide-grid { grid-template-columns: 1fr 1fr; }
-  .weather-forecast-day { min-width: 56px; }
-  .bottom-nav-item { font-size: 0.64rem; padding: 4px 4px; }
-}
-
-/* ===== Map Panel ===== */
-.map-section {
-  background: var(--card-bg);
-  border-radius: 16px;
-  overflow: hidden;
-  margin-bottom: 16px;
-  border: 1px solid var(--border);
-}
-.map-header {
-  padding: 10px 14px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-}
-.map-header .map-title { font-size: 0.88rem; font-weight: 700; color: var(--text); }
-.map-header .map-toggle { font-size: 0.8rem; color: var(--text-light); }
-.map-container {
-  width: 100%;
-  height: 320px;
-  transition: height .3s ease;
-}
-.map-container.collapsed { height: 0; }
-#travelMap { width: 100%; height: 100%; }
-.map-info-bar {
-  padding: 8px 14px;
-  font-size: 0.78rem;
-  color: var(--text-light);
-  border-top: 1px solid var(--border);
-  display: flex; gap: 12px; flex-wrap: wrap;
-}
-.map-info-bar .mi-item { display: flex; align-items: center; gap: 4px; }
-.map-info-bar .mi-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-/* ===== Day Timeline (圆周旅迹风格) ===== */
-.day-sections { margin-bottom: 16px; }
-.day-item {
-  margin-bottom: 4px;
-}
-.day-header {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 0 6px;
-}
-.day-tag {
-  font-size: 0.75rem; font-weight: 600;
-  padding: 3px 8px; border-radius: 8px;
-  color: #000; white-space: nowrap;
-}
-.day-title {
-  font-size: 0.92rem; font-weight: 700; color: var(--text);
-}
-.day-events {
-  padding-left: 12px;
-  border-left: 2px solid var(--border);
-  margin-left: 8px;
-}
-.event-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  border: 1px solid var(--border);
-  transition: all .2s;
-}
-.event-card:hover { background: var(--bg); }
-.event-card .event-main {
-  display: flex; gap: 10px; align-items: flex-start;
-}
-.event-card .event-cover {
-  width: 52px; height: 52px; border-radius: 8px;
-  overflow: hidden; flex-shrink: 0;
-  background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem;
-}
-.event-card .event-body { flex: 1; min-width: 0; }
-.event-card .event-cat-tag {
-  font-size: 0.72rem; padding: 1px 6px; border-radius: 6px;
-  background: var(--bg); color: var(--text-light);
-  display: inline-block; margin-bottom: 2px;
-}
-.event-card .event-name {
-  font-size: 0.88rem; font-weight: 600; color: var(--text);
-  margin-bottom: 2px;
-}
-.event-card .event-note-text {
-  font-size: 0.8rem; color: var(--text-light); line-height: 1.5;
-}
-.event-card .event-meta {
-  font-size: 0.75rem; color: var(--text-lighter);
-  margin-top: 4px; display: flex; gap: 10px; flex-wrap: wrap;
-}
-.event-transport {
-  background: var(--bg);
-  border-radius: 12px;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  font-size: 0.82rem;
-  color: var(--text);
-  display: flex; align-items: center; gap: 6px;
-}
-.event-transport .trans-icon { font-size: 1rem; }
-.event-transport .trans-text { flex: 1; }
-.event-transport .trans-detail { font-size: 0.76rem; color: var(--text-light); }
-
-/* Day tag colors - 每站不同颜色 */
-.day-tag.c0 { background: #33C2FF; }
-.day-tag.c1 { background: #FF9B54; }
-.day-tag.c2 { background: #7B74FF; }
-.day-tag.c3 { background: #22C55E; }
-.day-tag.c4 { background: #FFD93D; }
-.day-tag.c5 { background: #FF6B6B; }
-.day-tag.c6 { background: #14B8A6; }
-.day-tag.c7 { background: #FF8F3F; }
-.day-tag.c8 { background: #A78BFA; }
-.day-tag.c9 { background: #36CFC9; }
-.day-tag.c10 { background: #FF85C0; }
-
-/* Route actions in timeline */
-.event-actions {
-  display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;
-}
-.event-actions button {
-  font-size: 0.72rem; padding: 3px 12px; border: 1px solid var(--border);
-  border-radius: 24px; background: white; color: var(--text-light);
-  cursor: pointer; transition: all .2s;
-}
-.event-actions button:hover { border-color: var(--text); color: var(--text); }
-.event-actions button.btn-visited { border-color: var(--success); color: var(--success); }
-.event-actions button.btn-del:hover { border-color: var(--danger); color: var(--danger); }
-
-/* Route add row in timeline style */
-.route-add-area {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 16px;
-  border: 1px solid var(--border);
-}
-.route-add-area .add-title {
-  font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--text);
-}
-.route-add-area .add-row {
-  margin-bottom: 0;
-}
-.route-add-area .add-buttons {
-  display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
-}
-.route-add-area .btn-preset {
-  width: 100%; padding: 10px; border: 1px solid var(--border);
-  border-radius: 24px; background: var(--bg);
-  color: var(--text); font-size: 0.82rem; font-weight: 600;
-  cursor: pointer; transition: all .2s; margin-top: 10px;
-}
-.route-add-area .btn-preset:hover { background: white; border-color: var(--text); }
-
-/* ===== Mobile map ===== */
-@media (max-width: 480px) {
-  .map-container { height: 260px; }
-  .map-header .map-title { font-size: 0.82rem; }
-  .event-card { padding: 8px 10px; }
-  .event-card .event-cover { width: 44px; height: 44px; font-size: 1.2rem; }
-  .event-card .event-name { font-size: 0.84rem; }
-  .event-card .event-note-text { font-size: 0.76rem; }
-  .day-title { font-size: 0.86rem; }
-  .day-tag { font-size: 0.7rem; padding: 2px 6px; }
+/* ===== Mobile ===== */
+@media (max-width:480px) {
+  .page { padding:12px; }
+  .route-summary { grid-template-columns:repeat(2,1fr); }
+  .add-row { flex-direction:column; }
+  .add-row .input { width:100%; min-width:0; }
+  .add-row .btn { width:100%; }
+  .exchange-row { flex-direction:column; }
+  .exchange-row .input { width:100%; min-width:0; }
+  .guide-grid { grid-template-columns:repeat(3,1fr); }
 }
 </style>
 </head>
 <body>
 
-<header>
+<header class="app-header">
   <h1>追寻旅迹</h1>
-  <p>亚欧非大环线 · 路线 · 攻略 · 行李 · 攒钱 · 笔记</p>
+  <div class="subtitle">亚欧非大环线</div>
 </header>
 
-<!-- Trip Info -->
-<div class="trip-info">
-  <div class="trip-field"><label>目的地</label><input type="text" id="tripDest" placeholder="如：亚欧非大环线"></div>
-  <div class="trip-field"><label>出发日期</label><input type="date" id="tripDate"></div>
-  <div class="trip-field"><label>天数</label><input type="number" id="tripDays" placeholder="如：60" min="1" style="width:80px"></div>
-</div>
-
-<!-- Countdown -->
 <div class="countdown" id="countdownBox" style="display:none">
   <div class="cd-box"><div class="cd-num" id="cdDay">0</div><div class="cd-label">天</div></div>
   <div class="cd-colon">:</div>
@@ -983,290 +414,245 @@ footer {
   <div class="cd-box"><div class="cd-num" id="cdSec">0</div><div class="cd-label">秒</div></div>
 </div>
 
-<!-- Sub Tabs -->
-<div class="sub-tabs" id="subTabs">
-  <button class="sub-tab-btn active" data-subtab="route">路线规划</button>
-  <button class="sub-tab-btn" data-subtab="savings">攒钱进度</button>
+<!-- ===== Page 1: 路线 ===== -->
+<div class="page active" id="page-route">
+  <div class="route-summary" id="routeSummary">
+    <div class="rs-box"><div class="rs-val" id="rsCountries">0</div><div class="rs-lbl">国家/地区</div></div>
+    <div class="rs-box"><div class="rs-val" id="rsDays">0</div><div class="rs-lbl">预计天数</div></div>
+    <div class="rs-box"><div class="rs-val" id="rsVisited">0</div><div class="rs-lbl">已到访</div></div>
+    <div class="rs-box"><div class="rs-val" id="rsBudget">¥0</div><div class="rs-lbl">预算</div></div>
+  </div>
+
+  <div class="map-section">
+    <div class="map-header" onclick="toggleMap()">
+      <span class="map-title">行程地图</span>
+      <span class="map-toggle" id="mapToggleText">收起</span>
+    </div>
+    <div class="map-container" id="mapContainer">
+      <div id="travelMap"></div>
+    </div>
+  </div>
+
+  <div class="sec-title">路线详情</div>
+  <div id="routeList"></div>
+
+  <div class="card" style="margin-top:8px">
+    <div class="sec-title" style="margin-bottom:8px">添加站点</div>
+    <div class="add-row">
+      <input class="input" type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
+      <select class="input" id="routeVisa" style="max-width:100px">
+        <option value="free">免签</option><option value="evisa">电子签</option>
+        <option value="conditional">有条件免签</option><option value="other">其他</option>
+      </select>
+      <input class="input" type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
+      <input class="input" type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-dark" onclick="addRoute()">添加站点</button>
+      <button class="btn btn-outline" onclick="loadPresetRoute()">导入亚欧非大环线（11站）</button>
+    </div>
+  </div>
+
+  <!-- 行程信息 -->
+  <div class="card">
+    <div class="sec-title" style="margin-bottom:8px">行程信息</div>
+    <div class="add-row">
+      <input class="input" type="text" id="tripDest" placeholder="目的地">
+      <input class="input" type="date" id="tripDate">
+      <input class="input" type="number" id="tripDays" placeholder="天数" style="max-width:70px" min="1">
+    </div>
+  </div>
 </div>
 
-<main>
-  <!-- ===== Home Page ===== -->
-  <div class="page" id="page-home">
-    <!-- Route Panel -->
-    <div class="panel active" id="panel-route">
-      <!-- 地图区域 -->
-      <div class="map-section">
-        <div class="map-header" onclick="toggleMap()">
-          <span class="map-title">🗺️ 行程地图</span>
-          <span class="map-toggle" id="mapToggleText">收起</span>
-        </div>
-        <div class="map-container" id="mapContainer">
-          <div id="travelMap"></div>
-        </div>
-        <div class="map-info-bar" id="mapInfoBar">
-          <div class="mi-item"><span class="mi-dot" style="background:#33C2FF"></span>已规划</div>
-          <div class="mi-item"><span class="mi-dot" style="background:#22C55E"></span>已到访</div>
-          <div class="mi-item" id="mapRouteSummary">0 站 · 0 天</div>
-        </div>
-      </div>
+<!-- ===== Page 2: 攻略 ===== -->
+<div class="page" id="page-guide">
+  <div class="sec-title">攻略参考 <span class="badge">13国</span></div>
+  <div style="margin-bottom:12px"><input class="input" style="width:100%" type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
+  <div class="guide-grid" id="guideGrid"></div>
+  <div id="guideDetail"></div>
+</div>
 
-      <!-- 路线摘要 -->
-      <div class="route-summary" id="routeSummary">
-        <div class="rs-item"><div class="rs-num" id="rsCountries">0</div><div class="rs-label">国家/地区</div></div>
-        <div class="rs-item"><div class="rs-num" id="rsDays">0</div><div class="rs-label">预计天数</div></div>
-        <div class="rs-item"><div class="rs-num" id="rsVisited">0</div><div class="rs-label">已到访</div></div>
-        <div class="rs-item"><div class="rs-num" id="rsBudget">¥0</div><div class="rs-label">预算</div></div>
-      </div>
-
-      <!-- 添加路线 -->
-      <div class="route-add-area">
-        <div class="add-title">添加站点</div>
-        <div class="route-add-row">
-          <input type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
-          <select id="routeVisa">
-            <option value="free">免签</option><option value="evisa">电子签</option>
-            <option value="conditional">有条件免签</option><option value="other">其他</option>
-          </select>
-          <input type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
-          <input type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
-          <button class="btn-add" onclick="addRoute()">添加</button>
-        </div>
-        <button class="btn-preset" onclick="loadPresetRoute()">一键导入「我的亚欧非大环线」路线（11站约63天 · 预算约2.5万）</button>
-      </div>
-
-      <!-- 时间线 -->
-      <div class="day-sections" id="routeList"></div>
+<!-- ===== Page 3: 准备 ===== -->
+<div class="page" id="page-prepare">
+  <!-- 行李清单 -->
+  <div class="sec-title">行李清单 <span class="badge" id="luggageBadge">0/0</span></div>
+  <div class="card">
+    <div class="luggage-presets">
+      <div style="font-size:0.82rem;font-weight:600;margin-bottom:8px">常用物品（点击添加）</div>
+      <div class="preset-chips" id="presetChips"></div>
     </div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="btn btn-sm btn-dark" onclick="addAllPresets()">一键全选推荐</button>
+      <button class="btn btn-sm btn-outline" onclick="clearLuggage()">清空</button>
+    </div>
+    <div class="filters" id="luggageFilters">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="clothes">衣物</button>
+      <button class="filter-btn" data-filter="toiletry">洗漱</button>
+      <button class="filter-btn" data-filter="electronics">电子</button>
+      <button class="filter-btn" data-filter="docs">证件</button>
+      <button class="filter-btn" data-filter="medicine">药品</button>
+      <button class="filter-btn" data-filter="other">其他</button>
+    </div>
+    <div class="add-row">
+      <input class="input" type="text" id="luggageInput" placeholder="输入物品名称..." oninput="suggestLuggageCat()" onkeydown="if(event.key==='Enter')addLuggage()">
+      <button class="btn btn-dark" onclick="addLuggage()">添加</button>
+    </div>
+    <div id="autoCatHint" style="display:none;font-size:0.78rem;color:var(--primary);margin-bottom:6px"></div>
+    <div id="luggageList"></div>
+  </div>
 
-    <!-- Savings Panel -->
-    <div class="panel" id="panel-savings">
-      <div class="section-title">攒钱进度</div>
-      <div class="savings-card">
-        <div class="label">已攒金额</div>
-        <div class="amount" id="savedAmount">¥ 0</div>
-        <div class="target">目标：¥ <span id="targetText">0</span></div>
-        <div class="savings-bar"><div class="fill" id="savingsFill" style="width:0%"></div></div>
-        <div class="percent" id="savingsPercent">0%</div>
-      </div>
-      <div class="target-section">
-        <div class="row">
-          <input type="number" id="targetInput" placeholder="设置攒钱目标金额..." min="0">
-          <button class="btn btn-set" onclick="setTarget()">设置目标</button>
-          <button class="btn btn-reset" onclick="resetSavings()">重置</button>
-        </div>
-      </div>
-      <div class="add-money-section">
-        <div class="row">
-          <input type="number" id="moneyInput" placeholder="金额..." step="0.01">
-          <input type="text" id="moneyNote" placeholder="备注（如：本月工资）" style="flex:2">
-          <button class="btn btn-add-money" onclick="addMoney(1)">＋存入</button>
-          <button class="btn btn-sub-money" onclick="addMoney(-1)">－支出</button>
-        </div>
-      </div>
-      <div class="money-history"><h3>收支记录</h3><div id="historyList"></div></div>
+  <!-- 购物清单 -->
+  <div class="sec-title" style="margin-top:20px">购物清单 <span class="badge" id="shopBadge">0/0</span></div>
+  <div class="card">
+    <div class="add-row">
+      <input class="input" type="text" id="shopName" placeholder="物品名称..." onkeydown="if(event.key==='Enter')document.getElementById('shopPrice').focus()">
+      <input class="input" type="number" id="shopPrice" placeholder="价格" style="max-width:90px" onkeydown="if(event.key==='Enter')addShop()">
+      <button class="btn btn-dark" onclick="addShop()">添加</button>
+    </div>
+    <div id="shopList"></div>
+    <div class="shop-summary">
+      <span>预计总花费</span>
+      <span class="total-amount" id="shopTotal">¥ 0</span>
     </div>
   </div>
 
-  <!-- ===== Guide Page ===== -->
-  <div class="page" id="page-guide" style="display:none">
-    <div class="panel active" id="panel-guide">
-      <div class="section-title">攻略参考 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">亚欧非大环线13国 · 整合自环线SILKLOOP</span></div>
-      <div class="guide-search"><input type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
-      <div class="guide-grid" id="guideGrid"></div>
-      <div id="guideDetail"></div>
+  <!-- 攒钱进度 -->
+  <div class="sec-title" style="margin-top:20px">攒钱进度</div>
+  <div class="card savings-card">
+    <div style="font-size:0.82rem;color:var(--text2)">已攒金额</div>
+    <div class="amount" id="savedAmount">¥ 0</div>
+    <div class="target">目标：¥ <span id="targetText">0</span></div>
+    <div class="savings-bar"><div class="fill" id="savingsFill" style="width:0%"></div></div>
+    <div class="percent" id="savingsPercent">0%</div>
+  </div>
+  <div class="card">
+    <div class="add-row">
+      <input class="input" type="number" id="targetInput" placeholder="设置攒钱目标..." min="0">
+      <button class="btn btn-dark btn-sm" onclick="setTarget()">设置目标</button>
+      <button class="btn btn-outline btn-sm" onclick="resetSavings()">重置</button>
+    </div>
+    <div class="add-row">
+      <input class="input" type="number" id="moneyInput" placeholder="金额..." step="0.01">
+      <input class="input" type="text" id="moneyNote" placeholder="备注" style="flex:2">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-green btn-sm" onclick="addMoney(1)">存入</button>
+      <button class="btn btn-red btn-sm" onclick="addMoney(-1)">支出</button>
+    </div>
+  </div>
+  <div class="card"><h4 style="margin-bottom:10px;font-size:0.9rem">收支记录</h4><div id="historyList"></div></div>
+
+  <!-- 签证进度 -->
+  <div class="sec-title" style="margin-top:20px">签证进度 <span class="badge" id="visaBadge">0国</span></div>
+  <div class="card">
+    <div class="visa-overview" id="visaOverview" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin-bottom:10px"></div>
+    <div class="add-row">
+      <input class="input" type="text" id="visaCountry" placeholder="国家名称..." onkeydown="if(event.key==='Enter')addVisa()">
+      <select class="input" id="visaType" style="max-width:100px">
+        <option value="free">免签</option><option value="evisa">电子签</option>
+        <option value="conditional">有条件免签</option><option value="other">其他</option>
+      </select>
+      <button class="btn btn-dark btn-sm" onclick="addVisa()">添加</button>
+    </div>
+    <button class="btn btn-outline btn-sm btn-full" onclick="loadPresetVisa()" style="margin-bottom:12px;color:var(--purple);border-color:var(--purple)">一键导入大环线签证清单</button>
+    <div id="visaList"></div>
+  </div>
+</div>
+
+<!-- ===== Page 4: 工具 ===== -->
+<div class="page" id="page-tools">
+  <!-- 汇率换算 -->
+  <div class="sec-title">汇率换算</div>
+  <div class="card">
+    <div class="exchange-row">
+      <input class="input" type="number" id="exFromAmount" placeholder="金额" value="100" oninput="calcExchange()">
+      <select class="input" id="exFromCurrency" onchange="calcExchange()"></select>
+      <span class="ex-arrow" onclick="swapExchange()">⇄</span>
+      <select class="input" id="exToCurrency" onchange="calcExchange()"></select>
+    </div>
+    <input class="input" type="text" id="exToAmount" readonly placeholder="结果" style="margin-bottom:6px">
+    <div class="ex-result" id="exResult"></div>
+    <div style="font-size:0.72rem;color:var(--text3);margin-top:4px">离线参考值（2026-07），实际以兑换时为准</div>
+  </div>
+
+  <!-- 天气查询 -->
+  <div class="sec-title" style="margin-top:20px">天气查询</div>
+  <div class="card">
+    <div class="add-row">
+      <input class="input" type="text" id="weatherCity" placeholder="输入城市名..." onkeydown="if(event.key==='Enter')searchWeather()">
+      <button class="btn btn-dark btn-sm" onclick="searchWeather()">查询</button>
+    </div>
+    <div class="weather-quick-cities" id="weatherQuickCities"></div>
+    <div id="weatherResult"></div>
+    <div class="weather-cache-box" id="weatherCacheBox" style="display:none">
+      <div style="font-size:0.82rem;font-weight:600;margin-bottom:6px">最近查询</div>
+      <div id="weatherCacheList"></div>
     </div>
   </div>
 
-  <!-- ===== Prepare Page ===== -->
-  <div class="page" id="page-prepare" style="display:none">
-    <!-- Sub Tabs -->
-    <div class="sub-tabs" id="prepareSubTabs">
-      <button class="sub-tab-btn active" data-psubtab="prepare-main">出发准备</button>
-      <button class="sub-tab-btn" data-psubtab="luggage">行李清单</button>
-      <button class="sub-tab-btn" data-psubtab="shopping">购物清单</button>
-    </div>
+  <!-- 各国打车&酒店APP -->
+  <div class="sec-title" style="margin-top:20px">各国打车 & 酒店APP</div>
+  <div class="card" id="travelAppsCard"></div>
 
-    <!-- Prepare Main Panel -->
-    <div class="panel active" id="panel-prepare">
-      <div class="section-title">出发准备 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">签证 · 货币 · 通讯 · App · 紧急联络</span></div>
-      <div id="prepareContent"></div>
-      <!-- 汇率换算器 -->
-      <div class="exchange-box">
-        <div class="section-title" style="margin-top:16px">汇率换算器</div>
-        <div class="exchange-row">
-          <input type="number" id="exFromAmount" placeholder="金额" value="100" oninput="calcExchange()">
-          <select id="exFromCurrency" onchange="calcExchange()"></select>
-          <span class="ex-arrow" onclick="swapExchange()">⇄</span>
-          <select id="exToCurrency" onchange="calcExchange()"></select>
-          <input type="text" id="exToAmount" readonly placeholder="结果">
-        </div>
-        <div class="ex-result" id="exResult"></div>
-        <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">汇率为离线参考值（2026-07），实际以兑换时为准</div>
-      </div>
-    </div>
+  <!-- 出发准备速查 -->
+  <div class="sec-title" style="margin-top:20px">出发准备速查</div>
+  <div id="prepareContent"></div>
+</div>
 
-    <!-- Luggage Panel -->
-    <div class="panel" id="panel-luggage">
-      <div class="section-title">行李清单 <span class="badge" id="luggageBadge">0 / 0</span></div>
-      <div class="luggage-presets" id="luggagePresetsBox">
-        <div class="preset-label">常用物品（点击添加）</div>
-        <div class="preset-chips" id="presetChips"></div>
-      </div>
-      <button class="preset-all-btn" onclick="addAllPresets()">一键全选推荐清单</button>
-      <button class="preset-clear-btn" onclick="clearLuggage()">清空</button>
-      <div class="filters" id="luggageFilters">
-        <button class="filter-btn active" data-filter="all">全部</button>
-        <button class="filter-btn" data-filter="clothes">衣物</button>
-        <button class="filter-btn" data-filter="toiletry">洗漱</button>
-        <button class="filter-btn" data-filter="electronics">电子</button>
-        <button class="filter-btn" data-filter="docs">证件</button>
-        <button class="filter-btn" data-filter="medicine">药品</button>
-        <button class="filter-btn" data-filter="other">其他</button>
-      </div>
-      <div class="add-row">
-        <input type="text" id="luggageInput" placeholder="输入物品名称，自动分类..." oninput="suggestLuggageCat()" onkeydown="if(event.key==='Enter')addLuggage()">
-        <select id="luggageCat" style="display:none">
-          <option value="clothes">衣物</option><option value="toiletry">洗漱</option>
-          <option value="electronics">电子</option><option value="docs">证件</option>
-          <option value="medicine">药品</option><option value="other">其他</option>
-        </select>
-        <button class="btn-add" onclick="addLuggage()">添加</button>
-      </div>
-      <div class="auto-cat-hint" id="autoCatHint" style="display:none"></div>
-      <div id="luggageList"></div>
+<!-- ===== Page 5: AI ===== -->
+<div class="page" id="page-ai">
+  <div class="sec-title">AI 旅行助手</div>
+  <div class="card">
+    <div class="ai-chat-area" id="aiChatArea">
+      <div class="ai-msg bot"><div class="ai-bubble">你好！我是你的旅行AI助手。你可以把网上看到的攻略、游记直接粘贴给我，我会帮你整理成结构化的笔记。也可以问我路线、预算、行李、签证等问题。</div></div>
     </div>
-
-    <!-- Shopping Panel -->
-    <div class="panel" id="panel-shopping">
-      <div class="section-title">购物清单 <span class="badge" id="shopBadge">0 / 0</span></div>
-      <div class="add-row">
-        <input type="text" id="shopName" placeholder="物品名称..." onkeydown="if(event.key==='Enter')document.getElementById('shopPrice').focus()">
-        <input type="number" id="shopPrice" placeholder="价格" style="max-width:90px" onkeydown="if(event.key==='Enter')addShop()">
-        <button class="btn-add" onclick="addShop()">添加</button>
-      </div>
-      <div id="shopList"></div>
-      <div class="shop-summary">
-        <span class="total-label">预计总花费</span>
-        <span class="total-amount" id="shopTotal">¥ 0</span>
-      </div>
+    <div class="ai-quick-row">
+      <button class="ai-quick-btn" onclick="aiQuickAction('summarize')">整理攻略</button>
+      <button class="ai-quick-btn" onclick="aiQuickAction('checklist')">提取行李</button>
+      <button class="ai-quick-btn" onclick="aiQuickAction('budget')">估算预算</button>
+      <button class="ai-quick-btn" onclick="aiQuickAction('route')">规划路线</button>
+    </div>
+    <div class="ai-input-row">
+      <textarea id="aiInput" placeholder="粘贴攻略或输入问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+      <button class="btn btn-dark" onclick="sendAI()">发送</button>
     </div>
   </div>
 
-  <!-- ===== Tools Page ===== -->
-  <div class="page" id="page-tools" style="display:none">
-    <div class="sub-tabs" id="toolsSubTabs">
-      <button class="sub-tab-btn active" data-tsubtab="weather">天气查询</button>
-      <button class="sub-tab-btn" data-tsubtab="visa">签证进度</button>
-    </div>
-
-    <!-- Weather Panel -->
-    <div class="panel active" id="panel-weather">
-      <div class="section-title">天气查询 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">沿途城市实时天气</span></div>
-      <div class="weather-search-row">
-        <input type="text" id="weatherCity" placeholder="输入城市名（如：阿拉木图）" onkeydown="if(event.key==='Enter')searchWeather()">
-        <button class="btn-add" onclick="searchWeather()">查询</button>
-      </div>
-      <div class="weather-quick-cities" id="weatherQuickCities"></div>
-      <div id="weatherResult"></div>
-      <div class="weather-cache-box" id="weatherCacheBox" style="display:none">
-        <div class="weather-cache-title">最近查询</div>
-        <div id="weatherCacheList"></div>
-      </div>
-    </div>
-
-    <!-- Visa Panel -->
-    <div class="panel" id="panel-visa">
-      <div class="section-title">签证进度追踪 <span class="badge" id="visaBadge">0 国</span></div>
-      <div class="visa-overview" id="visaOverview"></div>
-      <div class="visa-add-row">
-        <input type="text" id="visaCountry" placeholder="国家名称..." onkeydown="if(event.key==='Enter')addVisa()">
-        <select id="visaType">
-          <option value="free">免签</option>
-          <option value="evisa">电子签</option>
-          <option value="conditional">有条件免签</option>
-          <option value="other">其他</option>
-        </select>
-        <button class="btn-add" onclick="addVisa()">添加</button>
-      </div>
-      <button class="preset-btn" onclick="loadPresetVisa()" style="border-color:var(--purple);color:var(--purple)">一键导入大环线签证清单</button>
-      <div id="visaList"></div>
-    </div>
+  <div class="sec-title" style="margin-top:20px">旅行笔记</div>
+  <div class="card">
+    <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
+    <div style="font-size:0.72rem;color:var(--text3);text-align:right;margin-top:4px">自动保存</div>
   </div>
 
-  <!-- ===== Notes Page ===== -->
-  <div class="page" id="page-notes" style="display:none">
-    <!-- AI Assistant -->
-    <div class="ai-assistant-box">
-      <div class="ai-header">
-        <span class="ai-icon">🤖</span>
-        <span class="ai-title">旅行AI助手</span>
-        <span class="ai-badge">攻略整理</span>
-      </div>
-      <div class="ai-chat-area" id="aiChatArea">
-        <div class="ai-msg bot"><div class="ai-msg-bubble">你好！我是你的旅行AI助手。你可以把网上看到的攻略、游记、注意事项直接粘贴给我，我会帮你整理成结构化的旅行笔记。试试看吧！</div></div>
-      </div>
-      <div class="ai-quick-row">
-        <button class="ai-quick-btn" onclick="aiQuickAction('summarize')">整理攻略</button>
-        <button class="ai-quick-btn" onclick="aiQuickAction('checklist')">提取行李清单</button>
-        <button class="ai-quick-btn" onclick="aiQuickAction('budget')">估算预算</button>
-        <button class="ai-quick-btn" onclick="aiQuickAction('route')">规划路线</button>
-      </div>
-      <div class="ai-input-row">
-        <textarea id="aiInput" placeholder="粘贴攻略内容或输入问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
-        <button class="ai-send-btn" id="aiSendBtn" onclick="sendAI()">发送</button>
-      </div>
+  <div class="sec-title" style="margin-top:20px">云同步与导出</div>
+  <div class="card">
+    <div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">电脑和手机之间同步数据</div>
+    <div class="share-btns" style="margin-bottom:12px">
+      <button class="share-btn" onclick="cloudUpload()" style="border-color:var(--green);color:var(--green)">上传同步</button>
+      <button class="share-btn" onclick="cloudDownload()" style="border-color:var(--primary);color:var(--primary)">下载同步</button>
     </div>
-
-    <div class="panel active" id="panel-notes">
-      <div class="section-title">旅行笔记</div>
-      <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
-      <div class="notes-hint">自动保存</div>
-    </div>
-    <!-- Share / Export -->
-    <div class="share-export-box">
-      <div class="share-title">云同步与导出</div>
-      <div class="sync-section" style="margin-bottom:12px">
-        <div style="font-size:0.82rem;color:var(--text-light);margin-bottom:8px">电脑和手机之间同步数据（存在你的GitHub仓库）</div>
-        <div class="share-btns">
-          <button class="share-btn" onclick="cloudUpload()" style="border-color:var(--success);color:var(--success)">上传同步</button>
-          <button class="share-btn" onclick="cloudDownload()" style="border-color:var(--primary);color:var(--primary)">下载同步</button>
-        </div>
-        <div id="syncStatus" style="font-size:0.78rem;color:var(--text-lighter);margin-top:6px"></div>
-      </div>
-      <div style="border-top:1px solid var(--border);padding-top:12px">
-        <div style="font-size:0.82rem;color:var(--text-light);margin-bottom:8px">本地备份</div>
-        <div class="share-btns">
-          <button class="share-btn" onclick="exportShareText()">复制行程摘要</button>
-          <button class="share-btn" onclick="exportShareImage()">导出行程图片</button>
-          <button class="share-btn" onclick="exportShareJSON()">导出数据备份</button>
-          <button class="share-btn" onclick="importShareJSON()">导入数据备份</button>
-        </div>
+    <div id="syncStatus" style="font-size:0.78rem;color:var(--text3);margin-bottom:12px"></div>
+    <div style="border-top:1px solid var(--border);padding-top:12px">
+      <div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">本地备份</div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="exportShareText()">复制摘要</button>
+        <button class="share-btn" onclick="exportShareImage()">导出图片</button>
+        <button class="share-btn" onclick="exportShareJSON()">导出备份</button>
+        <button class="share-btn" onclick="importShareJSON()">导入备份</button>
       </div>
     </div>
   </div>
-</main>
+</div>
 
-<footer>
-  追寻旅迹 · 数据保存在本地浏览器中 · 攻略整合自环线SILKLOOP
-</footer>
+<footer>追寻旅迹 · 数据保存在本地浏览器 · 攻略整合自环线SILKLOOP</footer>
 
-<!-- Bottom Navigation -->
 <nav class="bottom-nav" id="bottomNav">
-  <button class="bottom-nav-item active" data-page="home">
-    <span class="nav-icon">🏠</span><span>首页</span>
-  </button>
-  <button class="bottom-nav-item" data-page="guide">
-    <span class="nav-icon">🗺️</span><span>攻略</span>
-  </button>
-  <button class="bottom-nav-item" data-page="prepare">
-    <span class="nav-icon">🎒</span><span>准备</span>
-  </button>
-  <button class="bottom-nav-item" data-page="tools">
-    <span class="nav-icon">🔧</span><span>工具</span>
-  </button>
-  <button class="bottom-nav-item" data-page="notes">
-    <span class="nav-icon">📝</span><span>笔记</span>
-  </button>
+  <button class="nav-btn active" data-page="route"><span class="nav-icon">📍</span>路线</button>
+  <button class="nav-btn" data-page="guide"><span class="nav-icon">📖</span>攻略</button>
+  <button class="nav-btn" data-page="prepare"><span class="nav-icon">🎒</span>准备</button>
+  <button class="nav-btn" data-page="tools"><span class="nav-icon">🔧</span>工具</button>
+  <button class="nav-btn" data-page="ai"><span class="nav-icon">🤖</span>AI</button>
 </nav>
 
 <div id="toast"></div>
@@ -2076,75 +1462,22 @@ function showToast(msg) {
 }
 
 // ===== 底部导航切换 =====
-document.querySelectorAll('.bottom-nav-item').forEach(item => {
+document.querySelectorAll('.nav-btn').forEach(item => {
   item.addEventListener('click', () => {
     const page = item.dataset.page;
-    document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     item.classList.add('active');
-    // 隐藏所有 page
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    // 显示当前 page
-    document.getElementById('page-' + page).style.display = 'block';
-    // 管理子Tab显示：只有 home 和 prepare 有子Tab
-    const subTabs = document.getElementById('subTabs');
-    const prepareSubTabs = document.getElementById('prepareSubTabs');
-    const toolsSubTabs = document.getElementById('toolsSubTabs');
-    if (page === 'home') {
-      if (subTabs) subTabs.style.display = 'flex';
-      if (prepareSubTabs) prepareSubTabs.style.display = 'none';
-      if (toolsSubTabs) toolsSubTabs.style.display = 'none';
-    } else if (page === 'prepare') {
-      if (subTabs) subTabs.style.display = 'none';
-      if (prepareSubTabs) prepareSubTabs.style.display = 'flex';
-      if (toolsSubTabs) toolsSubTabs.style.display = 'none';
-    } else if (page === 'tools') {
-      if (subTabs) subTabs.style.display = 'none';
-      if (prepareSubTabs) prepareSubTabs.style.display = 'none';
-      if (toolsSubTabs) toolsSubTabs.style.display = 'flex';
-    } else {
-      if (subTabs) subTabs.style.display = 'none';
-      if (prepareSubTabs) prepareSubTabs.style.display = 'none';
-      if (toolsSubTabs) toolsSubTabs.style.display = 'none';
-    }
-    // 滚到顶部
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // 刷新地图大小
-    if (page === 'home' && travelMap) {
+    if (page === 'route' && travelMap) {
       setTimeout(function() { travelMap.invalidateSize(); }, 300);
     }
   });
 });
 
 // ===== 首页子Tab切换 =====
-document.querySelectorAll('#subTabs .sub-tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#subTabs .sub-tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('#page-home .panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-' + btn.dataset.subtab).classList.add('active');
-  });
-});
-
-// ===== 准备页子Tab切换 =====
-document.querySelectorAll('#prepareSubTabs .sub-tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#prepareSubTabs .sub-tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('#page-prepare .panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    var targetPanel = btn.dataset.psubtab === 'prepare-main' ? 'panel-prepare' : 'panel-' + btn.dataset.psubtab;
-    document.getElementById(targetPanel).classList.add('active');
-  });
-});
-
-// ===== 工具页子Tab切换 =====
-document.querySelectorAll('#toolsSubTabs .sub-tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#toolsSubTabs .sub-tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('#page-tools .panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('panel-' + btn.dataset.tsubtab).classList.add('active');
-  });
-});
+// (子Tab逻辑已移除——新设计无子Tab)
 
 // ===== 行程信息 =====
 function bindTripInfo() {
@@ -2190,13 +1523,41 @@ function initMap() {
   travelMap = L.map('travelMap', {
     zoomControl: true,
     attributionControl: false,
-    scrollWheelZoom: true
+    scrollWheelZoom: true,
+    dragging: true,
+    touchZoom: true,
+    tap: true
   }).setView([35, 60], 3);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     subdomains: ['a','b','c']
   }).addTo(travelMap);
+
+  // 移动端：防止地图滑动时触发页面滚动
+  var mapEl = document.getElementById('travelMap');
+  mapEl.addEventListener('touchstart', function(e) {
+    if (e.touches.length === 1) {
+      // 单指：允许地图拖拽，阻止页面滚动
+      e.stopPropagation();
+    }
+  }, { passive: true });
+  mapEl.addEventListener('touchmove', function(e) {
+    e.stopPropagation();
+  }, { passive: true });
+
+  // 移动端：点击地图标记的popup改善
+  travelMap.on('popupopen', function() {
+    // 让popup在移动端更好点击
+    setTimeout(function() {
+      var closeBtn = document.querySelector('.leaflet-popup-close-button');
+      if (closeBtn) {
+        closeBtn.style.width = '28px';
+        closeBtn.style.height = '28px';
+        closeBtn.style.fontSize = '18px';
+      }
+    }, 100);
+  });
 
   mapInitialized = true;
   renderMapRoute();
@@ -2265,7 +1626,9 @@ function renderMapRoute() {
   // 更新地图信息栏
   var totalDays = 0;
   state.route.forEach(function(r) { totalDays += parseInt(r.days) || 0; });
-  document.getElementById('mapRouteSummary').textContent = state.route.length + ' 站 · ' + totalDays + ' 天';
+  // 更新地图信息（可选）
+  var mapSummaryEl = document.getElementById('mapRouteSummary');
+  if (mapSummaryEl) mapSummaryEl.textContent = state.route.length + ' 站 · ' + totalDays + ' 天';
 }
 
 // ===== 路线规划（时间线样式）=====
@@ -2283,47 +1646,53 @@ function renderRoute() {
   document.getElementById('rsVisited').textContent = visited;
   document.getElementById('rsBudget').textContent = '¥' + totalBudget;
 
-  list.innerHTML = state.route.map(function(r, i) {
-    var visaClass = r.visa === 'free' ? 'free' : r.visa === 'evisa' ? 'evisa' : r.visa === 'conditional' ? 'conditional' : '';
-    var visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
-    var colorClass = 'c' + (i % 11);
-    var icon = getRouteIcon(r.name);
-    var dayTag = '第' + (i + 1) + '站';
-    var visitedBadge = r.visited ? ' ✓' : '';
+  if (!state.route.length) {
+    list.innerHTML = '<div class="empty-hint">还没有添加路线，点击下方按钮导入或手动添加</div>';
+    renderMapRoute();
+    return;
+  }
 
-    var html = '<div class="day-item">' +
-      '<div class="day-header">' +
-        '<span class="day-tag ' + colorClass + '">' + dayTag + '</span>' +
-        '<span class="day-title">' + r.name + visitedBadge + '</span>' +
-        '<span class="route-visa ' + visaClass + '">' + visaText + '</span>' +
+  list.innerHTML = state.route.map(function(r, i) {
+    var visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
+    var visaClass = r.visa === 'free' ? 'free' : r.visa === 'evisa' ? 'evisa' : r.visa === 'conditional' ? 'conditional' : 'other';
+    var icon = getRouteIcon(r.name);
+    var meta = [];
+    if (r.days) meta.push(r.days + '天');
+    if (r.budget) meta.push('¥' + r.budget);
+
+    var html = '<div class="route-item">' +
+      '<div class="route-header" onclick="toggleRouteDetail(' + i + ')">' +
+        '<div class="r-num' + (r.visited ? ' visited' : '') + '">' + (i + 1) + '</div>' +
+        '<div class="r-info">' +
+          '<div class="r-name">' + icon + ' ' + r.name + (r.visited ? ' ✓' : '') + '</div>' +
+          '<div class="r-meta">' + meta.join(' · ') + ' <span class="visa-tag ' + visaClass + '">' + visaText + '</span></div>' +
+        '</div>' +
+        '<div class="r-arrow">›</div>' +
       '</div>' +
-      '<div class="day-events">' +
-        '<div class="event-card' + (r.visited ? ' visited' : '') + '">' +
-          '<div class="event-main">' +
-            '<div class="event-cover">' + icon + '</div>' +
-            '<div class="event-body">' +
-              '<div class="event-name">' + r.name + '</div>' +
-              '<div class="event-note-text">' +
-                (r.notes ? r.notes : '') +
-              '</div>' +
-              '<div class="event-meta">' +
-                (r.days ? '<span>📅 ' + r.days + '天</span>' : '') +
-                (r.budget ? '<span>💰 ¥' + r.budget + '</span>' : '') +
-              '</div>' +
-              '<div class="event-actions">' +
-                '<button class="btn-visited" onclick="toggleVisited(' + i + ')">' + (r.visited ? '✓ 已到访' : '标记到访') + '</button>' +
-                '<button class="btn-del" onclick="delRoute(' + i + ')">删除</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
+      '<div class="route-detail" id="routeDetail' + i + '">' +
+        '<div class="r-notes">' + (r.notes || '暂无备注') + '</div>' +
+        '<div class="r-actions">' +
+          '<button class="btn btn-sm ' + (r.visited ? 'btn-green' : 'btn-outline') + '" onclick="toggleVisited(' + i + ')">' + (r.visited ? '✓ 已到访' : '标记到访') + '</button>' +
+          '<button class="btn btn-sm btn-outline" onclick="delRoute(' + i + ')" style="color:var(--red);border-color:var(--red)">删除</button>' +
         '</div>' +
       '</div>' +
     '</div>';
     return html;
   }).join('');
 
-  // 更新地图
   renderMapRoute();
+}
+
+function toggleRouteDetail(i) {
+  var el = document.getElementById('routeDetail' + i);
+  var header = el.previousElementSibling;
+  if (el.classList.contains('open')) {
+    el.classList.remove('open');
+    header.classList.remove('expanded');
+  } else {
+    el.classList.add('open');
+    header.classList.add('expanded');
+  }
 }
 
 function addRoute() {
@@ -3709,6 +3078,108 @@ function bindNotes() {
 }
 
 // ===== 初始化 =====
+// ===== 各国打车&酒店APP数据 =====
+const TRAVEL_APPS = {
+  taxi: [
+    {country:'哈萨克斯坦', apps:[{name:'Yandex Go', desc:'打车首选，类似滴滴，覆盖阿拉木图/阿斯塔纳'},{name:'inDrive', desc:'可议价打车，中亚常用'}]},
+    {country:'乌兹别克斯坦', apps:[{name:'Yandex Go', desc:'塔什干/撒马尔罕可用'},{name:'inDrive', desc:'本地常用，可议价'}]},
+    {country:'阿塞拜疆', apps:[{name:'Bolt', desc:'巴库打车首选'},{name:'Uber', desc:'巴库可用'}]},
+    {country:'格鲁吉亚', apps:[{name:'Yandex Go', desc:'第比利斯常用'},{name:'Bolt', desc:'第比利斯/巴统可用'},{name:'Maxim', desc:'本地打车App'}]},
+    {country:'亚美尼亚', apps:[{name:'Yandex Go', desc:'埃里温常用'},{name:'GG', desc:'本地打车App'}]},
+    {country:'土耳其', apps:[{name:'BiTaksi', desc:'土耳其本地打车App'},{name:'Uber', desc:'伊斯坦布尔等大城市'}]},
+    {country:'塞尔维亚', apps:[{name:'Yandex Go', desc:'贝尔格莱德可用'},{name:'Pink Taxi', desc:'本地打车'},{name:'CarGo', desc:'本地打车'}]},
+    {country:'波黑', apps:[{name:'Yandex Go', desc:'萨拉热窝可用'},{name:'Moj Taxi', desc:'萨拉热窝本地'}]},
+    {country:'埃及', apps:[{name:'Uber', desc:'开罗/卢克索首选'},{name:'inDrive/Careem', desc:'备选'}]},
+    {country:'泰国', apps:[{name:'Grab', desc:'东南亚打车首选'},{name:'Bolt', desc:'曼谷备选'},{name:'inDrive', desc:'曼谷可用'}]}
+  ],
+  hotel: [
+    {country:'通用', apps:[{name:'Booking.com', desc:'全球覆盖，价格透明'},{name:'Agoda', desc:'东南亚/中亚酒店较多'},{name:'Hostelworld', desc:'青旅首选'},{name:'Airbnb', desc:'民宿/整套公寓'}]},
+    {country:'土耳其', apps:[{name:'Trendyol GO', desc:'本地酒店预订'}]},
+    {country:'格鲁吉亚', apps:[{name:'MyStay', desc:'第比利斯本地订房'}]},
+    {country:'埃及', apps:[{name:'Trip.com', desc:'埃及酒店选择多'}]}
+  ]
+};
+
+function renderTravelApps() {
+  var card = document.getElementById('travelAppsCard');
+  if (!card) return;
+  var html = '<div class="app-section"><h4>🚕 各国打车App</h4>';
+  TRAVEL_APPS.taxi.forEach(function(t) {
+    html += '<div style="margin-bottom:8px"><div style="font-weight:600;font-size:0.82rem;margin-bottom:4px">' + t.country + '</div>';
+    t.apps.forEach(function(a) {
+      html += '<div class="app-row"><span class="app-name">' + a.name + '</span><span class="app-desc">' + a.desc + '</span></div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="app-section"><h4>🏨 酒店预订App</h4>';
+  TRAVEL_APPS.hotel.forEach(function(t) {
+    html += '<div style="margin-bottom:8px"><div style="font-weight:600;font-size:0.82rem;margin-bottom:4px">' + t.country + '</div>';
+    t.apps.forEach(function(a) {
+      html += '<div class="app-row"><span class="app-name">' + a.name + '</span><span class="app-desc">' + a.desc + '</span></div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  card.innerHTML = html;
+}
+
+// ===== 出发准备渲染（工具页内） =====
+function renderPrepareContent() {
+  var c = document.getElementById('prepareContent');
+  if (!c) return;
+  var html = '';
+
+  // 签证速查
+  html += '<div class="card"><div class="sec-title" style="margin-bottom:8px">签证速查</div>';
+  PREPARE.visa.forEach(function(v) {
+    html += '<div style="font-size:0.84rem;margin-bottom:6px"><strong>' + v.country + '</strong> — <span style="color:var(--primary)">' + v.type + '</span>：' + v.note + '</div>';
+  });
+  html += '</div>';
+
+  // SIM卡
+  html += '<div class="card"><div class="sec-title" style="margin-bottom:8px">📡 逐国办卡参考</div>';
+  html += '<table class="sim-table"><thead><tr><th>国家</th><th>参考价</th><th>要点</th></tr></thead><tbody>';
+  PREPARE.sim.forEach(function(s) {
+    html += '<tr><td>' + s.country + '</td><td style="font-weight:600">' + s.price + '</td><td style="font-size:0.82rem;color:var(--text2)">' + s.note + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // 紧急联络
+  html += '<div class="emergency-box"><h4 style="margin-bottom:8px">🆘 紧急联络</h4>';
+  html += '<div style="margin-bottom:8px">外交部全球领事保护应急热线：<span class="em-phone">+86-10-12308</span></div>';
+  html += '<table class="sim-table"><thead><tr><th>国家</th><th>紧急号码</th><th>使领馆</th></tr></thead><tbody>';
+  PREPARE.emergency.forEach(function(e) {
+    html += '<tr><td>' + e.country + '</td><td style="font-weight:600;color:var(--red)">' + e.phone + '</td><td style="font-size:0.82rem">' + e.note + '</td></tr>';
+  });
+  html += '</tbody></table></div>';
+
+  // 避坑提醒
+  html += '<div class="card"><div class="sec-title" style="margin-bottom:8px">⚠️ 避坑与提醒</div><ul style="padding-left:20px;font-size:0.84rem">';
+  PREPARE.tips.forEach(function(t) { html += '<li style="margin-bottom:4px">' + t + '</li>'; });
+  html += '</ul></div>';
+
+  // 季节窗口
+  html += '<div class="card"><div class="sec-title" style="margin-bottom:8px">🌤 季节窗口</div>';
+  html += '<div style="font-size:0.72rem;color:var(--text2);margin-bottom:6px">绿=适宜 · 红=偏热 · 蓝=偏冷</div>';
+  html += '<table class="season-table"><thead><tr><th></th>';
+  for (var m = 1; m <= 12; m++) html += '<th>' + m + '月</th>';
+  html += '</tr></thead><tbody>';
+  Object.keys(SEASON_DATA).forEach(function(country) {
+    html += '<tr><td style="font-size:0.68rem;font-weight:600;white-space:nowrap">' + country + '</td>';
+    SEASON_DATA[country].forEach(function(v) {
+      var cls = v === 'good' ? 'good' : v === 'hot' ? 'hot' : v === 'cold' ? 'cold' : '';
+      html += '<td class="' + cls + '">' + (v === 'good' ? '✓' : v === 'hot' ? '热' : v === 'cold' ? '冷' : '·') + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+
+  c.innerHTML = html;
+}
+
 function init() {
   loadState();
   bindTripInfo();
@@ -3718,6 +3189,7 @@ function init() {
   initMap();
   renderGuideGrid();
   renderPrepare();
+  renderPrepareContent();
   renderLuggage();
   renderLuggagePresets();
   renderShopping();
@@ -3726,6 +3198,7 @@ function init() {
   renderWeatherQuickCities();
   renderWeatherCache();
   initExchangeRate();
+  renderTravelApps();
   bindNotes();
   // 恢复AI聊天记录
   if (state.aiChat && state.aiChat.length) {
@@ -3733,6 +3206,22 @@ function init() {
     area.innerHTML = '';
     state.aiChat.forEach(function(m) { appendAIMsg(m.role, m.content); });
   }
+
+  // 移动端：输入框聚焦时自动滚动到可见位置（避免被键盘遮挡）
+  if ('ontouchstart' in window) {
+    document.addEventListener('focusin', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+        setTimeout(function() {
+          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    });
+  }
+
+  // 移动端：双击标题回到顶部
+  document.querySelector('header').addEventListener('dblclick', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
 init();
