@@ -6,22 +6,27 @@
 <title>追寻旅迹 · 亚欧非大环线</title>
 <style>
 :root {
-  --primary: #4A90D9;
-  --primary-light: #6BA5E8;
-  --primary-dark: #357ABD;
-  --accent: #F5A623;
-  --success: #27AE60;
-  --danger: #E74C3C;
-  --purple: #8E5BC9;
-  --teal: #1ABC9C;
-  --bg: #F0F4F8;
+  --primary: #3B7DD8;
+  --primary-light: #5B9BE8;
+  --primary-dark: #2A5FA8;
+  --accent: #FF8F3F;
+  --success: #22C55E;
+  --danger: #EF4444;
+  --purple: #8B5CF6;
+  --teal: #14B8A6;
+  --bg: #F5F7FA;
   --card-bg: #FFFFFF;
-  --text: #2C3E50;
-  --text-light: #7F8C8D;
-  --border: #E0E7EE;
+  --text: #1A2332;
+  --text-light: #6B7A8F;
+  --text-lighter: #9BA8BC;
+  --border: #E8EDF3;
   --radius: 16px;
-  --shadow: 0 2px 12px rgba(0,0,0,0.06);
-  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --gradient-main: linear-gradient(135deg, #3B7DD8, #14B8A6);
+  --gradient-warm: linear-gradient(135deg, #FF8F3F, #FFB347);
+  --gradient-purple: linear-gradient(135deg, #8B5CF6, #A78BFA);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -30,27 +35,29 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
+  padding-bottom: 64px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ===== Header ===== */
 header {
-  background: linear-gradient(135deg, #2C3E50, #4A90D9, #1ABC9C);
+  background: linear-gradient(135deg, #1A2332, #3B7DD8 60%, #14B8A6);
   color: white;
-  padding: 32px 20px 24px;
+  padding: 28px 20px 20px;
   text-align: center;
-  border-radius: 0 0 28px 28px;
-  box-shadow: var(--shadow-lg);
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 4px 24px rgba(59,125,216,0.2);
 }
-header h1 { font-size: 1.8rem; letter-spacing: 3px; font-weight: 800; }
-header p { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
+header h1 { font-size: 1.6rem; letter-spacing: 4px; font-weight: 800; }
+header p { font-size: 0.82rem; opacity: 0.75; margin-top: 6px; letter-spacing: 1px; }
 
 /* ===== Trip Info ===== */
 .trip-info {
   background: var(--card-bg);
-  margin: -16px 16px 0;
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  box-shadow: var(--shadow);
+  margin: -14px 16px 0;
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: var(--shadow-md);
   display: flex;
   flex-wrap: wrap;
   gap: 8px 20px;
@@ -59,50 +66,75 @@ header p { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
   z-index: 2;
 }
 .trip-field { display: flex; align-items: center; gap: 6px; }
-.trip-field label { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; }
+.trip-field label { font-size: 0.78rem; color: var(--text-light); white-space: nowrap; }
 .trip-field input {
   border: none; border-bottom: 2px solid var(--border);
-  padding: 4px 6px; font-size: 0.9rem; width: 130px;
+  padding: 4px 6px; font-size: 0.88rem; width: 130px;
   color: var(--text); background: transparent; transition: border-color .2s;
 }
 .trip-field input:focus { outline: none; border-color: var(--primary); }
 
-/* ===== Tabs ===== */
-.tabs {
+/* ===== Sub Tabs ===== */
+.sub-tabs {
   display: flex;
-  margin: 20px 16px 0;
+  margin: 16px 16px 0;
   background: var(--card-bg);
-  border-radius: 14px;
-  padding: 4px;
-  gap: 4px;
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
   box-shadow: var(--shadow);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
-.tab-btn {
-  flex: 1; padding: 10px 6px; border: none; background: none;
+.sub-tabs::-webkit-scrollbar { display: none; }
+.sub-tab-btn {
+  flex: 1; padding: 8px 6px; border: none; background: none;
   cursor: pointer; font-size: 0.82rem; color: var(--text-light);
-  border-radius: 10px; transition: all .25s; white-space: nowrap;
-  min-width: 70px;
+  border-radius: 9px; transition: all .2s; white-space: nowrap;
+  min-width: 60px; font-weight: 500;
 }
-.tab-btn.active {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: white; box-shadow: 0 2px 10px rgba(74,144,217,0.3);
+.sub-tab-btn.active {
+  background: var(--primary);
+  color: white; box-shadow: 0 2px 8px rgba(59,125,216,0.25);
 }
+
+/* ===== Bottom Nav ===== */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--card-bg);
+  display: flex; justify-content: space-around;
+  padding: 6px 4px; z-index: 100;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+  border-top: 1px solid var(--border);
+  max-width: 750px; margin: 0 auto;
+}
+.bottom-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 6px 10px; border: none; background: none;
+  cursor: pointer; font-size: 0.7rem; color: var(--text-lighter);
+  transition: color .2s; flex: 1;
+}
+.bottom-nav-item .nav-icon { font-size: 1.3rem; line-height: 1; }
+.bottom-nav-item.active { color: var(--primary); font-weight: 600; }
+.bottom-nav-item.active .nav-icon { transform: scale(1.1); transition: transform .2s; }
 
 /* ===== Main ===== */
 main { padding: 16px; max-width: 750px; margin: 0 auto; }
-.panel { display: none; animation: fadeIn .3s; }
+.page { animation: fadeIn .25s; }
+.panel { display: none; animation: fadeIn .25s; }
 .panel.active { display: block; }
-@keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
 
 /* ===== Section Title ===== */
 .section-title {
-  font-size: 1.1rem; font-weight: 700; margin: 4px 0 14px;
+  font-size: 1.05rem; font-weight: 700; margin: 4px 0 14px;
   display: flex; align-items: center; gap: 8px;
+  color: var(--text);
 }
 .section-title .badge {
-  background: var(--accent); color: white; font-size: 0.75rem;
-  padding: 2px 10px; border-radius: 20px; font-weight: normal;
+  background: var(--accent); color: white; font-size: 0.72rem;
+  padding: 2px 10px; border-radius: 20px; font-weight: 600;
 }
 
 /* Add row */
@@ -205,9 +237,9 @@ main { padding: 16px; max-width: 750px; margin: 0 auto; }
 
 /* ===== Savings ===== */
 .savings-card {
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  background: var(--gradient-main);
   border-radius: var(--radius); padding: 24px 20px; color: white;
-  text-align: center; margin-bottom: 16px; box-shadow: var(--shadow-lg);
+  text-align: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(59,125,216,0.2);
 }
 .savings-card .label { font-size: 0.85rem; opacity: .85; }
 .savings-card .amount { font-size: 2.4rem; font-weight: 800; margin: 6px 0; }
@@ -269,32 +301,34 @@ main { padding: 16px; max-width: 750px; margin: 0 auto; }
 .countdown {
   display: flex; gap: 10px; justify-content: center;
   margin: 16px; background: var(--card-bg); border-radius: 14px;
-  padding: 16px; box-shadow: var(--shadow);
+  padding: 16px; box-shadow: var(--shadow-md);
 }
 .countdown .cd-box { text-align: center; flex: 1; }
-.countdown .cd-num { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
-.countdown .cd-label { font-size: 0.72rem; color: var(--text-light); margin-top: 2px; }
-.countdown .cd-colon { font-size: 1.4rem; font-weight: 800; color: var(--border); display: flex; align-items: center; }
+.countdown .cd-num { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+.countdown .cd-label { font-size: 0.7rem; color: var(--text-light); margin-top: 2px; }
+.countdown .cd-colon { font-size: 1.3rem; font-weight: 800; color: var(--border); display: flex; align-items: center; }
 
 footer {
-  text-align: center; padding: 20px; font-size: 0.78rem; color: var(--text-light);
+  text-align: center; padding: 20px 16px 24px; font-size: 0.76rem; color: var(--text-lighter);
 }
 
 /* ===== Toast ===== */
 #toast {
-  position: fixed; bottom: 24px; left: 50%;
+  position: fixed; bottom: 72px; left: 50%;
   transform: translateX(-50%) translateY(60px);
   background: var(--text); color: white; padding: 10px 24px;
-  border-radius: 20px; font-size: 0.85rem; opacity: 0;
+  border-radius: 24px; font-size: 0.85rem; opacity: 0;
   transition: all .3s; z-index: 999; pointer-events: none;
+  box-shadow: var(--shadow-lg);
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ===== Route Panel ===== */
 .route-summary {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: var(--gradient-main);
   border-radius: 14px; padding: 16px 20px; color: white;
   margin-bottom: 16px; display: flex; justify-content: space-around; text-align: center;
+  box-shadow: 0 4px 16px rgba(59,125,216,0.15);
 }
 .route-summary .rs-item .rs-num { font-size: 1.4rem; font-weight: 800; }
 .route-summary .rs-item .rs-label { font-size: 0.75rem; opacity: .85; }
@@ -543,9 +577,10 @@ footer {
 
 /* ===== Visa Panel ===== */
 .visa-overview {
-  background: linear-gradient(135deg, var(--purple), #A67CD8);
+  background: var(--gradient-purple);
   border-radius: 14px; padding: 16px 20px; color: white;
   margin-bottom: 16px; display: flex; justify-content: space-around; text-align: center;
+  box-shadow: 0 4px 16px rgba(139,92,246,0.15);
 }
 .visa-overview .vo-item .vo-num { font-size: 1.4rem; font-weight: 800; }
 .visa-overview .vo-item .vo-label { font-size: 0.75rem; opacity: .85; }
@@ -617,16 +652,16 @@ footer {
 /* ===== Share / Export ===== */
 .share-export-box {
   background: var(--card-bg); border-radius: 14px; padding: 16px 18px;
-  margin-top: 16px; box-shadow: var(--shadow);
+  margin-top: 16px; box-shadow: var(--shadow-md);
 }
-.share-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+.share-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
 .share-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 .share-btn {
-  padding: 10px 16px; border: 2px solid var(--border); border-radius: 12px;
-  background: white; color: var(--text); font-size: 0.85rem; cursor: pointer;
-  transition: all .2s;
+  padding: 9px 16px; border: 2px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--text); font-size: 0.82rem; cursor: pointer;
+  transition: all .2s; font-weight: 500;
 }
-.share-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(74,144,217,0.04); }
+.share-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(59,125,216,0.06); }
 </style>
 </head>
 <body>
@@ -654,198 +689,209 @@ footer {
   <div class="cd-box"><div class="cd-num" id="cdSec">0</div><div class="cd-label">秒</div></div>
 </div>
 
-<!-- Tabs -->
-<div class="tabs">
-  <button class="tab-btn active" data-tab="route">路线规划</button>
-  <button class="tab-btn" data-tab="guide">攻略参考</button>
-  <button class="tab-btn" data-tab="prepare">出发准备</button>
-  <button class="tab-btn" data-tab="luggage">行李清单</button>
-  <button class="tab-btn" data-tab="shopping">购物清单</button>
-  <button class="tab-btn" data-tab="savings">攒钱进度</button>
-  <button class="tab-btn" data-tab="weather">天气</button>
-  <button class="tab-btn" data-tab="visa">签证进度</button>
-  <button class="tab-btn" data-tab="notes">旅行笔记</button>
+<!-- Sub Tabs -->
+<div class="sub-tabs" id="subTabs">
+  <button class="sub-tab-btn active" data-subtab="route">路线规划</button>
+  <button class="sub-tab-btn" data-subtab="savings">攒钱进度</button>
 </div>
 
 <main>
-  <!-- ===== Route Panel ===== -->
-  <div class="panel active" id="panel-route">
-    <div class="section-title">路线规划 <span class="badge" id="routeBadge">0 站</span></div>
-    <div class="route-summary" id="routeSummary">
-      <div class="rs-item"><div class="rs-num" id="rsCountries">0</div><div class="rs-label">国家/地区</div></div>
-      <div class="rs-item"><div class="rs-num" id="rsDays">0</div><div class="rs-label">预计天数</div></div>
-      <div class="rs-item"><div class="rs-num" id="rsVisited">0</div><div class="rs-label">已到访</div></div>
-      <div class="rs-item"><div class="rs-num" id="rsBudget">¥0</div><div class="rs-label">预算</div></div>
-    </div>
-    <button class="preset-btn" onclick="loadPresetRoute()">一键导入「我的亚欧非大环线」路线（11站约63天 · 预算约2.5万）</button>
-    <div class="route-add-row">
-      <input type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
-      <select id="routeVisa">
-        <option value="free">免签</option><option value="evisa">电子签</option>
-        <option value="conditional">有条件免签</option><option value="other">其他</option>
-      </select>
-      <input type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
-      <input type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
-      <button class="btn-add" onclick="addRoute()">添加</button>
-    </div>
-    <div class="route-list" id="routeList"></div>
-  </div>
-
-  <!-- ===== Guide Panel ===== -->
-  <div class="panel" id="panel-guide">
-    <div class="section-title">攻略参考 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">亚欧非大环线13国 · 整合自环线SILKLOOP</span></div>
-    <div class="guide-search"><input type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
-    <div class="guide-grid" id="guideGrid"></div>
-    <div id="guideDetail"></div>
-  </div>
-
-  <!-- ===== Prepare Panel ===== -->
-  <div class="panel" id="panel-prepare">
-    <div class="section-title">出发准备 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">签证 · 行李 · 货币 · 通讯 · App · 紧急联络</span></div>
-    <div id="prepareContent"></div>
-    <!-- 汇率换算器 -->
-    <div class="exchange-box">
-      <div class="section-title" style="margin-top:16px">汇率换算器</div>
-      <div class="exchange-row">
-        <input type="number" id="exFromAmount" placeholder="金额" value="100" oninput="calcExchange()">
-        <select id="exFromCurrency" onchange="calcExchange()"></select>
-        <span class="ex-arrow" onclick="swapExchange()">⇄</span>
-        <select id="exToCurrency" onchange="calcExchange()"></select>
-        <input type="text" id="exToAmount" readonly placeholder="结果">
+  <!-- ===== Home Page ===== -->
+  <div class="page" id="page-home">
+    <!-- Route Panel -->
+    <div class="panel active" id="panel-route">
+      <div class="section-title">路线规划 <span class="badge" id="routeBadge">0 站</span></div>
+      <div class="route-summary" id="routeSummary">
+        <div class="rs-item"><div class="rs-num" id="rsCountries">0</div><div class="rs-label">国家/地区</div></div>
+        <div class="rs-item"><div class="rs-num" id="rsDays">0</div><div class="rs-label">预计天数</div></div>
+        <div class="rs-item"><div class="rs-num" id="rsVisited">0</div><div class="rs-label">已到访</div></div>
+        <div class="rs-item"><div class="rs-num" id="rsBudget">¥0</div><div class="rs-label">预算</div></div>
       </div>
-      <div class="ex-result" id="exResult"></div>
-      <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">汇率为离线参考值（2026-07），实际以兑换时为准</div>
+      <button class="preset-btn" onclick="loadPresetRoute()">一键导入「我的亚欧非大环线」路线（11站约63天 · 预算约2.5万）</button>
+      <div class="route-add-row">
+        <input type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
+        <select id="routeVisa">
+          <option value="free">免签</option><option value="evisa">电子签</option>
+          <option value="conditional">有条件免签</option><option value="other">其他</option>
+        </select>
+        <input type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
+        <input type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
+        <button class="btn-add" onclick="addRoute()">添加</button>
+      </div>
+      <div class="route-list" id="routeList"></div>
+    </div>
+
+    <!-- Savings Panel -->
+    <div class="panel" id="panel-savings">
+      <div class="section-title">攒钱进度</div>
+      <div class="savings-card">
+        <div class="label">已攒金额</div>
+        <div class="amount" id="savedAmount">¥ 0</div>
+        <div class="target">目标：¥ <span id="targetText">0</span></div>
+        <div class="savings-bar"><div class="fill" id="savingsFill" style="width:0%"></div></div>
+        <div class="percent" id="savingsPercent">0%</div>
+      </div>
+      <div class="target-section">
+        <div class="row">
+          <input type="number" id="targetInput" placeholder="设置攒钱目标金额..." min="0">
+          <button class="btn btn-set" onclick="setTarget()">设置目标</button>
+          <button class="btn btn-reset" onclick="resetSavings()">重置</button>
+        </div>
+      </div>
+      <div class="add-money-section">
+        <div class="row">
+          <input type="number" id="moneyInput" placeholder="金额..." step="0.01">
+          <input type="text" id="moneyNote" placeholder="备注（如：本月工资）" style="flex:2">
+          <button class="btn btn-add-money" onclick="addMoney(1)">＋存入</button>
+          <button class="btn btn-sub-money" onclick="addMoney(-1)">－支出</button>
+        </div>
+      </div>
+      <div class="money-history"><h3>收支记录</h3><div id="historyList"></div></div>
     </div>
   </div>
 
-  <!-- ===== Luggage Panel ===== -->
-  <div class="panel" id="panel-luggage">
-    <div class="section-title">行李清单 <span class="badge" id="luggageBadge">0 / 0</span></div>
-
-    <!-- 快捷预设：一键添加常用物品 -->
-    <div class="luggage-presets" id="luggagePresetsBox">
-      <div class="preset-label">📦 常用物品（点击添加）</div>
-      <div class="preset-chips" id="presetChips"></div>
-    </div>
-
-    <!-- 一键全选预设 -->
-    <button class="preset-all-btn" onclick="addAllPresets()">一键全选推荐清单</button>
-    <button class="preset-clear-btn" onclick="clearLuggage()">清空</button>
-
-    <div class="filters" id="luggageFilters">
-      <button class="filter-btn active" data-filter="all">全部</button>
-      <button class="filter-btn" data-filter="clothes">衣物</button>
-      <button class="filter-btn" data-filter="toiletry">洗漱</button>
-      <button class="filter-btn" data-filter="electronics">电子</button>
-      <button class="filter-btn" data-filter="docs">证件</button>
-      <button class="filter-btn" data-filter="medicine">药品</button>
-      <button class="filter-btn" data-filter="other">其他</button>
-    </div>
-    <div class="add-row">
-      <input type="text" id="luggageInput" placeholder="输入物品名称，自动分类..." oninput="suggestLuggageCat()" onkeydown="if(event.key==='Enter')addLuggage()">
-      <select id="luggageCat">
-        <option value="clothes">衣物</option><option value="toiletry">洗漱</option>
-        <option value="electronics">电子</option><option value="docs">证件</option>
-        <option value="medicine">药品</option><option value="other">其他</option>
-      </select>
-      <button class="btn-add" onclick="addLuggage()">添加</button>
-    </div>
-    <!-- 自动分类提示 -->
-    <div class="auto-cat-hint" id="autoCatHint" style="display:none"></div>
-    <div id="luggageList"></div>
-  </div>
-
-  <!-- ===== Shopping Panel ===== -->
-  <div class="panel" id="panel-shopping">
-    <div class="section-title">购物清单 <span class="badge" id="shopBadge">0 / 0</span></div>
-    <div class="add-row">
-      <input type="text" id="shopName" placeholder="物品名称..." onkeydown="if(event.key==='Enter')document.getElementById('shopPrice').focus()">
-      <input type="number" id="shopPrice" placeholder="价格" style="max-width:90px" onkeydown="if(event.key==='Enter')addShop()">
-      <button class="btn-add" onclick="addShop()">添加</button>
-    </div>
-    <div id="shopList"></div>
-    <div class="shop-summary">
-      <span class="total-label">预计总花费</span>
-      <span class="total-amount" id="shopTotal">¥ 0</span>
+  <!-- ===== Guide Page ===== -->
+  <div class="page" id="page-guide" style="display:none">
+    <div class="panel active" id="panel-guide">
+      <div class="section-title">攻略参考 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">亚欧非大环线13国 · 整合自环线SILKLOOP</span></div>
+      <div class="guide-search"><input type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
+      <div class="guide-grid" id="guideGrid"></div>
+      <div id="guideDetail"></div>
     </div>
   </div>
 
-  <!-- ===== Savings Panel ===== -->
-  <div class="panel" id="panel-savings">
-    <div class="section-title">攒钱进度</div>
-    <div class="savings-card">
-      <div class="label">已攒金额</div>
-      <div class="amount" id="savedAmount">¥ 0</div>
-      <div class="target">目标：¥ <span id="targetText">0</span></div>
-      <div class="savings-bar"><div class="fill" id="savingsFill" style="width:0%"></div></div>
-      <div class="percent" id="savingsPercent">0%</div>
+  <!-- ===== Prepare Page ===== -->
+  <div class="page" id="page-prepare" style="display:none">
+    <!-- Sub Tabs -->
+    <div class="sub-tabs" id="prepareSubTabs">
+      <button class="sub-tab-btn active" data-psubtab="prepare-main">出发准备</button>
+      <button class="sub-tab-btn" data-psubtab="luggage">行李清单</button>
+      <button class="sub-tab-btn" data-psubtab="shopping">购物清单</button>
     </div>
-    <div class="target-section">
-      <div class="row">
-        <input type="number" id="targetInput" placeholder="设置攒钱目标金额..." min="0">
-        <button class="btn btn-set" onclick="setTarget()">设置目标</button>
-        <button class="btn btn-reset" onclick="resetSavings()">重置</button>
+
+    <!-- Prepare Main Panel -->
+    <div class="panel active" id="panel-prepare">
+      <div class="section-title">出发准备 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">签证 · 货币 · 通讯 · App · 紧急联络</span></div>
+      <div id="prepareContent"></div>
+      <!-- 汇率换算器 -->
+      <div class="exchange-box">
+        <div class="section-title" style="margin-top:16px">汇率换算器</div>
+        <div class="exchange-row">
+          <input type="number" id="exFromAmount" placeholder="金额" value="100" oninput="calcExchange()">
+          <select id="exFromCurrency" onchange="calcExchange()"></select>
+          <span class="ex-arrow" onclick="swapExchange()">⇄</span>
+          <select id="exToCurrency" onchange="calcExchange()"></select>
+          <input type="text" id="exToAmount" readonly placeholder="结果">
+        </div>
+        <div class="ex-result" id="exResult"></div>
+        <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">汇率为离线参考值（2026-07），实际以兑换时为准</div>
       </div>
     </div>
-    <div class="add-money-section">
-      <div class="row">
-        <input type="number" id="moneyInput" placeholder="金额..." step="0.01">
-        <input type="text" id="moneyNote" placeholder="备注（如：本月工资）" style="flex:2">
-        <button class="btn btn-add-money" onclick="addMoney(1)">＋存入</button>
-        <button class="btn btn-sub-money" onclick="addMoney(-1)">－支出</button>
+
+    <!-- Luggage Panel -->
+    <div class="panel" id="panel-luggage">
+      <div class="section-title">行李清单 <span class="badge" id="luggageBadge">0 / 0</span></div>
+      <div class="luggage-presets" id="luggagePresetsBox">
+        <div class="preset-label">常用物品（点击添加）</div>
+        <div class="preset-chips" id="presetChips"></div>
+      </div>
+      <button class="preset-all-btn" onclick="addAllPresets()">一键全选推荐清单</button>
+      <button class="preset-clear-btn" onclick="clearLuggage()">清空</button>
+      <div class="filters" id="luggageFilters">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="clothes">衣物</button>
+        <button class="filter-btn" data-filter="toiletry">洗漱</button>
+        <button class="filter-btn" data-filter="electronics">电子</button>
+        <button class="filter-btn" data-filter="docs">证件</button>
+        <button class="filter-btn" data-filter="medicine">药品</button>
+        <button class="filter-btn" data-filter="other">其他</button>
+      </div>
+      <div class="add-row">
+        <input type="text" id="luggageInput" placeholder="输入物品名称，自动分类..." oninput="suggestLuggageCat()" onkeydown="if(event.key==='Enter')addLuggage()">
+        <select id="luggageCat" style="display:none">
+          <option value="clothes">衣物</option><option value="toiletry">洗漱</option>
+          <option value="electronics">电子</option><option value="docs">证件</option>
+          <option value="medicine">药品</option><option value="other">其他</option>
+        </select>
+        <button class="btn-add" onclick="addLuggage()">添加</button>
+      </div>
+      <div class="auto-cat-hint" id="autoCatHint" style="display:none"></div>
+      <div id="luggageList"></div>
+    </div>
+
+    <!-- Shopping Panel -->
+    <div class="panel" id="panel-shopping">
+      <div class="section-title">购物清单 <span class="badge" id="shopBadge">0 / 0</span></div>
+      <div class="add-row">
+        <input type="text" id="shopName" placeholder="物品名称..." onkeydown="if(event.key==='Enter')document.getElementById('shopPrice').focus()">
+        <input type="number" id="shopPrice" placeholder="价格" style="max-width:90px" onkeydown="if(event.key==='Enter')addShop()">
+        <button class="btn-add" onclick="addShop()">添加</button>
+      </div>
+      <div id="shopList"></div>
+      <div class="shop-summary">
+        <span class="total-label">预计总花费</span>
+        <span class="total-amount" id="shopTotal">¥ 0</span>
       </div>
     </div>
-    <div class="money-history"><h3>收支记录</h3><div id="historyList"></div></div>
   </div>
 
-  <!-- ===== Weather Panel ===== -->
-  <div class="panel" id="panel-weather">
-    <div class="section-title">天气查询 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">沿途城市实时天气</span></div>
-    <div class="weather-search-row">
-      <input type="text" id="weatherCity" placeholder="输入城市名（如：阿拉木图）" onkeydown="if(event.key==='Enter')searchWeather()">
-      <button class="btn-add" onclick="searchWeather()">查询</button>
+  <!-- ===== Tools Page ===== -->
+  <div class="page" id="page-tools" style="display:none">
+    <div class="sub-tabs" id="toolsSubTabs">
+      <button class="sub-tab-btn active" data-tsubtab="weather">天气查询</button>
+      <button class="sub-tab-btn" data-tsubtab="visa">签证进度</button>
     </div>
-    <div class="weather-quick-cities" id="weatherQuickCities"></div>
-    <div id="weatherResult"></div>
-    <div class="weather-cache-box" id="weatherCacheBox" style="display:none">
-      <div class="weather-cache-title">最近查询</div>
-      <div id="weatherCacheList"></div>
+
+    <!-- Weather Panel -->
+    <div class="panel active" id="panel-weather">
+      <div class="section-title">天气查询 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">沿途城市实时天气</span></div>
+      <div class="weather-search-row">
+        <input type="text" id="weatherCity" placeholder="输入城市名（如：阿拉木图）" onkeydown="if(event.key==='Enter')searchWeather()">
+        <button class="btn-add" onclick="searchWeather()">查询</button>
+      </div>
+      <div class="weather-quick-cities" id="weatherQuickCities"></div>
+      <div id="weatherResult"></div>
+      <div class="weather-cache-box" id="weatherCacheBox" style="display:none">
+        <div class="weather-cache-title">最近查询</div>
+        <div id="weatherCacheList"></div>
+      </div>
+    </div>
+
+    <!-- Visa Panel -->
+    <div class="panel" id="panel-visa">
+      <div class="section-title">签证进度追踪 <span class="badge" id="visaBadge">0 国</span></div>
+      <div class="visa-overview" id="visaOverview"></div>
+      <div class="visa-add-row">
+        <input type="text" id="visaCountry" placeholder="国家名称..." onkeydown="if(event.key==='Enter')addVisa()">
+        <select id="visaType">
+          <option value="free">免签</option>
+          <option value="evisa">电子签</option>
+          <option value="conditional">有条件免签</option>
+          <option value="other">其他</option>
+        </select>
+        <button class="btn-add" onclick="addVisa()">添加</button>
+      </div>
+      <button class="preset-btn" onclick="loadPresetVisa()" style="border-color:var(--purple);color:var(--purple)">一键导入大环线签证清单</button>
+      <div id="visaList"></div>
     </div>
   </div>
 
-  <!-- ===== Visa Panel ===== -->
-  <div class="panel" id="panel-visa">
-    <div class="section-title">签证进度追踪 <span class="badge" id="visaBadge">0 国</span></div>
-    <div class="visa-overview" id="visaOverview"></div>
-    <div class="visa-add-row">
-      <input type="text" id="visaCountry" placeholder="国家名称..." onkeydown="if(event.key==='Enter')addVisa()">
-      <select id="visaType">
-        <option value="free">免签</option>
-        <option value="evisa">电子签</option>
-        <option value="conditional">有条件免签</option>
-        <option value="other">其他</option>
-      </select>
-      <button class="btn-add" onclick="addVisa()">添加</button>
+  <!-- ===== Notes Page ===== -->
+  <div class="page" id="page-notes" style="display:none">
+    <div class="panel active" id="panel-notes">
+      <div class="section-title">旅行笔记</div>
+      <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
+      <div class="notes-hint">自动保存</div>
     </div>
-    <button class="preset-btn" onclick="loadPresetVisa()" style="border-color:var(--purple);color:var(--purple)">一键导入大环线签证清单</button>
-    <div id="visaList"></div>
-  </div>
-
-  <!-- ===== Notes Panel ===== -->
-  <div class="panel" id="panel-notes">
-    <div class="section-title">旅行笔记</div>
-    <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
-    <div class="notes-hint">自动保存</div>
-  </div>
-
-  <!-- ===== Share / Export ===== -->
-  <div class="share-export-box">
-    <div class="share-title">分享与导出</div>
-    <div class="share-btns">
-      <button class="share-btn" onclick="exportShareText()">复制行程摘要</button>
-      <button class="share-btn" onclick="exportShareImage()">导出行程图片</button>
-      <button class="share-btn" onclick="exportShareJSON()">导出数据备份</button>
-      <button class="share-btn" onclick="importShareJSON()">导入数据备份</button>
+    <!-- Share / Export -->
+    <div class="share-export-box">
+      <div class="share-title">分享与导出</div>
+      <div class="share-btns">
+        <button class="share-btn" onclick="exportShareText()">复制行程摘要</button>
+        <button class="share-btn" onclick="exportShareImage()">导出行程图片</button>
+        <button class="share-btn" onclick="exportShareJSON()">导出数据备份</button>
+        <button class="share-btn" onclick="importShareJSON()">导入数据备份</button>
+      </div>
     </div>
   </div>
 </main>
@@ -853,6 +899,25 @@ footer {
 <footer>
   追寻旅迹 · 数据保存在本地浏览器中，不会上传 · 攻略整合自环线SILKLOOP等公开资源
 </footer>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bottom-nav-item active" data-page="home">
+    <span class="nav-icon">🏠</span><span>首页</span>
+  </button>
+  <button class="bottom-nav-item" data-page="guide">
+    <span class="nav-icon">🗺️</span><span>攻略</span>
+  </button>
+  <button class="bottom-nav-item" data-page="prepare">
+    <span class="nav-icon">🎒</span><span>准备</span>
+  </button>
+  <button class="bottom-nav-item" data-page="tools">
+    <span class="nav-icon">🧰</span><span>工具</span>
+  </button>
+  <button class="bottom-nav-item" data-page="notes">
+    <span class="nav-icon">📝</span><span>笔记</span>
+  </button>
+</nav>
 
 <div id="toast"></div>
 
@@ -1583,13 +1648,70 @@ function showToast(msg) {
   setTimeout(()=>t.classList.remove('show'), 2000);
 }
 
-// ===== Tab 切换 =====
-document.querySelectorAll('.tab-btn').forEach(btn => {
+// ===== 底部导航切换 =====
+document.querySelectorAll('.bottom-nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const page = item.dataset.page;
+    document.querySelectorAll('.bottom-nav-item').forEach(b => b.classList.remove('active'));
+    item.classList.add('active');
+    // 隐藏所有 page
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    // 显示当前 page
+    document.getElementById('page-' + page).style.display = 'block';
+    // 管理子Tab显示：只有 home 和 prepare 有子Tab
+    const subTabs = document.getElementById('subTabs');
+    const prepareSubTabs = document.getElementById('prepareSubTabs');
+    const toolsSubTabs = document.getElementById('toolsSubTabs');
+    if (page === 'home') {
+      if (subTabs) subTabs.style.display = 'flex';
+      if (prepareSubTabs) prepareSubTabs.style.display = 'none';
+      if (toolsSubTabs) toolsSubTabs.style.display = 'none';
+    } else if (page === 'prepare') {
+      if (subTabs) subTabs.style.display = 'none';
+      if (prepareSubTabs) prepareSubTabs.style.display = 'flex';
+      if (toolsSubTabs) toolsSubTabs.style.display = 'none';
+    } else if (page === 'tools') {
+      if (subTabs) subTabs.style.display = 'none';
+      if (prepareSubTabs) prepareSubTabs.style.display = 'none';
+      if (toolsSubTabs) toolsSubTabs.style.display = 'flex';
+    } else {
+      if (subTabs) subTabs.style.display = 'none';
+      if (prepareSubTabs) prepareSubTabs.style.display = 'none';
+      if (toolsSubTabs) toolsSubTabs.style.display = 'none';
+    }
+    // 滚到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// ===== 首页子Tab切换 =====
+document.querySelectorAll('#subTabs .sub-tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('#subTabs .sub-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#page-home .panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    document.getElementById('panel-' + btn.dataset.subtab).classList.add('active');
+  });
+});
+
+// ===== 准备页子Tab切换 =====
+document.querySelectorAll('#prepareSubTabs .sub-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#prepareSubTabs .sub-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#page-prepare .panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    var targetPanel = btn.dataset.psubtab === 'prepare-main' ? 'panel-prepare' : 'panel-' + btn.dataset.psubtab;
+    document.getElementById(targetPanel).classList.add('active');
+  });
+});
+
+// ===== 工具页子Tab切换 =====
+document.querySelectorAll('#toolsSubTabs .sub-tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#toolsSubTabs .sub-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#page-tools .panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tsubtab).classList.add('active');
   });
 });
 
