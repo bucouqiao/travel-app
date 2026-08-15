@@ -1025,12 +1025,23 @@ footer {
     </div>
     <!-- Share / Export -->
     <div class="share-export-box">
-      <div class="share-title">分享与导出</div>
-      <div class="share-btns">
-        <button class="share-btn" onclick="exportShareText()">复制行程摘要</button>
-        <button class="share-btn" onclick="exportShareImage()">导出行程图片</button>
-        <button class="share-btn" onclick="exportShareJSON()">导出数据备份</button>
-        <button class="share-btn" onclick="importShareJSON()">导入数据备份</button>
+      <div class="share-title">云同步与导出</div>
+      <div class="sync-section" style="margin-bottom:12px">
+        <div style="font-size:0.82rem;color:var(--text-light);margin-bottom:8px">电脑和手机之间同步数据（存在你的GitHub仓库）</div>
+        <div class="share-btns">
+          <button class="share-btn" onclick="cloudUpload()" style="border-color:var(--success);color:var(--success)">上传同步</button>
+          <button class="share-btn" onclick="cloudDownload()" style="border-color:var(--primary);color:var(--primary)">下载同步</button>
+        </div>
+        <div id="syncStatus" style="font-size:0.78rem;color:var(--text-lighter);margin-top:6px"></div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:12px">
+        <div style="font-size:0.82rem;color:var(--text-light);margin-bottom:8px">本地备份</div>
+        <div class="share-btns">
+          <button class="share-btn" onclick="exportShareText()">复制行程摘要</button>
+          <button class="share-btn" onclick="exportShareImage()">导出行程图片</button>
+          <button class="share-btn" onclick="exportShareJSON()">导出数据备份</button>
+          <button class="share-btn" onclick="importShareJSON()">导入数据备份</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2815,6 +2826,151 @@ function importShareJSON() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ===== 云同步（GitHub） =====
+function getSyncToken() {
+  // 优先从输入框读取，其次从localStorage缓存
+  let token = document.getElementById('syncTokenInput') ? document.getElementById('syncTokenInput').value.trim() : '';
+  if (token) {
+    localStorage.setItem('travelApp_syncToken', token);
+    return token;
+  }
+  return localStorage.getItem('travelApp_syncToken') || '';
+}
+
+async function cloudUpload() {
+  let token = getSyncToken();
+  if (!token) {
+    showSyncTokenDialog('upload');
+    return;
+  }
+  const statusEl = document.getElementById('syncStatus');
+  statusEl.textContent = '正在上传...';
+  statusEl.style.color = 'var(--primary)';
+
+  try {
+    const data = JSON.stringify(state);
+    const base64 = btoa(unescape(encodeURIComponent(data)));
+
+    // 先获取当前文件的SHA（如果存在）
+    const apiUrl = 'https://api.github.com/repos/bucouqiao/travel-app/contents/sync-data.json';
+    const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
+    let sha = null;
+    try {
+      const resp = await fetch(apiUrl, { headers: headers });
+      if (resp.ok) {
+        const info = await resp.json();
+        sha = info.sha;
+      }
+    } catch(e) {}
+
+    const body = { message: 'sync: 数据同步 ' + new Date().toLocaleString('zh-CN'), content: base64 };
+    if (sha) body.sha = sha;
+
+    const resp = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(body)
+    });
+
+    if (resp.ok) {
+      const now = new Date().toLocaleString('zh-CN');
+      statusEl.textContent = '上次上传：' + now;
+      statusEl.style.color = 'var(--success)';
+      showToast('数据已上传到云端');
+    } else {
+      const err = await resp.json();
+      if (resp.status === 401 || resp.status === 403) {
+        localStorage.removeItem('travelApp_syncToken');
+        statusEl.textContent = 'Token无效，请重新输入';
+        statusEl.style.color = 'var(--danger)';
+      } else {
+        statusEl.textContent = '上传失败：' + (err.message || '未知错误');
+        statusEl.style.color = 'var(--danger)';
+      }
+    }
+  } catch(err) {
+    statusEl.textContent = '网络错误，请检查连接';
+    statusEl.style.color = 'var(--danger)';
+  }
+}
+
+async function cloudDownload() {
+  let token = getSyncToken();
+  if (!token) {
+    showSyncTokenDialog('download');
+    return;
+  }
+  const statusEl = document.getElementById('syncStatus');
+  statusEl.textContent = '正在下载...';
+  statusEl.style.color = 'var(--primary)';
+
+  try {
+    const apiUrl = 'https://api.github.com/repos/bucouqiao/travel-app/contents/sync-data.json';
+    const headers = { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json' };
+    const resp = await fetch(apiUrl, { headers: headers });
+
+    if (resp.ok) {
+      const info = await resp.json();
+      const base64Data = info.content.replace(/\n/g, '');
+      const jsonStr = decodeURIComponent(escape(atob(base64Data)));
+      const data = JSON.parse(jsonStr);
+
+      // 合并策略：云端数据覆盖本地
+      state = data;
+      saveState();
+      init();
+      const now = new Date().toLocaleString('zh-CN');
+      statusEl.textContent = '上次下载：' + now;
+      statusEl.style.color = 'var(--success)';
+      showToast('数据已从云端同步');
+    } else if (resp.status === 404) {
+      statusEl.textContent = '云端暂无数据，请先上传';
+      statusEl.style.color = 'var(--accent)';
+    } else if (resp.status === 401 || resp.status === 403) {
+      localStorage.removeItem('travelApp_syncToken');
+      statusEl.textContent = 'Token无效，请重新输入';
+      statusEl.style.color = 'var(--danger)';
+    } else {
+      statusEl.textContent = '下载失败';
+      statusEl.style.color = 'var(--danger)';
+    }
+  } catch(err) {
+    statusEl.textContent = '网络错误，请检查连接';
+    statusEl.style.color = 'var(--danger)';
+  }
+}
+
+function showSyncTokenDialog(action) {
+  // 创建一个模态对话框
+  var overlay = document.createElement('div');
+  overlay.id = 'syncTokenModal';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:white;border-radius:16px;padding:24px;max-width:400px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.15);';
+  modal.innerHTML = '<div style="font-size:1rem;font-weight:700;margin-bottom:8px">设置同步Token</div>' +
+    '<div style="font-size:0.85rem;color:#6B7A8F;margin-bottom:16px;line-height:1.6">首次使用云同步，需要输入你的GitHub Personal Access Token。Token只会保存在你的浏览器本地，不会上传。<br><br>获取方式：github.com/settings/tokens → Generate new token → 勾选 repo 权限</div>' +
+    '<input id="syncTokenInput" type="password" placeholder="粘贴你的GitHub Token..." style="width:100%;padding:10px 14px;border:2px solid #E8EDF3;border-radius:12px;font-size:0.9rem;margin-bottom:16px" value="' + (localStorage.getItem('travelApp_syncToken') || '') + '">' +
+    '<div style="display:flex;gap:8px">' +
+    '<button onclick="closeSyncModal()" style="flex:1;padding:10px;border:2px solid #E8EDF3;border-radius:12px;background:white;color:#6B7A8F;font-size:0.88rem;cursor:pointer">取消</button>' +
+    '<button onclick="confirmSyncToken(\'' + action + '\')" style="flex:1;padding:10px;border:none;border-radius:12px;background:var(--primary);color:white;font-size:0.88rem;cursor:pointer;font-weight:600">确认</button>' +
+    '</div>';
+
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+}
+
+function closeSyncModal() {
+  var modal = document.getElementById('syncTokenModal');
+  if (modal) modal.remove();
+}
+
+function confirmSyncToken(action) {
+  closeSyncModal();
+  if (action === 'upload') cloudUpload();
+  else if (action === 'download') cloudDownload();
 }
 
 // ===== AI 助手 =====
