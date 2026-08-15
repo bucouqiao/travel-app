@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>追寻旅迹 · 亚欧非大环线</title>
+<style>
+:root {
+  --primary: #4A90D9;
+  --primary-light: #6BA5E8;
+  --primary-dark: #357ABD;
+  --accent: #F5A623;
+  --success: #27AE60;
+  --danger: #E74C3C;
+  --purple: #8E5BC9;
+  --teal: #1ABC9C;
+  --bg: #F0F4F8;
+  --card-bg: #FFFFFF;
+  --text: #2C3E50;
+  --text-light: #7F8C8D;
+  --border: #E0E7EE;
+  --radius: 16px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ===== Header ===== */
+header {
+  background: linear-gradient(135deg, #2C3E50, #4A90D9, #1ABC9C);
+  color: white;
+  padding: 32px 20px 24px;
+  text-align: center;
+  border-radius: 0 0 28px 28px;
+  box-shadow: var(--shadow-lg);
+}
+header h1 { font-size: 1.8rem; letter-spacing: 3px; font-weight: 800; }
+header p { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
+
+/* ===== Trip Info ===== */
+.trip-info {
+  background: var(--card-bg);
+  margin: -16px 16px 0;
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+.trip-field { display: flex; align-items: center; gap: 6px; }
+.trip-field label { font-size: 0.8rem; color: var(--text-light); white-space: nowrap; }
+.trip-field input {
+  border: none; border-bottom: 2px solid var(--border);
+  padding: 4px 6px; font-size: 0.9rem; width: 130px;
+  color: var(--text); background: transparent; transition: border-color .2s;
+}
+.trip-field input:focus { outline: none; border-color: var(--primary); }
+
+/* ===== Tabs ===== */
+.tabs {
+  display: flex;
+  margin: 20px 16px 0;
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 4px;
+  gap: 4px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.tab-btn {
+  flex: 1; padding: 10px 6px; border: none; background: none;
+  cursor: pointer; font-size: 0.82rem; color: var(--text-light);
+  border-radius: 10px; transition: all .25s; white-space: nowrap;
+  min-width: 70px;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white; box-shadow: 0 2px 10px rgba(74,144,217,0.3);
+}
+
+/* ===== Main ===== */
+main { padding: 16px; max-width: 750px; margin: 0 auto; }
+.panel { display: none; animation: fadeIn .3s; }
+.panel.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+/* ===== Section Title ===== */
+.section-title {
+  font-size: 1.1rem; font-weight: 700; margin: 4px 0 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title .badge {
+  background: var(--accent); color: white; font-size: 0.75rem;
+  padding: 2px 10px; border-radius: 20px; font-weight: normal;
+}
+
+/* Add row */
+.add-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.add-row input {
+  flex: 1; min-width: 100px;
+  padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.9rem; transition: border-color .2s;
+}
+.add-row input:focus { outline: none; border-color: var(--primary); }
+.add-row select {
+  padding: 10px 10px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.85rem; background: white; cursor: pointer; max-width: 100px;
+}
+.add-row .btn-add {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white; border: none; padding: 10px 18px;
+  border-radius: 12px; cursor: pointer; font-size: 0.9rem; white-space: nowrap; transition: opacity .2s;
+}
+.add-row .btn-add:hover { opacity: .9; }
+
+/* List items */
+.list-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card-bg); padding: 12px 16px;
+  border-radius: 12px; margin-bottom: 8px; box-shadow: var(--shadow); transition: all .2s;
+}
+.list-item:hover { box-shadow: var(--shadow-lg); }
+.list-item .checkbox {
+  width: 22px; height: 22px; border: 2px solid var(--border);
+  border-radius: 50%; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; transition: all .2s;
+}
+.list-item .checkbox.checked { background: var(--success); border-color: var(--success); }
+.list-item .checkbox.checked::after {
+  content: ''; width: 7px; height: 4px;
+  border-left: 2px solid white; border-bottom: 2px solid white;
+  transform: rotate(-45deg); margin-top: -2px;
+}
+.list-item .item-name { flex: 1; font-size: 0.92rem; }
+.list-item.checked .item-name { text-decoration: line-through; color: var(--text-light); }
+.list-item .item-cat {
+  font-size: 0.72rem; padding: 2px 8px; border-radius: 8px;
+  background: var(--bg); color: var(--text-light); white-space: nowrap;
+}
+.list-item .item-del {
+  background: none; border: none; color: var(--text-light);
+  cursor: pointer; font-size: 1.1rem; padding: 4px 6px;
+  border-radius: 8px; transition: all .2s;
+}
+.list-item .item-del:hover { color: var(--danger); background: rgba(231,76,60,0.08); }
+
+/* Filter buttons */
+.filters { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.filter-btn {
+  padding: 5px 14px; border: 2px solid var(--border); background: white;
+  border-radius: 20px; cursor: pointer; font-size: 0.8rem;
+  color: var(--text-light); transition: all .2s;
+}
+.filter-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(74,144,217,0.06); }
+
+/* Progress bar */
+.progress-bar { height: 10px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+.progress-bar .fill { height: 100%; border-radius: 10px; transition: width .4s ease; }
+
+/* ===== Shopping ===== */
+.shop-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card-bg); padding: 12px 16px;
+  border-radius: 12px; margin-bottom: 8px; box-shadow: var(--shadow);
+}
+.shop-item .shop-checkbox {
+  width: 22px; height: 22px; border: 2px solid var(--border);
+  border-radius: 6px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; transition: all .2s;
+}
+.shop-item .shop-checkbox.checked { background: var(--success); border-color: var(--success); }
+.shop-item .shop-checkbox.checked::after {
+  content: ''; width: 7px; height: 4px;
+  border-left: 2px solid white; border-bottom: 2px solid white;
+  transform: rotate(-45deg); margin-top: -2px;
+}
+.shop-item .shop-name { flex:1; font-size: 0.92rem; }
+.shop-item.checked .shop-name { text-decoration: line-through; color: var(--text-light); }
+.shop-item .shop-price { font-size: 0.9rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
+.shop-item .shop-del {
+  background: none; border: none; color: var(--text-light);
+  cursor: pointer; font-size: 1.1rem; padding: 4px 6px;
+  border-radius: 8px; transition: all .2s;
+}
+.shop-item .shop-del:hover { color: var(--danger); background: rgba(231,76,60,0.08); }
+
+.shop-summary {
+  background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+  border-radius: 14px; padding: 14px 18px; margin-bottom: 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.shop-summary .total-label { font-size: 0.85rem; color: var(--text-light); }
+.shop-summary .total-amount { font-size: 1.3rem; font-weight: 800; color: var(--accent); }
+
+/* ===== Savings ===== */
+.savings-card {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: var(--radius); padding: 24px 20px; color: white;
+  text-align: center; margin-bottom: 16px; box-shadow: var(--shadow-lg);
+}
+.savings-card .label { font-size: 0.85rem; opacity: .85; }
+.savings-card .amount { font-size: 2.4rem; font-weight: 800; margin: 6px 0; }
+.savings-card .target { font-size: 0.85rem; opacity: .85; }
+.savings-card .percent { font-size: 1.1rem; font-weight: 700; margin-top: 8px; }
+.savings-card .percent.complete { color: #FFD93D; }
+.savings-bar { height: 16px; background: rgba(255,255,255,0.3); border-radius: 16px; overflow: hidden; margin-top: 12px; }
+.savings-bar .fill { height: 100%; background: linear-gradient(90deg, #FFD93D, #FF9533); border-radius: 16px; transition: width .5s ease; }
+
+.target-section, .add-money-section, .money-history {
+  background: var(--card-bg); border-radius: 14px; padding: 16px 18px;
+  box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.target-section .row, .add-money-section .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.target-section input, .add-money-section input {
+  flex: 1; min-width: 80px; padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.9rem;
+}
+.target-section input:focus, .add-money-section input:focus { outline: none; border-color: var(--primary); }
+.target-section .btn, .add-money-section .btn {
+  padding: 10px 16px; border: none; border-radius: 12px;
+  cursor: pointer; font-size: 0.88rem; white-space: nowrap;
+}
+.target-section .btn-set { background: var(--accent); color: white; }
+.target-section .btn-reset { background: var(--border); color: var(--text-light); }
+.add-money-section .btn-add-money { background: var(--success); color: white; }
+.add-money-section .btn-sub-money { background: var(--danger); color: white; }
+
+.money-history h3 { font-size: 1rem; margin-bottom: 12px; }
+.history-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.88rem;
+}
+.history-item:last-child { border-bottom: none; }
+.history-item .h-date { color: var(--text-light); font-size: 0.8rem; }
+.history-item .h-amount { font-weight: 700; }
+.history-item .h-amount.add { color: var(--success); }
+.history-item .h-amount.sub { color: var(--danger); }
+.history-item .h-note { color: var(--text-light); font-size: 0.82rem; }
+.history-item .h-del {
+  background: none; border: none; color: var(--text-light);
+  cursor: pointer; font-size: 0.9rem; padding: 2px 6px;
+  border-radius: 6px; transition: all .2s;
+}
+.history-item .h-del:hover { color: var(--danger); }
+.empty-hint { text-align: center; color: var(--text-light); font-size: 0.85rem; padding: 16px 0; }
+
+/* ===== Notes ===== */
+.notes-area {
+  width: 100%; min-height: 300px; padding: 16px;
+  border: 2px solid var(--border); border-radius: 14px;
+  font-size: 0.92rem; resize: vertical; font-family: inherit;
+  line-height: 1.7; transition: border-color .2s;
+}
+.notes-area:focus { outline: none; border-color: var(--primary); }
+.notes-hint { font-size: 0.8rem; color: var(--text-light); margin-top: 8px; text-align: right; }
+
+/* ===== Countdown ===== */
+.countdown {
+  display: flex; gap: 10px; justify-content: center;
+  margin: 16px; background: var(--card-bg); border-radius: 14px;
+  padding: 16px; box-shadow: var(--shadow);
+}
+.countdown .cd-box { text-align: center; flex: 1; }
+.countdown .cd-num { font-size: 1.6rem; font-weight: 800; color: var(--primary); }
+.countdown .cd-label { font-size: 0.72rem; color: var(--text-light); margin-top: 2px; }
+.countdown .cd-colon { font-size: 1.4rem; font-weight: 800; color: var(--border); display: flex; align-items: center; }
+
+footer {
+  text-align: center; padding: 20px; font-size: 0.78rem; color: var(--text-light);
+}
+
+/* ===== Toast ===== */
+#toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(60px);
+  background: var(--text); color: white; padding: 10px 24px;
+  border-radius: 20px; font-size: 0.85rem; opacity: 0;
+  transition: all .3s; z-index: 999; pointer-events: none;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===== Route Panel ===== */
+.route-summary {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 14px; padding: 16px 20px; color: white;
+  margin-bottom: 16px; display: flex; justify-content: space-around; text-align: center;
+}
+.route-summary .rs-item .rs-num { font-size: 1.4rem; font-weight: 800; }
+.route-summary .rs-item .rs-label { font-size: 0.75rem; opacity: .85; }
+
+.route-list { position: relative; }
+.route-list::before {
+  content: ''; position: absolute; left: 19px; top: 0; bottom: 0;
+  width: 3px; background: var(--border); border-radius: 3px;
+}
+.route-card {
+  background: var(--card-bg); border-radius: 14px; padding: 14px 16px;
+  margin-bottom: 10px; box-shadow: var(--shadow); position: relative;
+  display: flex; gap: 14px; align-items: flex-start; transition: all .2s;
+}
+.route-card:hover { box-shadow: var(--shadow-lg); }
+.route-card .route-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white; display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700; flex-shrink: 0; z-index: 1;
+}
+.route-card.visited .route-num { background: var(--success); }
+.route-card .route-info { flex: 1; }
+.route-card .route-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 4px; }
+.route-card .route-name { font-size: 0.95rem; font-weight: 700; }
+.route-card .route-visa { font-size: 0.7rem; padding: 2px 8px; border-radius: 8px; white-space: nowrap; }
+.route-card .route-visa.free { background: #E8F5E9; color: var(--success); }
+.route-card .route-visa.evisa { background: #FFF3E0; color: var(--accent); }
+.route-card .route-visa.conditional { background: #E3F2FD; color: var(--primary); }
+.route-card .route-meta { font-size: 0.78rem; color: var(--text-light); display: flex; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+.route-card .route-notes { font-size: 0.82rem; color: var(--text); background: var(--bg); padding: 8px 12px; border-radius: 10px; line-height: 1.5; }
+.route-card .route-actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.route-card .route-actions button {
+  font-size: 0.75rem; padding: 4px 12px; border: 2px solid var(--border);
+  border-radius: 8px; background: white; color: var(--text-light);
+  cursor: pointer; transition: all .2s;
+}
+.route-card .route-actions button:hover { border-color: var(--primary); color: var(--primary); }
+.route-card .route-actions button.btn-visited { border-color: var(--success); color: var(--success); }
+.route-card .route-actions button.btn-del:hover { border-color: var(--danger); color: var(--danger); }
+
+.route-add-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.route-add-row input, .route-add-row select {
+  padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.88rem;
+}
+.route-add-row input { flex: 1; min-width: 120px; }
+.route-add-row select { max-width: 110px; }
+.route-add-row input:focus { outline: none; border-color: var(--primary); }
+.route-add-row .btn-add {
+  background: linear-gradient(135deg, var(--purple), #A67CD8);
+  color: white; border: none; padding: 10px 18px;
+  border-radius: 12px; cursor: pointer; font-size: 0.9rem; white-space: nowrap;
+}
+.route-add-row .btn-add:hover { opacity: .9; }
+
+.preset-btn {
+  width: 100%; padding: 14px; border: 2px dashed var(--primary);
+  border-radius: 14px; background: rgba(74,144,217,0.04);
+  color: var(--primary); font-size: 0.92rem; font-weight: 700;
+  cursor: pointer; margin-bottom: 16px; transition: all .2s;
+}
+.preset-btn:hover { background: rgba(74,144,217,0.08); }
+
+/* ===== Guide Panel ===== */
+.guide-search { margin-bottom: 14px; }
+.guide-search input {
+  width: 100%; padding: 10px 16px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.9rem; transition: border-color .2s;
+}
+.guide-search input:focus { outline: none; border-color: var(--primary); }
+
+.guide-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px; margin-bottom: 16px;
+}
+.guide-chip {
+  padding: 10px 14px; border: 2px solid var(--border); border-radius: 12px;
+  background: white; cursor: pointer; font-size: 0.85rem; transition: all .2s;
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+}
+.guide-chip:hover { border-color: var(--primary); }
+.guide-chip.active {
+  border-color: var(--primary); background: rgba(74,144,217,0.06);
+  color: var(--primary); font-weight: 700;
+}
+.guide-chip .visa-tag { font-size: 0.68rem; padding: 1px 6px; border-radius: 6px; white-space: nowrap; }
+.guide-chip .visa-tag.free { background: #E8F5E9; color: var(--success); }
+.guide-chip .visa-tag.evisa { background: #FFF3E0; color: var(--accent); }
+.guide-chip .visa-tag.conditional { background: #E3F2FD; color: var(--primary); }
+
+.guide-content {
+  background: var(--card-bg); border-radius: 14px; padding: 18px 20px;
+  box-shadow: var(--shadow); line-height: 1.75; font-size: 0.9rem;
+}
+.guide-content h3 { font-size: 1.15rem; margin-bottom: 6px; color: var(--primary-dark); }
+.guide-content h4 { font-size: 0.95rem; margin: 14px 0 6px; color: var(--text); }
+.guide-content .guide-tag { display: inline-block; font-size: 0.72rem; padding: 2px 10px; border-radius: 20px; margin-bottom: 10px; }
+.guide-content .guide-tag.free { background: #E8F5E9; color: var(--success); }
+.guide-content .guide-tag.evisa { background: #FFF3E0; color: var(--accent); }
+.guide-content .guide-tag.conditional { background: #E3F2FD; color: var(--primary); }
+.guide-content ul { padding-left: 20px; }
+.guide-content li { margin-bottom: 4px; }
+.guide-content .tip-box {
+  background: #FFF8E1; border-left: 3px solid var(--accent);
+  padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 10px 0; font-size: 0.85rem;
+}
+.guide-content .warn-box {
+  background: #FFEBEE; border-left: 3px solid var(--danger);
+  padding: 10px 14px; border-radius: 0 10px 10px 0; margin: 10px 0; font-size: 0.85rem;
+}
+.guide-content .section-divider { border: none; border-top: 1px dashed var(--border); margin: 14px 0; }
+.guide-content .city-card {
+  background: var(--bg); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
+}
+.guide-content .city-card .city-name { font-weight: 700; font-size: 0.88rem; }
+.guide-content .city-card .city-desc { font-size: 0.82rem; color: var(--text-light); margin-top: 2px; }
+.guide-content .city-card .city-spots { font-size: 0.8rem; color: var(--primary-dark); margin-top: 4px; }
+.guide-content .food-box {
+  background: #E8F8F5; border-radius: 10px; padding: 8px 14px; margin: 8px 0;
+  font-size: 0.85rem; color: var(--teal);
+}
+.guide-content .souvenir-box {
+  background: #F3E5F5; border-radius: 10px; padding: 8px 14px; margin: 8px 0;
+  font-size: 0.82rem; color: var(--purple);
+}
+.guide-source { font-size: 0.78rem; color: var(--text-light); margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border); }
+.guide-source a { color: var(--primary); text-decoration: none; }
+.guide-source a:hover { text-decoration: underline; }
+
+/* Season table */
+.season-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; margin: 10px 0; }
+.season-table th, .season-table td { text-align: center; padding: 3px 2px; border: 1px solid var(--border); }
+.season-table th { background: var(--bg); font-weight: 600; }
+.season-table td.good { background: #C8E6C9; }
+.season-table td.hot { background: #FFCDD2; color: var(--danger); }
+.season-table td.cold { background: #BBDEFB; color: var(--primary); }
+
+/* Transport table */
+.trans-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin: 10px 0; }
+.trans-table th, .trans-table td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.trans-table th { color: var(--text-light); font-weight: 600; }
+.trans-table .trans-from, .trans-table .trans-to { font-weight: 600; }
+
+/* Prepare panel */
+.prepare-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.prepare-card {
+  background: var(--card-bg); border-radius: 14px; padding: 16px 18px;
+  box-shadow: var(--shadow); font-size: 0.9rem;
+}
+.prepare-card h4 { font-size: 0.95rem; margin-bottom: 10px; color: var(--primary-dark); }
+.prepare-card ul { padding-left: 20px; }
+.prepare-card li { margin-bottom: 5px; font-size: 0.85rem; }
+.prepare-card .app-row {
+  display: flex; align-items: flex-start; gap: 10px; padding: 6px 0;
+  border-bottom: 1px solid var(--border); font-size: 0.84rem;
+}
+.prepare-card .app-row:last-child { border-bottom: none; }
+.prepare-card .app-name { font-weight: 700; color: var(--primary); white-space: nowrap; min-width: 120px; }
+.prepare-card .app-desc { color: var(--text-light); flex: 1; }
+
+.emergency-box {
+  background: #FFEBEE; border-radius: 14px; padding: 14px 18px; margin-bottom: 12px; font-size: 0.85rem;
+}
+.emergency-box .em-phone { font-size: 1.1rem; font-weight: 800; color: var(--danger); }
+
+.currency-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+.currency-table th, .currency-table td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.currency-table th { color: var(--text-light); font-weight: 600; }
+.currency-table .cur-code { color: var(--primary); font-weight: 600; font-size: 0.78rem; }
+
+.sim-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
+.sim-table th, .sim-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+.sim-table th { color: var(--text-light); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>追寻旅迹</h1>
+  <p>亚欧非大环线 · 路线 · 攻略 · 行李 · 攒钱 · 笔记</p>
+</header>
+
+<!-- Trip Info -->
+<div class="trip-info">
+  <div class="trip-field"><label>目的地</label><input type="text" id="tripDest" placeholder="如：亚欧非大环线"></div>
+  <div class="trip-field"><label>出发日期</label><input type="date" id="tripDate"></div>
+  <div class="trip-field"><label>天数</label><input type="number" id="tripDays" placeholder="如：60" min="1" style="width:60px"></div>
+</div>
+
+<!-- Countdown -->
+<div class="countdown" id="countdownBox" style="display:none">
+  <div class="cd-box"><div class="cd-num" id="cdDay">0</div><div class="cd-label">天</div></div>
+  <div class="cd-colon">:</div>
+  <div class="cd-box"><div class="cd-num" id="cdHour">0</div><div class="cd-label">时</div></div>
+  <div class="cd-colon">:</div>
+  <div class="cd-box"><div class="cd-num" id="cdMin">0</div><div class="cd-label">分</div></div>
+  <div class="cd-colon">:</div>
+  <div class="cd-box"><div class="cd-num" id="cdSec">0</div><div class="cd-label">秒</div></div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" data-tab="route">路线规划</button>
+  <button class="tab-btn" data-tab="guide">攻略参考</button>
+  <button class="tab-btn" data-tab="prepare">出发准备</button>
+  <button class="tab-btn" data-tab="luggage">行李清单</button>
+  <button class="tab-btn" data-tab="shopping">购物清单</button>
+  <button class="tab-btn" data-tab="savings">攒钱进度</button>
+  <button class="tab-btn" data-tab="notes">旅行笔记</button>
+</div>
+
+<main>
+  <!-- ===== Route Panel ===== -->
+  <div class="panel active" id="panel-route">
+    <div class="section-title">路线规划 <span class="badge" id="routeBadge">0 站</span></div>
+    <div class="route-summary" id="routeSummary">
+      <div class="rs-item"><div class="rs-num" id="rsCountries">0</div><div class="rs-label">国家/地区</div></div>
+      <div class="rs-item"><div class="rs-num" id="rsDays">0</div><div class="rs-label">预计天数</div></div>
+      <div class="rs-item"><div class="rs-num" id="rsVisited">0</div><div class="rs-label">已到访</div></div>
+      <div class="rs-item"><div class="rs-num" id="rsBudget">¥0</div><div class="rs-label">预算</div></div>
+    </div>
+    <button class="preset-btn" onclick="loadPresetRoute()">一键导入「我的亚欧非大环线」路线（11站约63天 · 预算约2.5万）</button>
+    <div class="route-add-row">
+      <input type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
+      <select id="routeVisa">
+        <option value="free">免签</option><option value="evisa">电子签</option>
+        <option value="conditional">有条件免签</option><option value="other">其他</option>
+      </select>
+      <input type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
+      <input type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
+      <button class="btn-add" onclick="addRoute()">添加</button>
+    </div>
+    <div class="route-list" id="routeList"></div>
+  </div>
+
+  <!-- ===== Guide Panel ===== -->
+  <div class="panel" id="panel-guide">
+    <div class="section-title">攻略参考 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">亚欧非大环线13国 · 整合自环线SILKLOOP</span></div>
+    <div class="guide-search"><input type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
+    <div class="guide-grid" id="guideGrid"></div>
+    <div id="guideDetail"></div>
+  </div>
+
+  <!-- ===== Prepare Panel ===== -->
+  <div class="panel" id="panel-prepare">
+    <div class="section-title">出发准备 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">签证 · 行李 · 货币 · 通讯 · App · 紧急联络</span></div>
+    <div id="prepareContent"></div>
+  </div>
+
+  <!-- ===== Luggage Panel ===== -->
+  <div class="panel" id="panel-luggage">
+    <div class="section-title">行李清单 <span class="badge" id="luggageBadge">0 / 0</span></div>
+    <div class="filters" id="luggageFilters">
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="clothes">衣物</button>
+      <button class="filter-btn" data-filter="toiletry">洗漱</button>
+      <button class="filter-btn" data-filter="electronics">电子</button>
+      <button class="filter-btn" data-filter="docs">证件</button>
+      <button class="filter-btn" data-filter="medicine">药品</button>
+      <button class="filter-btn" data-filter="other">其他</button>
+    </div>
+    <div class="add-row">
+      <input type="text" id="luggageInput" placeholder="添加物品名称..." onkeydown="if(event.key==='Enter')addLuggage()">
+      <select id="luggageCat">
+        <option value="clothes">衣物</option><option value="toiletry">洗漱</option>
+        <option value="electronics">电子</option><option value="docs">证件</option>
+        <option value="medicine">药品</option><option value="other">其他</option>
+      </select>
+      <button class="btn-add" onclick="addLuggage()">添加</button>
+    </div>
+    <div id="luggageList"></div>
+  </div>
+
+  <!-- ===== Shopping Panel ===== -->
+  <div class="panel" id="panel-shopping">
+    <div class="section-title">购物清单 <span class="badge" id="shopBadge">0 / 0</span></div>
+    <div class="add-row">
+      <input type="text" id="shopName" placeholder="物品名称..." onkeydown="if(event.key==='Enter')document.getElementById('shopPrice').focus()">
+      <input type="number" id="shopPrice" placeholder="价格" style="max-width:90px" onkeydown="if(event.key==='Enter')addShop()">
+      <button class="btn-add" onclick="addShop()">添加</button>
+    </div>
+    <div id="shopList"></div>
+    <div class="shop-summary">
+      <span class="total-label">预计总花费</span>
+      <span class="total-amount" id="shopTotal">¥ 0</span>
+    </div>
+  </div>
+
+  <!-- ===== Savings Panel ===== -->
+  <div class="panel" id="panel-savings">
+    <div class="section-title">攒钱进度</div>
+    <div class="savings-card">
+      <div class="label">已攒金额</div>
+      <div class="amount" id="savedAmount">¥ 0</div>
+      <div class="target">目标：¥ <span id="targetText">0</span></div>
+      <div class="savings-bar"><div class="fill" id="savingsFill" style="width:0%"></div></div>
+      <div class="percent" id="savingsPercent">0%</div>
+    </div>
+    <div class="target-section">
+      <div class="row">
+        <input type="number" id="targetInput" placeholder="设置攒钱目标金额..." min="0">
+        <button class="btn btn-set" onclick="setTarget()">设置目标</button>
+        <button class="btn btn-reset" onclick="resetSavings()">重置</button>
+      </div>
+    </div>
+    <div class="add-money-section">
+      <div class="row">
+        <input type="number" id="moneyInput" placeholder="金额..." step="0.01">
+        <input type="text" id="moneyNote" placeholder="备注（如：本月工资）" style="flex:2">
+        <button class="btn btn-add-money" onclick="addMoney(1)">＋存入</button>
+        <button class="btn btn-sub-money" onclick="addMoney(-1)">－支出</button>
+      </div>
+    </div>
+    <div class="money-history"><h3>收支记录</h3><div id="historyList"></div></div>
+  </div>
+
+  <!-- ===== Notes Panel ===== -->
+  <div class="panel" id="panel-notes">
+    <div class="section-title">旅行笔记</div>
+    <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
+    <div class="notes-hint">自动保存</div>
+  </div>
+</main>
+
+<footer>
+  追寻旅迹 · 数据保存在本地浏览器中，不会上传 · 攻略整合自环线SILKLOOP等公开资源
+</footer>
+
+<div id="toast"></div>
+
+<script>
+// ===== 13国完整攻略数据 =====
+const GUIDES = {
+  kazakhstan: {
+    name:'哈萨克斯坦', en:'Kazakhstan', region:'中亚', visa:'free', visaText:'免签',
+    days:'5-7天', currency:'坚戈 KZT', timezone:'比北京慢3小时',
+    desc:'中亚面积最大的国家，雪山、草原与现代城市并存，通常是从中国出发进入中亚的第一站。',
+    cities:[
+      {name:'阿拉木图', stay:'2-4天', desc:'哈萨克斯坦最大城市，雪山就在城市背后', spots:'大阿拉木图湖 · 麦迪奥冰场 · 琴布拉克滑雪场 · 升天大教堂 · 绿色巴扎 · 恰伦峡谷 · 科克托别山 · 阿拜歌剧院 · 中央国家博物馆'},
+      {name:'阿斯塔纳', stay:'1-2天', desc:'首都，以未来感的现代建筑群著称', spots:'巴伊杰列克观景塔 · 可汗之帐 · 哈兹拉特苏丹清真寺'},
+      {name:'奇姆肯特', stay:'1天', desc:'南部重镇，前往图尔克斯坦和乌兹别克斯坦的中转站', spots:'奥尔达巴瑟广场 · 独立公园 · 赛拉姆古城遗址'},
+      {name:'图尔克斯坦', stay:'1天', desc:'亚萨维陵所在地，最重要的历史古城', spots:'霍贾·艾哈迈德·亚萨维陵 · 希勒维特地下清真寺 · Keruen-Saray旅游综合体'},
+      {name:'阿克套', stay:'2-3天', desc:'唯一海滨大城，面朝里海，曼格斯套荒漠地貌大本营', spots:'博兹吉拉大峡谷 · 托雷什球石谷 · 舍尔卡拉山 · 里海滨海步道'}
+    ],
+    food:'马肉香肠、酸奶饮品和新鲜干果都在绿巴扎，值得专程一逛；尝中亚风味小吃记得备好现金。',
+    souvenirs:'毡制品 · 冬不拉乐器 · 哈萨克斯坦牌巧克力 · 山地蜂蜜 · 奶疙瘩',
+    tips:[
+      '从伊犁州汽车客运中心乘国际班车赴阿拉木图（经都拉塔口岸），全程约10小时，票价约200元',
+      '市内出行首选Yandex Go，起步价折合人民币约8元',
+      '绿巴扎值得专程一逛：新鲜水果、干果和哈萨克风味小吃',
+      '花50块就能在阿拜歌剧院看一场歌剧表演，票需提前买',
+      '科克托别缆车往返3500坚戈；12路公交直达但要1小时，打车更省时',
+      '恰伦峡谷距阿拉木图约200公里、车程约3.5小时，常与科尔赛湖/凯因迪湖拼一日团（约15-24美元起）'
+    ],
+    warnings:[
+      '伊宁客运总站8:50才开门；线上购票也必须凭身份证到窗口取纸质票',
+      '到阿拉木图前有一个中途下客点，别提前下，下一站才是Sayran总站',
+      'Sayran车站下车点旁有会中文的SIM卡柜台，可微信支付'
+    ],
+    transit:[
+      {from:'中国·新疆伊犁', to:'阿拉木图', mode:'大巴', time:'约10小时', price:'约¥200', note:'经都拉塔口岸出入境，微信小程序可购票'},
+      {from:'阿拉木图', to:'阿斯塔纳', mode:'夜火车/飞机', time:'火车约16-18小时，飞行1.5小时', price:'卧铺经济', note:'火车bilet.railways.kz购票'},
+      {from:'阿拉木图', to:'奇姆肯特', mode:'火车/飞机', time:'火车约12-14小时，飞行1.5小时', price:'卧铺经济', note:'bilet.railways.kz购票'},
+      {from:'奇姆肯特', to:'塔什干', mode:'拼车/巴士', time:'约3-4小时含通关', price:'现场议价', note:'Zhibek Zholy口岸改造关闭中，现经替代口岸过境'},
+      {from:'阿拉木图', to:'塔什干', mode:'夜行大巴/Talgo火车', time:'大巴约16小时，火车约17-18小时', price:'大巴约¥160-180', note:'大巴避开29-38号连床座；2025-12起Talgo直达更舒适'},
+      {from:'阿克套', to:'巴库', mode:'里海轮渡/飞机', time:'轮渡约18-30小时，直飞1小时', price:'轮渡约$80起', note:'轮渡班期看货源与风浪，需临近确认'}
+    ]
+  },
+
+  uzbekistan: {
+    name:'乌兹别克斯坦', en:'Uzbekistan', region:'中亚', visa:'free', visaText:'免签',
+    days:'7-10天', currency:'苏姆 UZS', timezone:'比北京慢3小时',
+    desc:'丝路古城核心，撒马尔罕、布哈拉、希瓦串起中亚最经典的历史线路。',
+    cities:[
+      {name:'塔什干', stay:'1-2天', desc:'首都和交通枢纽，巴扎、清真古籍与华丽的地铁站', spots:'哈兹拉提伊玛目建筑群 · 恰苏大巴扎 · 帖木儿广场 · 塔什干地铁站巡礼'},
+      {name:'撒马尔罕', stay:'1-2天', desc:'丝路古城代表，雷吉斯坦广场是中亚最著名的地标', spots:'雷吉斯坦广场 · 沙赫静达陵墓群 · 比比哈努姆清真寺 · 古尔-埃米尔陵 · 兀鲁伯天文台遗址'},
+      {name:'布哈拉', stay:'1-2天', desc:'保存完整的丝路老城，适合放慢节奏步行闲逛', spots:'卡良宣礼塔与波伊卡良建筑群 · 雅克城堡 · 拉比豪兹水池广场 · 萨曼王陵 · 四塔楼'},
+      {name:'希瓦', stay:'1-2天', desc:'被完整城墙包裹的露天博物馆古城', spots:'伊昌卡拉内城 · 卡尔塔米纳尔宣礼塔 · 朱玛清真寺 · 库尼亚方舟王宫'},
+      {name:'费尔干纳', stay:'1-2天', desc:'费尔干纳盆地中心，以手工艺和市集闻名', spots:'马尔吉兰丝绸工坊 · 里什坦陶瓷村 · 浩罕汗宫'}
+    ],
+    food:'餐桌主角是抓饭、烤肉、撒姆撒（烤肉饼）和酸奶；不少人会水土不服，瓶装水和肠胃药提前备齐。',
+    souvenirs:'里什坦陶瓷 · 苏扎尼刺绣 · 玛尔吉兰艾德莱斯绸 · 皮恰克刀 · 干果与香料',
+    tips:[
+      '城际移动首选Afrosiyob高速列车，又快又舒适；车票在eticket.railway.uz购买，务必赶早',
+      '撒马尔罕的景点分布集中，步行即可串联，住宿选雷吉斯坦广场附近',
+      '布哈拉住宿首选古城区里面：氛围出色，主要景点走路都能到',
+      '布哈拉→希瓦火车现已全部直达希瓦站，普速约5.5-6小时，另有新型快车约3小时20分（每周3班）',
+      '塔什干→布哈拉火车分两档：普通约6.5小时95元，高速约4小时224元',
+      '古尔-埃米尔陵后门出去走几十米，有座私人打理的小陵墓：穹顶极为惊艳，路过值得进去一看',
+      '塔什干青旅床位约90元/晚，房价中通常含约20元旅游税',
+      '塔什干地铁保留着浓郁苏联遗风，逐站看站台本身就算一个景点'
+    ],
+    warnings:[
+      '无人机严禁带入，入关时会开箱检查，一经查出当场没收',
+      '每处住宿都要向店家索取住宿登记单（Registration Slip），出境时存在抽查',
+      '廉价航空对行李额查得很严，有超重被收80美元的先例——可把衣物塞进颈枕给背包减负',
+      '入境无正式离境机票硬性要求，但边检偶尔会问行程与离境安排，备好后续车票/机票更稳妥'
+    ],
+    transit:[
+      {from:'奇姆肯特', to:'塔什干', mode:'拼车/巴士', time:'约3-4小时含通关', price:'现场议价', note:'Zhibek Zholy口岸改造中，经替代口岸过境'},
+      {from:'阿拉木图', to:'塔什干', mode:'夜行大巴/Talgo火车', time:'大巴约16小时，火车约17-18小时', price:'大巴约¥160-180', note:'大巴避开29-38号连床座'},
+      {from:'塔什干', to:'撒马尔罕', mode:'Afrosiyob高铁/Sharq快车/拼车', time:'高铁约2-2.5小时，Sharq约3.5小时', price:'需提前购票', note:'高铁票eticket.railway.uz开售即抢'},
+      {from:'塔什干', to:'布哈拉', mode:'高铁/普速火车', time:'高铁约4小时，普速约7小时', price:'需提前购票', note:'eticket.railway.uz'},
+      {from:'布哈拉', to:'撒马尔罕', mode:'高铁/Sharq快车/拼车', time:'高铁约1.5-2小时，拼车约4小时', price:'需提前购票', note:'拼车约$10-15/座，布哈拉北汽车站坐满即走'},
+      {from:'布哈拉', to:'希瓦', mode:'火车/拼车', time:'火车约5.5-6小时，拼车约6小时', price:'需提前购票', note:'现行班次均直达希瓦站'},
+      {from:'希瓦', to:'塔什干', mode:'夜火车/飞机', time:'夜火车约14-15小时，飞行1.5小时', price:'卧铺可省一晚住宿', note:'火车eticket.railway.uz购票'},
+      {from:'塔什干', to:'巴库', mode:'飞机', time:'直飞约2.5-3小时', price:'提前比价', note:'乌航与阿塞拜疆航空每天均有直飞'}
+    ]
+  },
+
+  kyrgyzstan: {
+    name:'吉尔吉斯斯坦', en:'Kyrgyzstan', region:'中亚', visa:'evisa', visaText:'电子签',
+    days:'7-12天', currency:'索姆 KGS', timezone:'比北京慢2小时',
+    desc:'中亚自然风光核心，雪山与高山湖泊，适合徒步和户外爱好者。可选支线，非免签主线必经国。',
+    cities:[
+      {name:'比什凯克', stay:'1-2天', desc:'首都，前往雪山和湖泊的出发基地', spots:'阿拉图广场 · 奥什巴扎 · 胜利广场'},
+      {name:'伊塞克湖', stay:'2-3天', desc:'世界第二大高山湖，北岸乔尔蓬阿塔是度假中心', spots:'乔尔蓬阿塔岩画露天博物馆 · 伊塞克湖北岸度假带'},
+      {name:'卡拉科尔', stay:'2-3天', desc:'伊塞克湖东端徒步小城，周边峡谷和雪山资源丰富', spots:'东干清真寺 · 圣三一东正教堂 · 普尔热瓦尔斯基博物馆'},
+      {name:'奥什', stay:'1-2天', desc:'南部古城，苏莱曼圣山是世界遗产', spots:'苏莱曼山 · 苏莱曼山洞穴博物馆'}
+    ],
+    food:'常见的是烤肉、拉条子（Lagman）和马奶酒；山区民宿做的家常晚餐常有意外之喜。',
+    souvenirs:'沙尔达克毡毯 · 卡尔帕克毡帽 · 伊塞克湖蜂蜜 · 阿尔斯兰博布核桃 · 马奶酒',
+    tips:[
+      '个人游客需电子签（evisa.e-gov.kg，有2天加急服务）；5-25人旅游团可免签21天',
+      '持3年以上美英申根多次签可经比什凯克机场免签7天',
+      '比什凯克→伊塞克湖（乔尔蓬阿塔）约4-4.5小时，新汽车总站出发坐满即走',
+      '比什凯克→卡拉科尔marshrutka约6-7小时，夜班大巴用GoBus App预订',
+      '比什凯克→奥什约11-13小时山路多弯，冬季Too-Ashuu山口可能封路数日'
+    ],
+    warnings:[
+      '中国护照需提前办电子签，为可选支线',
+      '冬季山区路况差，出发前务必确认路况'
+    ],
+    transit:[
+      {from:'阿拉木图', to:'比什凯克', mode:'拼车/marshrutka', time:'约4-5小时含通关', price:'现场议价', note:'Sayran车站出发，经科尔代口岸过境'},
+      {from:'比什凯克', to:'伊塞克湖', mode:'marshrutka/拼车', time:'约4-4.5小时', price:'现场购票', note:'新汽车总站出发至乔尔蓬阿塔'},
+      {from:'比什凯克', to:'卡拉科尔', mode:'marshrutka/夜班大巴', time:'约6-7小时', price:'现场购票', note:'夜班大巴GoBus App预订，途经乔尔蓬阿塔可中途下'},
+      {from:'比什凯克', to:'奥什', mode:'拼车/marshrutka', time:'约11-13小时', price:'现场议价', note:'冬季Too-Ashuu山口可能封路'}
+    ]
+  },
+
+  tajikistan: {
+    name:'塔吉克斯坦', en:'Tajikistan', region:'中亚', visa:'evisa', visaText:'电子签',
+    days:'7-10天', currency:'索莫尼 TJS', timezone:'比北京慢3小时',
+    desc:'以帕米尔高原闻名的山地国家，适合喜欢小众探险路线的旅行者。可选支线，非免签主线必经国。',
+    cities:[
+      {name:'杜尚别', stay:'1-2天', desc:'首都，进出帕米尔和法恩山脉的基地', spots:'鲁达基公园 · 塔吉克斯坦国家博物馆 · 国旗公园'},
+      {name:'苦盏', stay:'1天', desc:'第二大城市，费尔干纳盆地边缘的古城', spots:'苦盏城堡 · 星期四大巴扎'},
+      {name:'伊斯坎德尔湖', stay:'1-2天', desc:'法恩山脉中的高山湖泊', spots:'伊斯坎德尔湖与范恩尼亚加拉瀑布'},
+      {name:'帕米尔公路与霍罗格', stay:'3-7天', desc:'世界最著名的高原公路之一，适合包车深度穿越', spots:'帕米尔植物园'}
+    ],
+    food:'主食有抓饭、现烤大馕和国菜Qurutob（馕泡酸奶沙拉）；走帕米尔线基本在家庭旅馆包餐。',
+    souvenirs:'霍瓦林与帕米尔蜂蜜 · 托奇绣花帽 · 伊斯法拉干杏 · 青金石 · 帕米尔羊毛袜与牦牛毛织物',
+    tips:[
+      '官网（visa.gov.tj）在线申请e-Visa；55岁以上中国公民可免签14天',
+      '前往帕米尔需勾选GBAO通行证',
+      '塔什干→苦盏拼车约2.5-3小时含通关，经Oybek口岸过境',
+      '苦盏→杜尚别拼车约5-6小时山区公路，冬季注意路况；也有航班约45-55分钟',
+      '杜尚别→霍罗格帕米尔公路约14-16小时，需提前办妥GBAO许可证'
+    ],
+    warnings:[
+      '中国护照需提前办电子签，为可选支线',
+      '帕米尔公路Qala-i-Khumb—霍罗格段修路中，实际耗时可能明显超出',
+      '杜尚别→霍罗格小飞机逢云即停，可当惊喜不可当计划'
+    ],
+    transit:[
+      {from:'塔什干', to:'苦盏', mode:'拼车/直达大巴', time:'拼车约2.5-3小时含通关', price:'现场议价', note:'Kuyluk市场拼车至Oybek口岸过境'},
+      {from:'苦盏', to:'杜尚别', mode:'拼车/航班', time:'拼车约5-6小时，航班约45-55分钟', price:'现场议价', note:'Somon Air约$50-100'},
+      {from:'杜尚别', to:'霍罗格', mode:'越野拼车/小型航班', time:'公路约14-16小时，航班约1小时', price:'拼车按座计价', note:'需GBAO许可证；小飞机每周约3班，逢云即停'}
+    ]
+  },
+
+  azerbaijan: {
+    name:'阿塞拜疆', en:'Azerbaijan', region:'高加索', visa:'free', visaText:'免签',
+    days:'3-5天', currency:'马纳特 AZN', timezone:'比北京慢4小时',
+    desc:'里海之滨的高加索门户，巴库老城与现代天际线同框。',
+    cities:[
+      {name:'巴库', stay:'2-3天', desc:'里海边的首都，老城与火焰塔新旧同框', spots:'巴库老城 · 少女塔 · 火焰塔 · 盖达尔·阿利耶夫中心'},
+      {name:'舍基', stay:'1-2天', desc:'高加索山麓小城，以汗王夏宫的彩绘玻璃闻名', spots:'舍基汗宫 · 上骆驼驿站 · 基什教堂 · 舍基汗家冬宫'},
+      {name:'戈布斯坦', stay:'1天', desc:'史前岩画与泥火山，巴库出发经典一日游', spots:'戈布斯坦岩画 · 泥火山群'}
+    ],
+    food:'招牌是藏红花抓饭、Qutab薄饼和石榴汁；待客的标准配置是红茶加果酱。',
+    souvenirs:'石榴酱 · 手绘真丝头巾 · 梨形茶杯与红茶 · 地毯与基里姆 · 谢基哈尔瓦',
+    tips:[
+      '戈布斯坦岩画+泥火山半日包车：泥火山段换苏联老拉达4x4，近期约40马纳特/车',
+      '巴库→第比利斯ADY夜火车：23:10发、次日08:41到，边检在车上完成',
+      '巴库机场办BakıKart交通卡，H1机场大巴进城1.3马纳特最划算，24小时运营',
+      '地铁单程0.3马纳特；打车进城约20+马纳特',
+      '阿塞拜疆陆路口岸自2020年起对所有人关闭入境方向（延长至2026-10-01），可陆路出境去格鲁吉亚'
+    ],
+    warnings:[
+      '阿塞拜疆与亚美尼亚积怨极深，过关时海关可能问到相关问题，照实回答就好',
+      '顺序必须阿塞拜疆在亚美尼亚之前',
+      'Visa ATM取现100马纳特收约6马纳特手续费，别少量多取'
+    ],
+    transit:[
+      {from:'塔什干', to:'巴库', mode:'飞机', time:'直飞约2.5-3小时', price:'提前比价', note:'乌航与阿塞拜疆航空每天均有直飞'},
+      {from:'巴库', to:'舍基', mode:'夜火车/大巴', time:'夜火车约6小时，大巴约5-6小时', price:'卧铺经济', note:'ady.az购票；舍基火车站在城外约17-20公里'},
+      {from:'巴库', to:'第比利斯', mode:'夜火车（推荐）', time:'约9.5小时', price:'卧铺经济', note:'23:10发、08:41到，ady.az购票，边检在车上完成'},
+      {from:'阿克套', to:'巴库', mode:'里海轮渡/飞机', time:'轮渡约18-30小时，直飞1小时', price:'轮渡约$80起', note:'滚装轮渡自库里克港发阿塞拜疆阿拉特港'}
+    ]
+  },
+
+  armenia: {
+    name:'亚美尼亚', en:'Armenia', region:'高加索', visa:'free', visaText:'免签',
+    days:'4-7天', currency:'德拉姆 AMD', timezone:'比北京慢4小时',
+    desc:'遍布山间修道院的高加索古国，历史与山地风光浓度极高。',
+    cities:[
+      {name:'埃里温', stay:'2-3天', desc:'首都，粉色石头建成的城市，周边修道院众多', spots:'共和国广场 · 阶梯艺术中心 · 种族灭绝纪念馆 · 加尼神庙 · 格加尔德岩石修道院 · 深坑修道院 · 岩石交响曲'},
+      {name:'塞凡湖', stay:'1天', desc:'高加索最大的高山湖，塞凡修道院立于半岛之上', spots:'塞凡修道院 · 诺拉图斯石十字墓园 · 海拉万克修道院'},
+      {name:'迪利然', stay:'1-2天', desc:'森林环绕的山间小镇，被称为亚美尼亚的小瑞士', spots:'迪利然老城与国家公园 · 哈加尔津修道院 · 帕尔兹湖 · 戈沙万克修道院'},
+      {name:'戈里斯', stay:'1-2天', desc:'南部小城，前往塔特夫修道院的基地', spots:'塔捷夫修道院与塔捷夫之翼缆车 · 老洪佐雷斯克洞穴村 · 戈里斯老城洞穴群'}
+    ],
+    food:'烤肉串、葡萄酒和街头小吃管够；夏天车厘子便宜得惊人（参考价约¥7一公斤）。',
+    souvenirs:'亚美尼亚白兰地 · 石榴酒 · 杏干礼盒 · 杜杜克笛 · 十字架石微缩雕件',
+    tips:[
+      '埃里温—第比利斯之间小巴单程约6-7小时，车费约130元人民币',
+      '乘266路公交可直达加尼神庙、岩石交响曲与格加尔德修道院，串成一日游',
+      '每年7月的瓦达瓦尔节是全民泼水节，全城水战、气氛热烈',
+      '种族灭绝纪念馆属缅怀历史之地，氛围庄重，参观时留意言行'
+    ],
+    warnings:[
+      '曾访问阿塞拜疆者入境亚美尼亚方向或被问话，照实回答即可',
+      '种族灭绝纪念馆氛围庄重，参观时留意言行'
+    ],
+    transit:[
+      {from:'埃里温', to:'第比利斯', mode:'小巴/夜火车/拼车', time:'小巴约5-7小时，夜火车约10.5小时', price:'约¥130-150', note:'夜火车ticket.railway.am或gr.com.ge购票'},
+      {from:'埃里温', to:'迪利然', mode:'marshrutka/网约车', time:'小巴约2小时，网约车约1.5小时', price:'约1000 AMD', note:'埃里温北站乘651/654/655/656路小巴'},
+      {from:'埃里温', to:'戈里斯', mode:'大巴/拼车', time:'约4-5小时', price:'现场购票', note:'南下塔特夫以戈里斯为落脚点，山路多备晕车药'}
+    ]
+  },
+
+  georgia: {
+    name:'格鲁吉亚', en:'Georgia', region:'高加索', visa:'free', visaText:'免签',
+    days:'7-10天', currency:'拉里 GEL', timezone:'比北京慢4小时',
+    desc:'高加索自由行热门目的地，雪山、葡萄酒与老城巷弄。',
+    cities:[
+      {name:'第比利斯', stay:'2-4天', desc:'首都，老城巷弄、硫磺浴场和山顶要塞', spots:'纳里卡拉要塞 · 圣三一大教堂 · 和平桥 · 硫磺浴场区 · 姆塔茨明达山 · 自由广场与布偶钟楼 · 旱桥跳蚤市场 · 格鲁吉亚编年史纪念碑 · 格鲁吉亚母亲雕像'},
+      {name:'卡兹别克', stay:'1-2天', desc:'高加索雪山下的小镇，圣三一教堂是格鲁吉亚的名片', spots:'格尔盖蒂圣三一教堂 · 卡兹别克山观景 · 格韦莱蒂瀑布 · 特鲁索峡谷'},
+      {name:'巴统', stay:'1-2天', desc:'黑海海滨城市，夏季度假氛围浓厚', spots:'阿里与尼诺动态雕像 · 巴统海滨大道与植物园 · 贡尼奥要塞 · 阿尔戈缆车与阿纳利亚山观景'},
+      {name:'库塔伊西', stay:'1-2天', desc:'西部古都，周边有洞穴和峡谷', spots:'格拉特修道院 · 普罗米修斯溶洞 · 巴格拉特大教堂 · 马茨温塔峡谷'},
+      {name:'西格纳吉', stay:'1天', desc:'卡赫季葡萄酒产区的山顶小镇，被称为爱情之城', spots:'西格纳吉城墙 · 博德贝修道院 · 锡格纳吉国家博物馆'}
+    ],
+    food:'必吃奶酪船Khachapuri和灌汤包Khinkali，佐以各色葡萄酒；蓝莓量足价廉，西格纳吉别错过葡萄酒冰淇淋。',
+    souvenirs:'陶罐葡萄酒 · 丘尔奇赫拉 · 恰恰烈酒 · 掐丝珐琅首饰 · 牛角杯',
+    tips:[
+      '市区游览用步行搭配缆车（每段约2.5拉里），城市不大、景致集中',
+      '想淘苏联时代的老物件，去旱桥跳蚤市场',
+      '上纳里卡拉要塞坐缆车最省力（单程2.5拉里），傍晚上去赏落日',
+      '木偶钟楼整点有1分钟木偶短剧，需掐准整点到场',
+      '第比利斯Didube站乘marshrutka到卡兹别克约3.5小时、20拉里',
+      '格尔盖蒂圣三一教堂徒步上山约1.5-2小时，或4x4往返约40拉里',
+      '格鲁吉亚蓝莓价格低廉，可以放开实现蓝莓自由',
+      '第比利斯青旅床位普遍60-130元/晚',
+      '库塔伊西青旅可低至15拉里/晚，但便宜的常离市中心很远',
+      '巴统住宿选欧洲广场附近，黑海海滩全是鹅卵石几乎无沙'
+    ],
+    warnings:[
+      '2026年1月1日起入境须持覆盖全程的旅行保险（保额不低于30,000拉里），边检会查验',
+      '陆路入境备选（自舍基）：口岸只能步行通过（中立区约700米），格方一侧查护照+旅行保险保单',
+      '卡兹别克一日游返程常堵车，时间充裕强烈建议过夜一晚'
+    ],
+    transit:[
+      {from:'巴库', to:'第比利斯', mode:'夜火车（推荐）', time:'约9.5小时', price:'卧铺经济', note:'23:10发、08:41到，ady.az购票，边检在车上完成'},
+      {from:'第比利斯', to:'西格纳吉', mode:'marshrutka/包车', time:'小巴约2-2.5小时', price:'现场购票', note:'Samgori车站小巴现场购票'},
+      {from:'埃里温', to:'第比利斯', mode:'小巴/夜火车/拼车', time:'小巴约5-7小时，夜火车约10.5小时', price:'约¥130-150', note:'夜火车ticket.railway.am或gr.com.ge购票'},
+      {from:'第比利斯', to:'库塔伊西', mode:'火车/marshrutka', time:'火车约4-4.5小时，小巴约4小时', price:'现场或官网购票', note:'tkt.ge购票，快车停郊外Rioni站'},
+      {from:'库塔伊西', to:'巴统', mode:'marshrutka/火车', time:'小巴约3小时，慢火车约4.5小时', price:'现场购票', note:'库塔伊西汽车站出发'},
+      {from:'巴统', to:'伊斯坦布尔', mode:'飞机/大巴', time:'直飞约2小时，大巴约18-20小时', price:'机票提前订', note:'土耳其航空/飞马航空每日直飞'},
+      {from:'第比利斯', to:'安卡拉', mode:'飞机', time:'直飞', price:'约¥449', note:'AJet直飞，每周3-4班非每日'}
+    ]
+  },
+
+  turkey: {
+    name:'土耳其', en:'Turkey', region:'西亚', visa:'free', visaText:'免签',
+    days:'10-20天', currency:'里拉 TRY', timezone:'比北京慢5小时',
+    desc:'横跨欧亚的旅行大国，从伊斯坦布尔到卡帕多奇亚再到地中海海岸。',
+    cities:[
+      {name:'伊斯坦布尔', stay:'3-5天', desc:'横跨欧亚的千年古都，清真寺、宫殿与博斯普鲁斯海峡', spots:'圣索菲亚大教堂 · 蓝色清真寺 · 托普卡帕宫 · 大巴扎 · 加拉塔塔 · 博斯普鲁斯海峡游船 · 独立大街与红色电车 · 巴拉特彩色街区 · 科拉教堂'},
+      {name:'卡帕多奇亚', stay:'2-3天', desc:'热气球与奇石地貌的代名词，格雷梅是住宿中心', spots:'格雷梅露天博物馆 · 热气球日出 · 乌奇希萨尔城堡 · 帕夏贝精灵烟囱 · 德林库尤地下城 · 玫瑰谷徒步 · 格雷梅观景台'},
+      {name:'安塔利亚', stay:'2-3天', desc:'地中海度假名城，老城与海岸线兼具', spots:'下杜登瀑布 · 卡勒伊奇老城与罗马港 · 哈德良门'},
+      {name:'卡什', stay:'2-3天', desc:'地中海岸宝藏小镇，出海、跳水与松弛感', spots:'卡普塔斯海滩 · 安提菲罗斯古剧场 · 凯科瓦沉没之城出海'},
+      {name:'棉花堡', stay:'1天', desc:'雪白石灰华梯田与希拉波利斯古城遗址', spots:'棉花堡与希拉波利斯 · 古董温泉泳池 · 老底嘉古城'},
+      {name:'伊兹密尔', stay:'1-2天', desc:'爱琴海畔第三大城市，前往以弗所的门户', spots:'康纳克广场 · 凯梅拉尔特巴扎 · 士麦那古市集'},
+      {name:'以弗所', stay:'1天', desc:'地中海世界保存最好的古罗马城市遗址之一', spots:'以弗所古城与塞尔苏斯图书馆 · 圣约翰教堂遗址 · 圣母玛利亚故居'},
+      {name:'安卡拉', stay:'1天', desc:'首都，国父陵与城堡值得半日，常作航线中转站', spots:'国父陵 · 安卡拉城堡 · 安纳托利亚文明博物馆'}
+    ],
+    food:'烤肉、烤茄子和果仁蜜饼Baklava是主打；街边的甜品、水果与冰淇淋同样地道。',
+    souvenirs:'恶魔眼护身符 · 土耳其软糖 · 藏红花与香料 · 陶瓷（伊兹尼克与屈塔希亚） · 哈曼浴巾',
+    tips:[
+      '自2026年初起对中国护照免签，任意180天内累计停留不超过90天',
+      '住宿选老欧洲区最顺——离各大历史景点都近；办一张公交交通卡地铁轮渡通用',
+      '圣索菲亚等热门景点尽量错开高峰时段去',
+      '看博斯普鲁斯海峡日落，坐价格亲民的公共渡轮就够了',
+      '卡里耶教堂已于2024年修复重新开放，门票约20欧',
+      '热气球需提前一天通过本地旅行社预订，报价波动很大（约80-300欧）',
+      '老爷车追热气球项目约65-100欧',
+      '玫瑰谷徒步全程约12公里5小时，出发前先把轨迹下载好',
+      '吃饭想省钱可去快餐店Göreme Kadin Kooperatifi',
+      '长途大巴票在App Obilet上订',
+      '安塔利亚B线：杜登瀑布选免费的下杜登即可；再串老城Kaleiçi、罗马港、电梯观景台',
+      '卡什出海一日游约268元含午餐，9:00-18:00共四次下海，途经沉没之城',
+      '棉花堡温泉梯田清晨6:30开门或午后人最少'
+    ],
+    warnings:[
+      '免签政策截至2026-07，行前请再次核实',
+      '卡什镇上不少地方刷不了卡，现金务必备足',
+      '蓝色清真寺门口可免费借用女士头巾'
+    ],
+    transit:[
+      {from:'巴统', to:'伊斯坦布尔', mode:'飞机/大巴', time:'直飞约2小时，大巴约18-20小时', price:'机票提前订', note:'土耳其航空/飞马航空每日直飞'},
+      {from:'第比利斯', to:'安卡拉', mode:'飞机', time:'直飞', price:'约¥449', note:'AJet直飞，每周3-4班非每日'},
+      {from:'伊斯坦布尔', to:'安卡拉', mode:'YHT高铁/飞机', time:'高铁约4-4.5小时', price:'需提前购票', note:'TCDD官网或Obilet购票'},
+      {from:'伊斯坦布尔', to:'卡帕多奇亚', mode:'飞机/夜巴', time:'飞行约1.5小时+接驳1小时，夜巴约11小时', price:'机票提前订常有特价', note:'飞开塞利或内夫谢希尔机场'},
+      {from:'卡帕多奇亚', to:'安塔利亚', mode:'夜巴/飞机', time:'夜巴过夜直达', price:'大巴更省钱', note:'Obilet App购票'},
+      {from:'安塔利亚', to:'卡什', mode:'中巴/自驾', time:'中巴约3.5-4小时', price:'现场购票', note:'长途车站乘Batı Antalya中巴'},
+      {from:'卡什', to:'伊斯坦布尔', mode:'巴士+飞机', time:'接驳巴士约3小时+飞行1.5小时', price:'机票约¥252', note:'谷歌地图搜Kaş Özgür Turizm预约'},
+      {from:'卡帕多奇亚', to:'棉花堡', mode:'夜巴', time:'约9-11小时', price:'线上购票', note:'格雷梅发车，代尼兹利下车转小巴约20分钟'},
+      {from:'棉花堡', to:'以弗所', mode:'火车/大巴', time:'约3-4小时', price:'票价低廉', note:'代尼兹利与塞尔丘克之间区域火车与大巴'},
+      {from:'以弗所', to:'伊兹密尔', mode:'区域火车/小巴', time:'约1-1.5小时', price:'票价低廉', note:'塞尔丘克乘TCDD区域火车直达伊兹密尔'},
+      {from:'伊斯坦布尔', to:'开罗', mode:'飞机', time:'直飞约2.5小时', price:'提前比价', note:'土耳其航空/埃及航空直飞班次多'}
+    ]
+  },
+
+  serbia: {
+    name:'塞尔维亚', en:'Serbia', region:'巴尔干', visa:'free', visaText:'免签',
+    days:'2-3天', currency:'第纳尔 RSD', timezone:'比北京慢6小时',
+    desc:'多瑙河畔的前南斯拉夫首都所在，不靠精致取胜，靠的是东欧城市的厚重气质。可选支线。',
+    cities:[
+      {name:'贝尔格莱德', stay:'2-3天', desc:'萨瓦河与多瑙河在城下交汇，前南斯拉夫首都', spots:'卡莱梅格丹城堡 · 圣萨瓦大教堂 · 共和广场与米哈伊洛大街 · 塞尔维亚国家博物馆 · 泽蒙区与加尔多什塔 · 中塞友谊广场'},
+      {name:'诺维萨德', stay:'1-2天', desc:'塞尔维亚第二城，奥匈时期中欧街区，被称作"塞尔维亚的雅典"', spots:'彼得罗瓦拉丁要塞 · 自由广场与圣母之名教堂 · 斯特兰德多瑙河沙滩 · 弗鲁什卡山修道院群'},
+      {name:'尼什', stay:'1-2天', desc:'塞尔维亚南部重镇、君士坦丁大帝出生地', spots:'骷髅塔 · 尼什要塞 · 梅迪亚纳 · 红十字集中营纪念馆 · 铜匠巷'}
+    ],
+    food:'口味偏重，肉卷Ćevapi与炖菜是主打；咖啡馆文化浓厚，街边一杯土耳其咖啡能坐一下午。',
+    souvenirs:'拉基亚果酒 · 兹拉蒂博尔手工羊毛织物 · 舒马迪亚与弗尔沙茨葡萄酒 · 库伦熏肠 · 皮罗特基里姆毯',
+    tips:[
+      '2025年起市区常规公交、电车全部免费乘坐（机场快线除外）',
+      '贝尔格莱德→诺维萨德Soko高铁只要36分钟，一日往返或住一晚都从容',
+      '贝尔格莱德→诺维萨德高铁二等座734第纳尔（App购票661，约45元）',
+      '贝尔格莱德→尼什大巴约3小时（首选），火车约6小时且每日仅3班'
+    ],
+    warnings:[
+      '可选支线：不在主线环线上，一般自伊斯坦布尔飞贝尔格莱德接入',
+      '免签每次入境停留不超过30天（是单次入境上限、非180天累计制）',
+      '贝尔格莱德→萨拉热窝大巴进站台另收约300第纳尔站台费'
+    ],
+    transit:[
+      {from:'伊斯坦布尔', to:'贝尔格莱德', mode:'飞机', time:'直飞约1小时10分', price:'常见¥400-700', note:'土耳其航空、AJet、塞尔维亚航空每日多班直飞'},
+      {from:'贝尔格莱德', to:'萨拉热窝', mode:'大巴', time:'约7-9小时含通关', price:'约25-40欧', note:'贝尔格莱德汽车站发车，两国间无直达火车'},
+      {from:'贝尔格莱德', to:'诺维萨德', mode:'高铁/大巴', time:'高铁36分钟', price:'二等座734第纳尔', note:'Srbija Voz App购票约9折'},
+      {from:'贝尔格莱德', to:'尼什', mode:'大巴/火车', time:'大巴约3小时', price:'约1300-1860第纳尔', note:'大巴每日约19班对开'}
+    ]
+  },
+
+  bosnia: {
+    name:'波黑', en:'Bosnia and Herzegovina', region:'巴尔干', visa:'free', visaText:'免签',
+    days:'3-4天', currency:'可兑换马克 BAM', timezone:'比北京慢6小时',
+    desc:'萨拉热窝与莫斯塔尔——宗教与民族在此交汇的山地小国，历史沉重而街巷温和。可选支线。',
+    cities:[
+      {name:'萨拉热窝', stay:'2-3天', desc:'群山环抱的波黑首都，奥斯曼老城与奥匈街区一街之隔', spots:'拉丁桥 · 巴什察尔希亚老城 · 希望隧道（战争隧道博物馆） · 黄堡日落点 · 1984冬奥雪橇赛道'},
+      {name:'莫斯塔尔', stay:'1-2天', desc:'内雷特瓦河上的石桥之城，老桥2004年按原工艺重建并列入世界遗产', spots:'莫斯塔尔老桥 · 科斯基·穆罕默德帕夏清真寺 · 布拉加伊泰基亚修道院 · 波奇泰利古城'},
+      {name:'特雷比涅', stay:'1-2天', desc:'波黑东南角河谷小城，黑塞哥维那葡萄酒产区核心', spots:'特雷比涅老城（卡斯特尔） · 阿尔斯兰阿吉奇桥 · 黑塞哥维那格拉查尼查修道院'},
+      {name:'亚伊策', stay:'1-2天', desc:'中世纪波斯尼亚王国末代都城，普利瓦河在城中心跌下22米瀑布', spots:'普利瓦瀑布 · 亚伊策城堡 · 亚伊策地下教堂 · AVNOJ博物馆 · 普利瓦湖水车磨坊群'}
+    ],
+    food:'奥斯曼与中欧两路风格融合：烤肉、炖豆与甜品Baklava；老城咖啡馆密度极高。',
+    souvenirs:'手打铜咖啡具 · 波斯尼亚咖啡 · 李子白兰地 · 手织羊毛袜 · 科尼茨木雕',
+    tips:[
+      '萨拉热窝→莫斯塔尔Talgo火车约2小时，全程内雷特瓦河谷风景线，是全线最值得坐的火车段之一',
+      '莫斯塔尔→科托尔直达约4.5-6小时含通关，走特雷比涅短线不经克罗地亚',
+      '莫斯塔尔→特雷比涅约2小时45分，正好把莫斯塔尔→科托尔拆成两程',
+      '特雷比涅→科托尔直达约2小时15分（每日约1班，午后发车）'
+    ],
+    warnings:[
+      '可选支线：自贝尔格莱德乘大巴南下萨拉热窝、再到莫斯塔尔衔接',
+      '免签任意180天内累计停留不超过90天（180天为滚动窗口）',
+      '冬季可先到特雷比涅或赫尔采格诺维再换黑山境内班车'
+    ],
+    transit:[
+      {from:'萨拉热窝', to:'莫斯塔尔', mode:'火车/大巴', time:'火车约2小时', price:'二等座约14马克', note:'Talgo车底，全程风景线；zfbh.ba为准'},
+      {from:'贝尔格莱德', to:'萨拉热窝', mode:'大巴', time:'约7-9小时含通关', price:'约25-40欧', note:'贝尔格莱德汽车站发车'},
+      {from:'莫斯塔尔', to:'科托尔', mode:'大巴', time:'直达约4.5-6小时含通关', price:'约26-40欧', note:'夏季每日多班、冬季班次锐减'},
+      {from:'莫斯塔尔', to:'特雷比涅', mode:'大巴', time:'约2小时45分', price:'约6-12欧', note:'每日约2班对开'},
+      {from:'特雷比涅', to:'科托尔', mode:'跨境大巴', time:'直达约2小时15分', price:'约6-10欧', note:'每日约1班午后发车'},
+      {from:'萨拉热窝', to:'亚伊策', mode:'大巴', time:'约3小时35分', price:'约10-18欧', note:'Centrotrans与FlixBus每日约2-4班'}
+    ]
+  },
+
+  montenegro: {
+    name:'黑山', en:'Montenegro', region:'巴尔干', visa:'conditional', visaText:'有条件免签',
+    days:'3-4天', currency:'欧元 EUR', timezone:'比北京慢6小时',
+    desc:'亚得里亚海东岸的小国，中世纪峡湾古城与海滨落日浓缩在几十公里海岸线内。可选支线。',
+    cities:[
+      {name:'科托尔', stay:'2-3天', desc:'科托尔湾最深处的中世纪城墙古城，1979年列入世界遗产', spots:'科托尔老城 · 圣约翰要塞城墙徒步 · 黑山海事博物馆 · 佩拉斯特与岩石圣母岛 · 洛夫琴山与涅古什盘山公路'},
+      {name:'布德瓦', stay:'1-2天', desc:'亚得里亚海最古老的聚落之一，黑山头号海滩度假城', spots:'布德瓦老城与城堡 · 莫格伦海滩 · 圣斯特凡岛 · Jaz海滩'},
+      {name:'采蒂涅', stay:'1天', desc:'旧王都与宪法上的"荣誉首都"，坐在洛夫琴山麓海拔约670米', spots:'采蒂涅修道院 · 尼古拉国王博物馆 · Biljarda · 蓝色礼拜堂 · 利帕溶洞'},
+      {name:'乌尔齐尼', stay:'1-2天', desc:'最南端海滨城，距阿尔巴尼亚边境仅15公里，盐场湿地栖着约2500只火烈鸟', spots:'乌尔齐尼老城 · 小海滩 · 大海滩 · 乌尔齐尼盐场 · 博扬纳河岛'}
+    ],
+    food:'地中海路数：海鲜意面、橄榄与干酪；餐厅整体偏贵，便利店与街头披萨是省钱选项。',
+    souvenirs:'涅古什火腿 · Vranac红酒 · 沿海特级初榨橄榄油 · 银丝细工首饰 · 科托尔猫之城文创',
+    tips:[
+      '普通护照两条免签路径：①随团出行不超30天；②持有效申根/美/英/日/爱多次签证不超30天',
+      '都不满足需申办C类短期签证（可停留90天）',
+      '科托尔→布德瓦约40-45分钟，白天班次密集随到随走',
+      '科托尔清晨与傍晚才是它本来的样子（避开邮轮时段）',
+      '科托尔→采蒂涅大巴约1-1.5小时走沿海公路；包车可走25道发卡弯的洛夫琴盘山老路',
+      '乌尔齐尼→斯库台跨境大巴约1.5-2小时含通关，走Sukobin/Muriqan口岸24小时开放'
+    ],
+    warnings:[
+      '可选支线中办证门槛最高的一国',
+      '旺季周末口岸排队可达45-90分钟',
+      '冬季班次锐减，以包车为可靠备选'
+    ],
+    transit:[
+      {from:'科托尔', to:'布德瓦', mode:'公交大巴', time:'约40-45分钟', price:'约3-4欧', note:'白天班次密集随到随走'},
+      {from:'布德瓦', to:'斯库台', mode:'跨境大巴', time:'约3小时含通关', price:'约12-20欧', note:'Old Town Travel等每日数班，走Sukobin/Muriqan口岸'},
+      {from:'莫斯塔尔', to:'科托尔', mode:'大巴', time:'直达约4.5-6小时含通关', price:'约26-40欧', note:'走特雷比涅短线不经克罗地亚'},
+      {from:'特雷比涅', to:'科托尔', mode:'跨境大巴', time:'直达约2小时15分', price:'约6-10欧', note:'每日约1班午后发车'},
+      {from:'科托尔', to:'采蒂涅', mode:'大巴/包车', time:'大巴约1-1.5小时', price:'约6-8.5欧', note:'经典拼线：采蒂涅→洛夫琴→涅古什村→盘山路下科托尔'},
+      {from:'布德瓦', to:'乌尔齐尼', mode:'大巴', time:'约1.5小时', price:'约4-9欧', note:'沿海干线一票直达，夏季班次比冬季密好几倍'},
+      {from:'乌尔齐尼', to:'斯库台', mode:'跨境大巴/包车', time:'约1.5-2小时含通关', price:'小巴约7欧', note:'走Sukobin/Muriqan口岸'}
+    ]
+  },
+
+  albania: {
+    name:'阿尔巴尼亚', en:'Albania', region:'巴尔干', visa:'free', visaText:'免签',
+    days:'2-3天', currency:'列克 ALL', timezone:'比北京慢6小时',
+    desc:'欧洲物价最友好的角落之一：满街涂鸦、废墟改造的文化空间与松弛的城市节奏。可选支线。',
+    cities:[
+      {name:'斯库台', stay:'1-2天', desc:'西北部千年古城，紧邻黑山边境，坐在巴尔干最大湖泊斯库台湖畔', spots:'罗扎法城堡 · 斯库台湖 · Marubi国家摄影博物馆 · 老城步行街'},
+      {name:'地拉那', stay:'2-3天', desc:'欧洲变化最快的年轻首都之一，满街涂鸦与咖啡馆', spots:'斯坎德培广场 · 地拉那金字塔 · Bunk\'Art 2地堡博物馆 · Bunk\'Art 1地堡博物馆 · 达伊蒂山缆车 · 新巴扎'},
+      {name:'贝拉特', stay:'1-2天', desc:'奥苏姆河谷里的"千窗之城"，山顶是巴尔干罕见的"住人城堡"', spots:'贝拉特城堡 · Onufri圣像博物馆 · Mangalem老城区 · 戈里察石桥'},
+      {name:'吉诺卡斯特', stay:'1-2天', desc:'"石头之城"，石板屋顶的奥斯曼塔楼民居漫山而建，2005年列入世界遗产', spots:'吉诺卡斯特城堡 · 老巴扎 · Skenduli之家 · 民族志博物馆 · 冷战地道'}
+    ],
+    food:'Byrek（菠菜奶酪饼）与烤羊肉最常见，甜点带明显土耳其风；物价是全线欧洲段里最低的一档。',
+    souvenirs:'拉基酒 · 山茶 · 橄榄油 · 手织羊毛地毯 · 斯坎德培白兰地',
+    tips:[
+      '全年免签，任意180天内累计停留不超过90天',
+      '斯库台→地拉那约每30分钟一班，随到随走不用提前订',
+      '地拉那→贝拉特约2小时15分，每日约20班（6:10-17:00）',
+      '地拉那→吉诺卡特约3.5-4小时，每日多班',
+      '贝拉特→吉诺卡斯特直达每日约2班时刻不稳，经菲耶里中转更稳妥'
+    ],
+    warnings:[
+      '可选支线末站：自黑山跨境大巴进入，游毕从地拉那飞开罗回接主线',
+      '地拉那到发均在南北汽车总站（Kamëz区，不在市中心）'
+    ],
+    transit:[
+      {from:'布德瓦', to:'斯库台', mode:'跨境大巴', time:'约3小时含通关', price:'约12-20欧', note:'走Sukobin/Muriqan口岸'},
+      {from:'斯库台', to:'地拉那', mode:'furgon/大巴', time:'约2小时', price:'约300-500列克', note:'约每30分钟一班随到随走'},
+      {from:'乌尔齐尼', to:'斯库台', mode:'跨境大巴/包车', time:'约1.5-2小时含通关', price:'小巴约7欧', note:'走Sukobin/Muriqan口岸'},
+      {from:'地拉那', to:'贝拉特', mode:'大巴/furgon', time:'约2小时15分-2.5小时', price:'约400-500列克', note:'每日约20班，南北汽车总站发车'},
+      {from:'地拉那', to:'吉诺卡斯特', mode:'大巴', time:'约3.5-4小时', price:'约1200-1600列克', note:'每日多班，可接萨兰达里维埃拉'},
+      {from:'地拉那', to:'开罗', mode:'飞机（中转）', time:'全程约7-10小时', price:'常见¥900-1500', note:'经伊斯坦布尔或雅典中转'}
+    ]
+  },
+
+  egypt: {
+    name:'埃及', en:'Egypt', region:'北非', visa:'evisa', visaText:'落地签/电子签',
+    days:'8-14天', currency:'埃镑 EGP', timezone:'比北京慢5小时',
+    desc:'尼罗河畔的古文明现场，金字塔、神庙与红海潜水。',
+    cities:[
+      {name:'开罗', stay:'3-4天', desc:'首都，金字塔、博物馆与老城市集', spots:'吉萨金字塔与狮身人面像 · 埃及博物馆 · 大埃及博物馆 · 汗·哈利利市场 · 萨拉丁城堡 · 科普特老城区'},
+      {name:'卢克索', stay:'2-3天', desc:'古底比斯所在地，尼罗河两岸满是神庙和帝王陵', spots:'卡尔纳克神庙 · 卢克索神庙 · 帝王谷 · 哈特谢普苏特神庙 · 门农巨像'},
+      {name:'阿斯旺', stay:'1-2天', desc:'尼罗河上游的悠闲城市，努比亚村落和阿布辛贝的门户', spots:'菲莱神庙 · 阿布辛贝神庙 · 努比亚村与尼罗河风帆船 · 未完成方尖碑'},
+      {name:'赫尔格达', stay:'2-3天', desc:'红海西岸潜水度假地，吉夫通岛出海浮潜', spots:'吉夫通岛出海 · 赫尔格达码头区 · 达哈尔老城集市'},
+      {name:'沙姆沙伊赫', stay:'2-3天', desc:'西奈半岛南端红海度假城市', spots:'拉斯穆罕默德国家公园 · 萨哈巴清真寺 · 蒂朗岛浮潜'},
+      {name:'马特鲁', stay:'1-2天', desc:'地中海岸度假城市，前往锡瓦绿洲的门户', spots:'阿吉巴海滩 · 克利奥帕特拉海滩与海之眼'},
+      {name:'锡瓦绿洲', stay:'2-3天', desc:'撒哈拉深处的绿洲，柏柏尔古堡、盐湖漂浮与大沙海越野', spots:'沙利古堡 · 锡瓦盐湖 · 大沙海冲沙 · 阿蒙神谕庙'},
+      {name:'亚历山大', stay:'1-2天', desc:'地中海畔历史名城，开罗出发一日可达', spots:'盖贝依城堡 · 亚历山大图书馆 · 孔姆·舒卡法地下墓穴 · 蒙塔扎宫花园'}
+    ],
+    food:'代表作是国民拌饭Koshari、Falafel和薄荷茶；用餐尽量跟着本地人的推荐走，绕开游客坑。',
+    souvenirs:'纸莎草画 · 香精油 · 洛神花茶 · 长绒棉制品 · 雕花铜灯与铜盘',
+    tips:[
+      'eVisa约25美元（有效3个月/停留30天），提前一周在线办；落地签已涨至30美元，建议在线办',
+      '参观金字塔务必赶早（7:00到场），既避开人流又躲过暴晒。门票700埃镑',
+      '金字塔入口：北门已永久关闭；从南门进园，迎面即是狮身人面像',
+      '埃及博物馆9:00-17:00；票价成人550埃镑、学生275埃镑',
+      '在手机里存一张阿拉伯数字对照表，点餐认价格、打车对车牌号都用得上',
+      '落脚点选解放广场一带，离博物馆和交通枢纽都近',
+      '出行用Uber或国际版滴滴，绕开公共交通的高峰时段',
+      '开罗机场出站：所有主动凑上来"帮忙"的人一概别理，径直过马路下楼走到停车场再用打车软件叫车',
+      '黄昏时分包一艘尼罗河帆船约200-300埃镑（折合50多元人民币）',
+      '想延伸红海线：可去赫尔格达浮潜/潜水，卢克索有陆路大巴直达',
+      '西线延伸：开罗→马特鲁（gobus大巴约7小时）→锡瓦绿洲（盐湖漂浮与大沙海冲沙）'
+    ],
+    warnings:[
+      '卢克索是全程防骗警惕级别最高的城市，从下车那刻起对任何人都别轻信',
+      '帝王谷一张门票默认可任选3座普通墓参观，行前先查好想看的墓编号',
+      '不要携带无人机：埃及入境查验很严',
+      '金字塔景区：塔内通道又窄又闷不建议进入；园区里"没有免费的帮忙"',
+      '合影留念前先把价钱谈妥；骑骆驼的价格可当场再谈',
+      '身上有伤口别下锡瓦盐湖，会刺痛'
+    ],
+    transit:[
+      {from:'伊斯坦布尔', to:'开罗', mode:'飞机', time:'直飞约2.5小时', price:'提前比价', note:'土耳其航空/埃及航空直飞班次多'},
+      {from:'开罗', to:'亚历山大', mode:'火车/大巴', time:'火车约2.5-3小时', price:'票价低廉', note:'火车班次密集，Ramses车站乘车'},
+      {from:'开罗', to:'马特鲁', mode:'长途大巴', time:'约5-7小时', price:'行李费10埃镑/件', note:'GoBus线上购票或车站购票'},
+      {from:'马特鲁', to:'锡瓦绿洲', mode:'包车/拼车', time:'约4小时', price:'现场议价', note:'从开罗直接包车约10小时'},
+      {from:'开罗', to:'锡瓦绿洲', mode:'直达夜巴/夜发小巴', time:'大巴约10-12小时', price:'车站或线上购票', note:'West & Mid Delta自Turgoman车站发车；Siwa Bus小巴快2-3小时'},
+      {from:'开罗', to:'卢克索', mode:'夜火车/飞机', time:'火车睡一晚，或飞约1小时', price:'火车更省钱', note:'夜卧铺由吉萨Bashteel站发车，Abela官网可订'},
+      {from:'卢克索', to:'阿斯旺', mode:'火车/包车/游轮', time:'火车约3-4小时，游轮3晚4天', price:'票价低廉', note:'包车可顺访埃德夫与康翁波双神庙'},
+      {from:'卢克索', to:'赫尔格达', mode:'大巴/拼车/包车', time:'大巴约4-5小时', price:'线上购票', note:'GoBus线上购票；拼车约$25-30/人'},
+      {from:'开罗', to:'沙姆沙伊赫', mode:'飞机/夜巴', time:'飞行约1小时，大巴约8-10小时', price:'机票常有特价', note:'GoBus夜巴经苏伊士隧道进西奈'},
+      {from:'赫尔格达', to:'开罗', mode:'大巴/飞机', time:'大巴约6小时，飞行1小时', price:'大巴更省钱', note:'GoBus线上购票选直达班次'},
+      {from:'开罗', to:'中国·上海', mode:'飞机（回国）', time:'直飞或中转', price:'约¥2091', note:'环线收尾的回国航段，宜提早比价'}
+    ]
+  }
+};
+
+// ===== 出发准备数据 =====
+const PREPARE = {
+  visa: [
+    {country:'哈萨克斯坦', type:'免签', note:'中哈互免签证，一般停留不超过30天'},
+    {country:'乌兹别克斯坦', type:'免签', note:'2025年6月起中乌互免签证。严查无人机入境'},
+    {country:'吉尔吉斯斯坦', type:'电子签', note:'evisa.e-gov.kg，有2天加急；5-25人团可免签21天'},
+    {country:'塔吉克斯坦', type:'电子签', note:'visa.gov.tj在线申请；55岁以上中国公民可免签14天'},
+    {country:'阿塞拜疆', type:'免签', note:'2025年4月起中阿互免签证'},
+    {country:'亚美尼亚', type:'免签', note:'中阿互免签证，最长停留90天'},
+    {country:'格鲁吉亚', type:'免签', note:'2024年5月起免签。2026年起须持旅行保险'},
+    {country:'土耳其', type:'免签', note:'2026年1月2日起免签，180天内累计不超90天'},
+    {country:'塞尔维亚', type:'免签', note:'每次入境不超30天；持美/英/申根签可累计90天'},
+    {country:'波黑', type:'免签', note:'任意180天内累计不超90天'},
+    {country:'黑山', type:'有条件免签', note:'随团或持申根/美/英/日/爱多次签证，不超30天'},
+    {country:'阿尔巴尼亚', type:'免签', note:'任意180天内累计不超90天'},
+    {country:'埃及', type:'落地签/电子签', note:'落地签约30美元；eVisa约25美元，建议在线办'}
+  ],
+  luggage: [
+    '护照与身份证（有效期6个月以上，空白页留足5页以上，备复印件和电子版）',
+    '大背包+腰包（38-50L可随身登机，廉航不适合行李箱）',
+    '廉航U型枕（值机前把衣物塞进枕套省重量与体积）',
+    '银联卡+Visa卡（给Visa卡配防盗刷卡套）',
+    '美元现金（按单人700-1000美元准备，出发前通过银行App预约换汇）',
+    '旅行保险（保障期须覆盖整个行程）',
+    '药品（肠胃药不可少，另备感冒退烧药、创可贴、防蚊液）',
+    '万能转接头（中东与非洲地区插座以欧标圆孔为主）',
+    '洗漱用品（沿线不少国家酒店不配备牙刷、拖鞋等）'
+  ],
+  apps: [
+    {name:'Yandex Go', desc:'俄语区打车主力：哈萨克斯坦、乌兹别克斯坦、格鲁吉亚、亚美尼亚'},
+    {name:'inDrive', desc:'议价式打车，中亚与埃及覆盖广，机场宰客的克星'},
+    {name:'Bolt', desc:'格鲁吉亚打车常用，第比利斯/巴统覆盖好'},
+    {name:'Uber / Careem', desc:'埃及、土耳其打车'},
+    {name:'Google Maps / Maps.me', desc:'导航；Maps.me可用离线地图'},
+    {name:'2GIS / Yandex Maps', desc:'中亚俄语区更好用的地图'},
+    {name:'Obilet', desc:'土耳其大巴订票（obilet.com）'},
+    {name:'TCDD Taşımacılık', desc:'土耳其铁路官方购票'},
+    {name:'GoBus', desc:'埃及长途大巴订票'},
+    {name:'eticket.railway.uz', desc:'乌兹别克斯坦铁路官网购票'},
+    {name:'Booking / Agoda / Airbnb', desc:'订住宿跨平台比价，至少提前一周下单'},
+    {name:'WhatsApp / Telegram', desc:'当地民宿、司机、包车向导的主流联络方式'},
+    {name:'Airalo 等 eSIM', desc:'落地前装好eSIM流量兜底'},
+    {name:'Google Translate', desc:'翻译工具，记得预先下载离线语言包'},
+    {name:'XE Currency', desc:'汇率换算'}
+  ],
+  sim: [
+    {country:'哈萨克斯坦', price:'约40-90元', note:'Beeline/Activ，游客常办5-15GB约3000-5000坚戈'},
+    {country:'乌兹别克斯坦', price:'约30-60元', note:'游客价最便宜的一国：Beeline 20GB约40元'},
+    {country:'阿塞拜疆', price:'约60-150元', note:'Nar游客卡14马纳特7GB约59元更省'},
+    {country:'格鲁吉亚', price:'约55-120元', note:'Magti不限量流量周包10拉里、月包35拉里'},
+    {country:'亚美尼亚', price:'约46元', note:'Ucom uWelcome 2500德拉姆不限量15天，仅机场柜台有售'},
+    {country:'土耳其', price:'约165-250元', note:'Turkcell游客包1800里拉/28天20GB，市区门店更便宜'},
+    {country:'埃及', price:'约20-75元', note:'Vodafone 505埃镑30GB+200分钟约73元，24小时柜台'}
+  ],
+  emergency: [
+    {country:'中国', phone:'12308', note:'外交部全球领事保护应急热线 +86-10-12308'},
+    {country:'哈萨克斯坦', phone:'112', note:'报警102/急救103；阿斯塔纳大使馆·阿拉木图总领馆'},
+    {country:'吉尔吉斯斯坦', phone:'112', note:'报警102/急救103；比什凯克大使馆'},
+    {country:'乌兹别克斯坦', phone:'102/103', note:'塔什干大使馆'},
+    {country:'塔吉克斯坦', phone:'102/103', note:'杜尚别大使馆'},
+    {country:'阿塞拜疆', phone:'112', note:'报警102/急救103；巴库大使馆'},
+    {country:'亚美尼亚', phone:'911/112', note:'埃里温大使馆'},
+    {country:'格鲁吉亚', phone:'112', note:'第比利斯大使馆'},
+    {country:'土耳其', phone:'112', note:'安卡拉大使馆·伊斯坦布尔总领馆'},
+    {country:'埃及', phone:'122/123', note:'开罗大使馆·亚历山大总领馆'}
+  ],
+  currency: [
+    {country:'哈萨克斯坦', code:'KZT', rate:'68,000坚戈'},
+    {country:'乌兹别克斯坦', code:'UZS', rate:'1,720,000苏姆'},
+    {country:'吉尔吉斯斯坦', code:'KGS', rate:'11,900索姆'},
+    {country:'塔吉克斯坦', code:'TJS', rate:'1,450索莫尼'},
+    {country:'阿塞拜疆', code:'AZN', rate:'235马纳特'},
+    {country:'亚美尼亚', code:'AMD', rate:'53,500德拉姆'},
+    {country:'格鲁吉亚', code:'GEL', rate:'375拉里'},
+    {country:'土耳其', code:'TRY', rate:'5,800里拉'},
+    {country:'塞尔维亚', code:'RSD', rate:'15,100第纳尔'},
+    {country:'波黑', code:'BAM', rate:'252可兑换马克'},
+    {country:'黑山', code:'EUR', rate:'129欧元'},
+    {country:'阿尔巴尼亚', code:'ALL', rate:'12,100列克'},
+    {country:'埃及', code:'EGP', rate:'6,800埃镑'}
+  ],
+  tips: [
+    '不要携带无人机：乌兹别克斯坦、埃及等国入境查验很严',
+    '在乌兹别克斯坦每晚入住后索取住宿登记单（Registration Slip），出境时可能被抽查',
+    '阿塞拜疆与亚美尼亚两国关系紧张，入境时如实回应海关问询即可',
+    '前往埃及可先存一张阿拉伯数字对照表，看价格、认车牌都用得上',
+    '沿线多国日常高度依赖现金，随身留些小额零钱',
+    '衣物带3-4套足够，以洋葱式叠穿应对沿途气候差异',
+    '女性出行建议结伴同行；备一条围巾进入宗教场所时会用到',
+    '英文行程单、酒店订单与返程机票提前备好，以便入境时查验'
+  ]
+};
+
+// ===== 季节数据（1-12月，good=适宜, hot=偏热, cold=偏冷） =====
+const SEASON_DATA = {
+  '哈萨克斯坦': ['cold','cold',' ',' ',' ','good','good',' ',' ',' ','cold','cold'],
+  '吉尔吉斯斯坦': ['cold','cold',' ',' ',' ','good','good','good',' ',' ','cold','cold'],
+  '乌兹别克斯坦': ['cold','cold',' ',' ',' ',' ','good','good','good',' ',' ','cold','cold'],
+  '阿塞拜疆': ['cold','cold',' ',' ',' ','good','good','good',' ',' ','cold','cold'],
+  '格鲁吉亚': ['cold','cold',' ',' ',' ','good','good',' ',' ',' ','cold','cold'],
+  '亚美尼亚': ['cold','cold',' ',' ',' ',' ','good','good','good',' ',' ','cold','cold'],
+  '土耳其': ['cold','cold',' ',' ',' ','good','good',' ',' ',' ',' ','cold'],
+  '埃及': [' ',' ','good','good',' ',' ','hot','hot','hot','hot','hot','good']
+};
+
+// ===== 预设路线 =====
+const PRESET_ROUTE = [
+  {name:'长沙→新疆', visa:'free', days:3, budget:2000, notes:'长沙飞乌鲁木齐，再去赛里木湖玩1-2天'},
+  {name:'哈萨克斯坦', visa:'free', days:5, budget:2000, notes:'霍尔果斯出境→阿拉木图2天+恰伦峡谷+大阿拉木图湖'},
+  {name:'乌兹别克斯坦', visa:'free', days:10, budget:2500, notes:'塔什干2天→撒马尔罕3天→布哈拉3天→希瓦2天'},
+  {name:'阿塞拜疆', visa:'free', days:4, budget:2500, notes:'巴库老城+火焰塔2天+戈布斯坦+泥火山1天（塔什干飞巴库约2.5小时）'},
+  {name:'格鲁吉亚', visa:'free', days:7, budget:3000, notes:'第比利斯3天→卡兹别克2天→西格纳吉1天（巴库夜火车到第比利斯约9.5小时）'},
+  {name:'亚美尼亚', visa:'free', days:4, budget:1500, notes:'埃里温2天+Khor Virap+Geghard（第比利斯拼车去埃里温约6-7小时）'},
+  {name:'土耳其', visa:'free', days:12, budget:4000, notes:'伊斯坦布尔4天+卡帕多奇亚3天+安塔利亚/以弗所5天（第比利斯直飞伊斯坦布尔）'},
+  {name:'塞尔维亚', visa:'free', days:3, budget:1200, notes:'贝尔格莱德2天+诺维萨德1天（伊斯坦布尔飞贝尔格莱德约1小时）'},
+  {name:'波黑', visa:'free', days:3, budget:1000, notes:'萨拉热窝2天+莫斯塔尔1天（贝尔格莱德大巴约7-9小时）'},
+  {name:'埃及', visa:'evisa', days:10, budget:3000, notes:'开罗4天+卢克索3天+红海3天（从萨拉热窝飞开罗，经伊斯坦布尔中转）'},
+  {name:'泰国中转回国', visa:'free', days:2, budget:1500, notes:'开罗飞曼谷中转，顺便玩两天再飞长沙（泰国免签）'}
+];
+
+// ===== 状态管理 =====
+let state = {
+  trip: { dest:'', date:'', days:'' },
+  route: [],
+  luggage: [],
+  shopping: [],
+  savings: { target:0, current:0, history:[] },
+  notes: ''
+};
+
+let currentLuggageFilter = 'all';
+let currentGuideKey = null;
+
+// ===== localStorage 持久化 =====
+function saveState() {
+  localStorage.setItem('travelApp_state', JSON.stringify(state));
+}
+function loadState() {
+  const saved = localStorage.getItem('travelApp_state');
+  if (saved) { try { state = JSON.parse(saved); } catch(e) {} }
+}
+
+// ===== Toast =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+// ===== Tab 切换 =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== 行程信息 =====
+function bindTripInfo() {
+  const dest = document.getElementById('tripDest');
+  const date = document.getElementById('tripDate');
+  const days = document.getElementById('tripDays');
+  dest.value = state.trip.dest || '';
+  date.value = state.trip.date || '';
+  days.value = state.trip.days || '';
+  dest.addEventListener('input', e => { state.trip.dest = e.target.value; saveState(); });
+  date.addEventListener('input', e => { state.trip.date = e.target.value; saveState(); updateCountdown(); });
+  days.addEventListener('input', e => { state.trip.days = e.target.value; saveState(); });
+}
+
+// ===== 倒计时 =====
+function updateCountdown() {
+  const box = document.getElementById('countdownBox');
+  if (!state.trip.date) { box.style.display = 'none'; return; }
+  const target = new Date(state.trip.date + 'T00:00:00');
+  const now = new Date();
+  const diff = target - now;
+  if (diff <= 0) { box.style.display = 'none'; return; }
+  box.style.display = 'flex';
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cdDay').textContent = d;
+  document.getElementById('cdHour').textContent = String(h).padStart(2,'0');
+  document.getElementById('cdMin').textContent = String(m).padStart(2,'0');
+  document.getElementById('cdSec').textContent = String(s).padStart(2,'0');
+}
+
+// ===== 路线规划 =====
+function renderRoute() {
+  const list = document.getElementById('routeList');
+  const badge = document.getElementById('routeBadge');
+  badge.textContent = state.route.length + ' 站';
+  let totalDays = 0, totalBudget = 0, visited = 0, countries = new Set();
+  state.route.forEach(r => {
+    totalDays += parseInt(r.days) || 0;
+    totalBudget += parseInt(r.budget) || 0;
+    if (r.visited) visited++;
+    countries.add(r.name);
+  });
+  document.getElementById('rsCountries').textContent = countries.size;
+  document.getElementById('rsDays').textContent = totalDays;
+  document.getElementById('rsVisited').textContent = visited;
+  document.getElementById('rsBudget').textContent = '¥' + totalBudget;
+
+  list.innerHTML = state.route.map((r, i) => {
+    const visaClass = r.visa === 'free' ? 'free' : r.visa === 'evisa' ? 'evisa' : r.visa === 'conditional' ? 'conditional' : '';
+    const visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
+    return `<div class="route-card${r.visited ? ' visited' : ''}">
+      <div class="route-num">${i + 1}</div>
+      <div class="route-info">
+        <div class="route-header">
+          <span class="route-name">${r.name}</span>
+          <span class="route-visa ${visaClass}">${visaText}</span>
+        </div>
+        <div class="route-meta">
+          ${r.days ? `<span>📅 ${r.days}天</span>` : ''}
+          ${r.budget ? `<span>💰 ¥${r.budget}</span>` : ''}
+        </div>
+        ${r.notes ? `<div class="route-notes">${r.notes}</div>` : ''}
+        <div class="route-actions">
+          <button class="btn-visited" onclick="toggleVisited(${i})">${r.visited ? '✓ 已到访' : '标记到访'}</button>
+          <button class="btn-del" onclick="delRoute(${i})">删除</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addRoute() {
+  const name = document.getElementById('routeName').value.trim();
+  if (!name) { showToast('请输入名称'); return; }
+  const visa = document.getElementById('routeVisa').value;
+  const days = document.getElementById('routeDays').value;
+  const budget = document.getElementById('routeBudget').value;
+  state.route.push({ name, visa, days, budget, notes:'', visited:false });
+  document.getElementById('routeName').value = '';
+  document.getElementById('routeDays').value = '';
+  document.getElementById('routeBudget').value = '';
+  saveState(); renderRoute(); showToast('已添加：' + name);
+}
+
+function toggleVisited(i) {
+  state.route[i].visited = !state.route[i].visited;
+  saveState(); renderRoute();
+}
+
+function delRoute(i) {
+  state.route.splice(i, 1);
+  saveState(); renderRoute(); showToast('已删除');
+}
+
+function loadPresetRoute() {
+  state.route = PRESET_ROUTE.map(r => ({...r, visited:false}));
+  saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（8站）');
+}
+
+// ===== 攻略参考 =====
+function renderGuideGrid(filter) {
+  const grid = document.getElementById('guideGrid');
+  const keys = Object.keys(GUIDES);
+  const filtered = filter ? keys.filter(k => {
+    const g = GUIDES[k];
+    return g.name.includes(filter) || g.en.toLowerCase().includes(filter.toLowerCase()) ||
+           g.region.includes(filter) || g.desc.includes(filter);
+  }) : keys;
+  grid.innerHTML = filtered.map(k => {
+    const g = GUIDES[k];
+    return `<div class="guide-chip${currentGuideKey === k ? ' active' : ''}" onclick="selectGuide('${k}')">
+      <span>${g.name}</span>
+      <span class="visa-tag ${g.visa}">${g.visaText}</span>
+    </div>`;
+  }).join('');
+}
+
+function filterGuide() {
+  const q = document.getElementById('guideSearch').value.trim();
+  renderGuideGrid(q);
+}
+
+function selectGuide(key) {
+  currentGuideKey = key;
+  renderGuideGrid(document.getElementById('guideSearch').value.trim());
+  const g = GUIDES[key];
+  const detail = document.getElementById('guideDetail');
+
+  let html = `<div class="guide-content">
+    <h3>${g.name} <span style="font-size:0.8rem;color:var(--text-light);font-weight:normal">${g.en}</span></h3>
+    <span class="guide-tag ${g.visa}">${g.visaText}</span>
+    <div style="font-size:0.85rem;color:var(--text-light);margin-bottom:8px">
+      ${g.region} · 建议${g.days} · ${g.currency} · ${g.timezone}
+    </div>
+    <p>${g.desc}</p>
+    <hr class="section-divider">
+    <h4>🏙 值得去的城市</h4>`;
+  g.cities.forEach(c => {
+    html += `<div class="city-card">
+      <div class="city-name">${c.name} <span style="font-size:0.78rem;color:var(--text-light);font-weight:normal">· ${c.stay}</span></div>
+      <div class="city-desc">${c.desc}</div>
+      <div class="city-spots">📍 ${c.spots}</div>
+    </div>`;
+  });
+
+  html += `<div class="food-box">🍴 ${g.food}</div>`;
+  html += `<div class="souvenir-box">🎁 ${g.souvenirs}</div>`;
+
+  if (g.tips && g.tips.length) {
+    html += `<h4>💡 实用贴士</h4><ul>`;
+    g.tips.forEach(t => html += `<li>${t}</li>`);
+    html += `</ul>`;
+  }
+
+  if (g.warnings && g.warnings.length) {
+    html += `<div class="warn-box">⚠️ ${g.warnings.join('<br>⚠️ ')}</div>`;
+  }
+
+  if (g.transit && g.transit.length) {
+    html += `<hr class="section-divider"><h4>🚌 交通衔接</h4>
+    <table class="trans-table"><thead><tr><th>出发</th><th>到达</th><th>方式</th><th>耗时</th><th>参考价</th><th>说明</th></tr></thead><tbody>`;
+    g.transit.forEach(t => {
+      html += `<tr><td class="trans-from">${t.from}</td><td class="trans-to">${t.to}</td><td>${t.mode}</td><td>${t.time}</td><td>${t.price}</td><td style="font-size:0.78rem;color:var(--text-light)">${t.note}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  html += `<div class="guide-source">攻略数据整合自 <a href="https://www.thesilkloop.com/destinations/${key}/" target="_blank">环线SILKLOOP · ${g.name}</a> · 以出行当天实际情况为准</div>
+  </div>`;
+
+  detail.innerHTML = html;
+  detail.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+// ===== 出发准备 =====
+function renderPrepare() {
+  const c = document.getElementById('prepareContent');
+  let html = '<div class="prepare-grid">';
+
+  // 签证速查
+  html += `<div class="prepare-card"><h4>📋 签证速查</h4><ul>`;
+  PREPARE.visa.forEach(v => {
+    html += `<li><strong>${v.country}</strong> — <span style="color:var(--primary)">${v.type}</span>：${v.note}</li>`;
+  });
+  html += `</ul></div>`;
+
+  // 行李清单
+  html += `<div class="prepare-card"><h4>🎒 行李清单</h4><ul>`;
+  PREPARE.luggage.forEach(l => html += `<li>${l}</li>`);
+  html += `</ul></div>`;
+
+  // 常用App
+  html += `<div class="prepare-card"><h4>📱 常用App</h4>`;
+  PREPARE.apps.forEach(a => {
+    html += `<div class="app-row"><span class="app-name">${a.name}</span><span class="app-desc">${a.desc}</span></div>`;
+  });
+  html += `</div>`;
+
+  // SIM卡
+  html += `<div class="prepare-card"><h4>📡 逐国办卡参考价（主线七国）</h4>
+    <table class="sim-table"><thead><tr><th>国家</th><th>参考价</th><th>要点</th></tr></thead><tbody>`;
+  PREPARE.sim.forEach(s => {
+    html += `<tr><td>${s.country}</td><td style="font-weight:600">${s.price}</td><td style="font-size:0.82rem;color:var(--text-light)">${s.note}</td></tr>`;
+  });
+  html += `</tbody></table>
+    <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">60天全程粗算：漫游包约714元最省心，逐国办卡约450-750元，网购流量卡分区段通常最省</div>
+  </div>`;
+
+  // 货币汇率
+  html += `<div class="prepare-card"><h4>💰 货币汇率速查（离线参考 2026-07）</h4>
+    <table class="currency-table"><thead><tr><th>国家</th><th>币种</th><th>≈100元人民币</th></tr></thead><tbody>`;
+  PREPARE.currency.forEach(c => {
+    html += `<tr><td>${c.country}</td><td><span class="cur-code">${c.code}</span></td><td>${c.rate}</td></tr>`;
+  });
+  html += `</tbody></table>
+    <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">中亚各国与埃及主要使用现金，可持美元在机场或市内兑换点换取</div>
+  </div>`;
+
+  // 紧急联络
+  html += `<div class="emergency-box"><h4 style="margin-bottom:8px">🆘 紧急联络</h4>
+    <div style="margin-bottom:10px">外交部全球领事保护应急热线：<span class="em-phone">+86-10-12308</span></div>
+    <table class="sim-table"><thead><tr><th>国家</th><th>紧急号码</th><th>使领馆</th></tr></thead><tbody>`;
+  PREPARE.emergency.forEach(e => {
+    html += `<tr><td>${e.country}</td><td style="font-weight:600;color:var(--danger)">${e.phone}</td><td style="font-size:0.82rem">${e.note}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  // 避坑提醒
+  html += `<div class="prepare-card"><h4>⚠️ 避坑与提醒</h4><ul>`;
+  PREPARE.tips.forEach(t => html += `<li>${t}</li>`);
+  html += `</ul></div>`;
+
+  // 季节窗口
+  html += `<div class="prepare-card"><h4>🌤 季节窗口（1-12月适宜出行参考）</h4>
+    <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:6px">绿=适宜 · 红=偏热(>28°C) · 蓝=偏冷(<15°C)</div>
+    <table class="season-table"><thead><tr><th></th>`;
+  for (let m = 1; m <= 12; m++) html += `<th>${m}月</th>`;
+  html += `</tr></thead><tbody>`;
+  Object.keys(SEASON_DATA).forEach(country => {
+    html += `<tr><td style="font-size:0.72rem;font-weight:600;white-space:nowrap">${country}</td>`;
+    SEASON_DATA[country].forEach(v => {
+      const cls = v === 'good' ? 'good' : v === 'hot' ? 'hot' : v === 'cold' ? 'cold' : '';
+      html += `<td class="${cls}">${v === 'good' ? '✓' : v === 'hot' ? '热' : v === 'cold' ? '冷' : '·'}</td>`;
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>
+    <div style="font-size:0.75rem;color:var(--text-light);margin-top:6px">4-5月与9-10月除埃及外各国大多适宜——是走完整环线的最佳窗口；埃及冬季(11-2月)才是好季节</div>
+  </div>`;
+
+  html += '</div>';
+  c.innerHTML = html;
+}
+
+// ===== 行李清单 =====
+function renderLuggage() {
+  const list = document.getElementById('luggageList');
+  const badge = document.getElementById('luggageBadge');
+  const filtered = currentLuggageFilter === 'all'
+    ? state.luggage
+    : state.luggage.filter(l => l.cat === currentLuggageFilter);
+  const checked = state.luggage.filter(l => l.checked).length;
+  badge.textContent = `${checked} / ${state.luggage.length}`;
+
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty-hint">还没有添加物品${currentLuggageFilter !== 'all' ? '（当前分类）' : ''}</div>`;
+    return;
+  }
+  const catNames = { clothes:'衣物', toiletry:'洗漱', electronics:'电子', docs:'证件', medicine:'药品', other:'其他' };
+  list.innerHTML = filtered.map(l => {
+    const idx = state.luggage.indexOf(l);
+    return `<div class="list-item${l.checked ? ' checked' : ''}">
+      <div class="checkbox${l.checked ? ' checked' : ''}" onclick="toggleLuggage(${idx})"></div>
+      <span class="item-name">${l.name}</span>
+      <span class="item-cat">${catNames[l.cat] || l.cat}</span>
+      <button class="item-del" onclick="delLuggage(${idx})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function addLuggage() {
+  const name = document.getElementById('luggageInput').value.trim();
+  if (!name) { showToast('请输入物品名称'); return; }
+  const cat = document.getElementById('luggageCat').value;
+  state.luggage.push({ name, cat, checked:false });
+  document.getElementById('luggageInput').value = '';
+  saveState(); renderLuggage(); showToast('已添加：' + name);
+}
+
+function toggleLuggage(i) {
+  state.luggage[i].checked = !state.luggage[i].checked;
+  saveState(); renderLuggage();
+}
+
+function delLuggage(i) {
+  state.luggage.splice(i, 1);
+  saveState(); renderLuggage();
+}
+
+// 行李筛选
+document.querySelectorAll('#luggageFilters .filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#luggageFilters .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentLuggageFilter = btn.dataset.filter;
+    renderLuggage();
+  });
+});
+
+// ===== 购物清单 =====
+function renderShopping() {
+  const list = document.getElementById('shopList');
+  const badge = document.getElementById('shopBadge');
+  const total = document.getElementById('shopTotal');
+  const checked = state.shopping.filter(s => s.checked).length;
+  badge.textContent = `${checked} / ${state.shopping.length}`;
+  let sum = 0;
+  state.shopping.forEach(s => { if (!s.checked) sum += parseFloat(s.price) || 0; });
+  total.textContent = '¥ ' + sum;
+
+  if (!state.shopping.length) {
+    list.innerHTML = '<div class="empty-hint">还没有添加购物物品</div>';
+    return;
+  }
+  list.innerHTML = state.shopping.map((s, i) => {
+    return `<div class="shop-item${s.checked ? ' checked' : ''}">
+      <div class="shop-checkbox${s.checked ? ' checked' : ''}" onclick="toggleShop(${i})"></div>
+      <span class="shop-name">${s.name}</span>
+      <span class="shop-price">¥${s.price || 0}</span>
+      <button class="shop-del" onclick="delShop(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function addShop() {
+  const name = document.getElementById('shopName').value.trim();
+  if (!name) { showToast('请输入物品名称'); return; }
+  const price = document.getElementById('shopPrice').value || 0;
+  state.shopping.push({ name, price:parseFloat(price), checked:false });
+  document.getElementById('shopName').value = '';
+  document.getElementById('shopPrice').value = '';
+  saveState(); renderShopping(); showToast('已添加：' + name);
+}
+
+function toggleShop(i) {
+  state.shopping[i].checked = !state.shopping[i].checked;
+  saveState(); renderShopping();
+}
+
+function delShop(i) {
+  state.shopping.splice(i, 1);
+  saveState(); renderShopping();
+}
+
+// ===== 攒钱进度 =====
+function renderSavings() {
+  const current = state.savings.current || 0;
+  const target = state.savings.target || 0;
+  document.getElementById('savedAmount').textContent = '¥ ' + current;
+  document.getElementById('targetText').textContent = target;
+  const pct = target > 0 ? Math.min(100, Math.round(current / target * 100)) : 0;
+  document.getElementById('savingsFill').style.width = pct + '%';
+  const pctEl = document.getElementById('savingsPercent');
+  pctEl.textContent = pct + '%';
+  pctEl.classList.toggle('complete', pct >= 100);
+  document.getElementById('targetInput').value = target || '';
+
+  const historyList = document.getElementById('historyList');
+  if (!state.savings.history || !state.savings.history.length) {
+    historyList.innerHTML = '<div class="empty-hint">暂无收支记录</div>';
+    return;
+  }
+  historyList.innerHTML = state.savings.history.map((h, i) => {
+    return `<div class="history-item">
+      <div>
+        <span class="h-amount ${h.type}">${h.type === 'add' ? '+' : '-'}¥${h.amount}</span>
+        <span class="h-note">${h.note || ''}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="h-date">${h.date}</span>
+        <button class="h-del" onclick="delHistory(${i})">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setTarget() {
+  const val = parseFloat(document.getElementById('targetInput').value);
+  if (!val || val <= 0) { showToast('请输入有效金额'); return; }
+  state.savings.target = val;
+  saveState(); renderSavings(); showToast('目标已设置：¥' + val);
+}
+
+function resetSavings() {
+  state.savings.current = 0;
+  state.savings.history = [];
+  saveState(); renderSavings(); showToast('已重置');
+}
+
+function addMoney(direction) {
+  const amount = parseFloat(document.getElementById('moneyInput').value);
+  if (!amount || amount <= 0) { showToast('请输入有效金额'); return; }
+  const note = document.getElementById('moneyNote').value.trim();
+  const type = direction > 0 ? 'add' : 'sub';
+  state.savings.current = (state.savings.current || 0) + (direction > 0 ? amount : -amount);
+  if (!state.savings.history) state.savings.history = [];
+  state.savings.history.unshift({ type, amount, note, date:new Date().toLocaleDateString('zh-CN') });
+  document.getElementById('moneyInput').value = '';
+  document.getElementById('moneyNote').value = '';
+  saveState(); renderSavings(); showToast(direction > 0 ? '已存入 ¥' + amount : '已支出 ¥' + amount);
+}
+
+function delHistory(i) {
+  const h = state.savings.history[i];
+  if (h.type === 'add') state.savings.current -= h.amount;
+  else state.savings.current += h.amount;
+  state.savings.history.splice(i, 1);
+  saveState(); renderSavings();
+}
+
+// ===== 旅行笔记 =====
+function bindNotes() {
+  const area = document.getElementById('notesArea');
+  area.value = state.notes || '';
+  let timer = null;
+  area.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      state.notes = area.value;
+      saveState();
+    }, 500);
+  });
+}
+
+// ===== 初始化 =====
+function init() {
+  loadState();
+  bindTripInfo();
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  renderRoute();
+  renderGuideGrid();
+  renderPrepare();
+  renderLuggage();
+  renderShopping();
+  renderSavings();
+  bindNotes();
+}
+
+init();
+</script>
+</body>
+</html>
