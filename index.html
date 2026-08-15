@@ -469,6 +469,164 @@ footer {
 .sim-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
 .sim-table th, .sim-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); }
 .sim-table th { color: var(--text-light); font-weight: 600; }
+/* ===== Luggage Presets ===== */
+.luggage-presets {
+  background: var(--card-bg); border-radius: 14px; padding: 14px 16px;
+  margin-bottom: 12px; box-shadow: var(--shadow);
+}
+.luggage-presets .preset-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+.preset-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.preset-chip {
+  padding: 5px 12px; border: 2px solid var(--border); border-radius: 20px;
+  font-size: 0.8rem; cursor: pointer; transition: all .2s; background: white;
+  color: var(--text); white-space: nowrap;
+}
+.preset-chip:hover { border-color: var(--primary); color: var(--primary); }
+.preset-chip.added { background: var(--success); color: white; border-color: var(--success); }
+.preset-all-btn, .preset-clear-btn {
+  padding: 10px 16px; border-radius: 12px; border: none; cursor: pointer;
+  font-size: 0.85rem; font-weight: 600; margin-right: 8px; margin-bottom: 12px; transition: opacity .2s;
+}
+.preset-all-btn { background: linear-gradient(135deg, var(--success), #2ECC71); color: white; }
+.preset-clear-btn { background: var(--border); color: var(--text-light); }
+.preset-all-btn:hover { opacity: .9; }
+.preset-clear-btn:hover { background: #D5DDE4; }
+.auto-cat-hint {
+  font-size: 0.8rem; color: var(--primary); padding: 4px 10px;
+  background: rgba(74,144,217,0.06); border-radius: 8px; margin-bottom: 8px;
+}
+
+/* ===== Weather Panel ===== */
+.weather-search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.weather-search-row input {
+  flex: 1; padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.9rem;
+}
+.weather-search-row input:focus { outline: none; border-color: var(--primary); }
+.weather-quick-cities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.weather-quick-city {
+  padding: 4px 12px; border: 2px solid var(--border); border-radius: 20px;
+  font-size: 0.8rem; cursor: pointer; background: white; color: var(--text-light);
+  transition: all .2s;
+}
+.weather-quick-city:hover { border-color: var(--primary); color: var(--primary); }
+.weather-card {
+  background: linear-gradient(135deg, #4A90D9, #6BA5E8);
+  border-radius: 16px; padding: 20px; color: white; margin-bottom: 12px;
+  box-shadow: var(--shadow-lg);
+}
+.weather-card .wc-city { font-size: 1.2rem; font-weight: 700; }
+.weather-card .wc-temp { font-size: 2.5rem; font-weight: 800; margin: 8px 0; }
+.weather-card .wc-desc { font-size: 0.95rem; opacity: .9; }
+.weather-card .wc-meta { font-size: 0.8rem; opacity: .75; margin-top: 8px; display: flex; gap: 16px; flex-wrap: wrap; }
+.weather-forecast { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 16px; }
+.weather-forecast-day {
+  background: var(--card-bg); border-radius: 12px; padding: 10px 12px;
+  text-align: center; min-width: 72px; box-shadow: var(--shadow);
+}
+.weather-forecast-day .wfd-day { font-size: 0.75rem; color: var(--text-light); }
+.weather-forecast-day .wfd-icon { font-size: 1.5rem; margin: 4px 0; }
+.weather-forecast-day .wfd-temp { font-size: 0.85rem; font-weight: 700; }
+.weather-forecast-day .wfd-low { font-size: 0.75rem; color: var(--text-light); }
+.weather-cache-box {
+  background: var(--card-bg); border-radius: 12px; padding: 12px 16px; box-shadow: var(--shadow);
+}
+.weather-cache-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+.weather-cache-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem;
+}
+.weather-cache-item:last-child { border-bottom: none; }
+.weather-cache-item .wc-cache-name { cursor: pointer; color: var(--primary); }
+.weather-cache-item .wc-cache-del { color: var(--text-light); cursor: pointer; font-size: 0.9rem; }
+.weather-cache-item .wc-cache-del:hover { color: var(--danger); }
+
+/* ===== Visa Panel ===== */
+.visa-overview {
+  background: linear-gradient(135deg, var(--purple), #A67CD8);
+  border-radius: 14px; padding: 16px 20px; color: white;
+  margin-bottom: 16px; display: flex; justify-content: space-around; text-align: center;
+}
+.visa-overview .vo-item .vo-num { font-size: 1.4rem; font-weight: 800; }
+.visa-overview .vo-item .vo-label { font-size: 0.75rem; opacity: .85; }
+.visa-add-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.visa-add-row input {
+  flex: 1; min-width: 120px; padding: 10px 14px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.9rem;
+}
+.visa-add-row input:focus { outline: none; border-color: var(--primary); }
+.visa-add-row select {
+  padding: 10px 10px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.85rem; background: white; max-width: 120px;
+}
+.visa-card {
+  background: var(--card-bg); border-radius: 14px; padding: 16px;
+  margin-bottom: 10px; box-shadow: var(--shadow); transition: all .2s;
+}
+.visa-card:hover { box-shadow: var(--shadow-lg); }
+.visa-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 4px; }
+.visa-card .vc-name { font-size: 1rem; font-weight: 700; }
+.visa-card .vc-type { font-size: 0.72rem; padding: 2px 10px; border-radius: 8px; white-space: nowrap; }
+.visa-card .vc-type.free { background: #E8F5E9; color: var(--success); }
+.visa-card .vc-type.evisa { background: #FFF3E0; color: var(--accent); }
+.visa-card .vc-type.conditional { background: #E3F2FD; color: var(--primary); }
+.visa-card .vc-type.other { background: var(--bg); color: var(--text-light); }
+.visa-status-bar { display: flex; gap: 4px; margin-bottom: 8px; }
+.visa-status-step {
+  flex: 1; height: 6px; border-radius: 3px; background: var(--border);
+  transition: background .2s;
+}
+.visa-status-step.done { background: var(--success); }
+.visa-status-step.current { background: var(--accent); }
+.visa-status-labels { display: flex; gap: 4px; font-size: 0.7rem; color: var(--text-light); margin-bottom: 8px; }
+.visa-status-label { flex: 1; text-align: center; }
+.visa-status-label.done { color: var(--success); font-weight: 600; }
+.visa-status-label.current { color: var(--accent); font-weight: 600; }
+.visa-card .vc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.visa-card .vc-actions button {
+  font-size: 0.78rem; padding: 4px 12px; border: 2px solid var(--border);
+  border-radius: 8px; background: white; color: var(--text-light);
+  cursor: pointer; transition: all .2s;
+}
+.visa-card .vc-actions button:hover { border-color: var(--primary); color: var(--primary); }
+.visa-card .vc-actions button.btn-next { border-color: var(--success); color: var(--success); }
+.visa-card .vc-actions button.btn-del:hover { border-color: var(--danger); color: var(--danger); }
+.visa-card .vc-note {
+  font-size: 0.82rem; color: var(--text); background: var(--bg); padding: 8px 12px;
+  border-radius: 10px; margin-bottom: 8px; min-height: 20px;
+}
+
+/* ===== Exchange Rate ===== */
+.exchange-box {
+  background: var(--card-bg); border-radius: 14px; padding: 16px 18px;
+  box-shadow: var(--shadow); margin-top: 16px;
+}
+.exchange-row {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.exchange-row input, .exchange-row select {
+  padding: 10px 12px; border: 2px solid var(--border);
+  border-radius: 12px; font-size: 0.9rem;
+}
+.exchange-row input { flex: 1; min-width: 80px; }
+.exchange-row input:focus, .exchange-row select:focus { outline: none; border-color: var(--primary); }
+.ex-arrow { font-size: 1.4rem; cursor: pointer; color: var(--text-light); padding: 0 4px; transition: color .2s; }
+.ex-arrow:hover { color: var(--primary); }
+.ex-result { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-top: 10px; }
+
+/* ===== Share / Export ===== */
+.share-export-box {
+  background: var(--card-bg); border-radius: 14px; padding: 16px 18px;
+  margin-top: 16px; box-shadow: var(--shadow);
+}
+.share-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+.share-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.share-btn {
+  padding: 10px 16px; border: 2px solid var(--border); border-radius: 12px;
+  background: white; color: var(--text); font-size: 0.85rem; cursor: pointer;
+  transition: all .2s;
+}
+.share-btn:hover { border-color: var(--primary); color: var(--primary); background: rgba(74,144,217,0.04); }
 </style>
 </head>
 <body>
@@ -504,6 +662,8 @@ footer {
   <button class="tab-btn" data-tab="luggage">行李清单</button>
   <button class="tab-btn" data-tab="shopping">购物清单</button>
   <button class="tab-btn" data-tab="savings">攒钱进度</button>
+  <button class="tab-btn" data-tab="weather">天气</button>
+  <button class="tab-btn" data-tab="visa">签证进度</button>
   <button class="tab-btn" data-tab="notes">旅行笔记</button>
 </div>
 
@@ -543,11 +703,35 @@ footer {
   <div class="panel" id="panel-prepare">
     <div class="section-title">出发准备 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">签证 · 行李 · 货币 · 通讯 · App · 紧急联络</span></div>
     <div id="prepareContent"></div>
+    <!-- 汇率换算器 -->
+    <div class="exchange-box">
+      <div class="section-title" style="margin-top:16px">汇率换算器</div>
+      <div class="exchange-row">
+        <input type="number" id="exFromAmount" placeholder="金额" value="100" oninput="calcExchange()">
+        <select id="exFromCurrency" onchange="calcExchange()"></select>
+        <span class="ex-arrow" onclick="swapExchange()">⇄</span>
+        <select id="exToCurrency" onchange="calcExchange()"></select>
+        <input type="text" id="exToAmount" readonly placeholder="结果">
+      </div>
+      <div class="ex-result" id="exResult"></div>
+      <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">汇率为离线参考值（2026-07），实际以兑换时为准</div>
+    </div>
   </div>
 
   <!-- ===== Luggage Panel ===== -->
   <div class="panel" id="panel-luggage">
     <div class="section-title">行李清单 <span class="badge" id="luggageBadge">0 / 0</span></div>
+
+    <!-- 快捷预设：一键添加常用物品 -->
+    <div class="luggage-presets" id="luggagePresetsBox">
+      <div class="preset-label">📦 常用物品（点击添加）</div>
+      <div class="preset-chips" id="presetChips"></div>
+    </div>
+
+    <!-- 一键全选预设 -->
+    <button class="preset-all-btn" onclick="addAllPresets()">一键全选推荐清单</button>
+    <button class="preset-clear-btn" onclick="clearLuggage()">清空</button>
+
     <div class="filters" id="luggageFilters">
       <button class="filter-btn active" data-filter="all">全部</button>
       <button class="filter-btn" data-filter="clothes">衣物</button>
@@ -558,7 +742,7 @@ footer {
       <button class="filter-btn" data-filter="other">其他</button>
     </div>
     <div class="add-row">
-      <input type="text" id="luggageInput" placeholder="添加物品名称..." onkeydown="if(event.key==='Enter')addLuggage()">
+      <input type="text" id="luggageInput" placeholder="输入物品名称，自动分类..." oninput="suggestLuggageCat()" onkeydown="if(event.key==='Enter')addLuggage()">
       <select id="luggageCat">
         <option value="clothes">衣物</option><option value="toiletry">洗漱</option>
         <option value="electronics">电子</option><option value="docs">证件</option>
@@ -566,6 +750,8 @@ footer {
       </select>
       <button class="btn-add" onclick="addLuggage()">添加</button>
     </div>
+    <!-- 自动分类提示 -->
+    <div class="auto-cat-hint" id="autoCatHint" style="display:none"></div>
     <div id="luggageList"></div>
   </div>
 
@@ -612,11 +798,55 @@ footer {
     <div class="money-history"><h3>收支记录</h3><div id="historyList"></div></div>
   </div>
 
+  <!-- ===== Weather Panel ===== -->
+  <div class="panel" id="panel-weather">
+    <div class="section-title">天气查询 <span style="font-size:0.75rem;font-weight:normal;color:var(--text-light)">沿途城市实时天气</span></div>
+    <div class="weather-search-row">
+      <input type="text" id="weatherCity" placeholder="输入城市名（如：阿拉木图）" onkeydown="if(event.key==='Enter')searchWeather()">
+      <button class="btn-add" onclick="searchWeather()">查询</button>
+    </div>
+    <div class="weather-quick-cities" id="weatherQuickCities"></div>
+    <div id="weatherResult"></div>
+    <div class="weather-cache-box" id="weatherCacheBox" style="display:none">
+      <div class="weather-cache-title">最近查询</div>
+      <div id="weatherCacheList"></div>
+    </div>
+  </div>
+
+  <!-- ===== Visa Panel ===== -->
+  <div class="panel" id="panel-visa">
+    <div class="section-title">签证进度追踪 <span class="badge" id="visaBadge">0 国</span></div>
+    <div class="visa-overview" id="visaOverview"></div>
+    <div class="visa-add-row">
+      <input type="text" id="visaCountry" placeholder="国家名称..." onkeydown="if(event.key==='Enter')addVisa()">
+      <select id="visaType">
+        <option value="free">免签</option>
+        <option value="evisa">电子签</option>
+        <option value="conditional">有条件免签</option>
+        <option value="other">其他</option>
+      </select>
+      <button class="btn-add" onclick="addVisa()">添加</button>
+    </div>
+    <button class="preset-btn" onclick="loadPresetVisa()" style="border-color:var(--purple);color:var(--purple)">一键导入大环线签证清单</button>
+    <div id="visaList"></div>
+  </div>
+
   <!-- ===== Notes Panel ===== -->
   <div class="panel" id="panel-notes">
     <div class="section-title">旅行笔记</div>
     <textarea class="notes-area" id="notesArea" placeholder="在这里记录你的旅行计划、攻略、注意事项..."></textarea>
     <div class="notes-hint">自动保存</div>
+  </div>
+
+  <!-- ===== Share / Export ===== -->
+  <div class="share-export-box">
+    <div class="share-title">分享与导出</div>
+    <div class="share-btns">
+      <button class="share-btn" onclick="exportShareText()">复制行程摘要</button>
+      <button class="share-btn" onclick="exportShareImage()">导出行程图片</button>
+      <button class="share-btn" onclick="exportShareJSON()">导出数据备份</button>
+      <button class="share-btn" onclick="importShareJSON()">导入数据备份</button>
+    </div>
   </div>
 </main>
 
@@ -1225,6 +1455,102 @@ const PRESET_ROUTE = [
   {name:'泰国中转回国', visa:'free', days:2, budget:1500, notes:'开罗飞曼谷中转，顺便玩两天再飞长沙（泰国免签）'}
 ];
 
+// ===== 行李预设数据 =====
+const LUGGAGE_PRESETS = [
+  // 衣物
+  {name:'速干T恤', cat:'clothes'}, {name:'长袖衬衫', cat:'clothes'}, {name:'抓绒衣', cat:'clothes'},
+  {name:'薄羽绒服', cat:'clothes'}, {name:'冲锋衣', cat:'clothes'}, {name:'换洗内衣', cat:'clothes'},
+  {name:'袜子(5双)', cat:'clothes'}, {name:'速干裤', cat:'clothes'}, {name:'短裤', cat:'clothes'},
+  {name:'睡衣', cat:'clothes'}, {name:'遮阳帽', cat:'clothes'}, {name:'墨镜', cat:'clothes'},
+  {name:'围巾/披肩', cat:'clothes'}, {name:'拖鞋', cat:'clothes'}, {name:'徒步鞋', cat:'clothes'},
+  // 洗漱
+  {name:'牙刷/牙膏', cat:'toiletry'}, {name:'洗发水(分装)', cat:'toiletry'}, {name:'沐浴露(分装)', cat:'toiletry'},
+  {name:'毛巾', cat:'toiletry'}, {name:'防晒霜SPF50', cat:'toiletry'}, {name:'唇膏', cat:'toiletry'},
+  {name:'梳子', cat:'toiletry'}, {name:'指甲剪', cat:'toiletry'}, {name:'剃须刀', cat:'toiletry'},
+  {name:'洗衣液(分装)', cat:'toiletry'},
+  // 电子
+  {name:'手机充电器', cat:'electronics'}, {name:'充电宝(≤100Wh)', cat:'electronics'}, {name:'Type-C数据线', cat:'electronics'},
+  {name:'多国转换插头', cat:'electronics'}, {name:'耳机', cat:'electronics'}, {name:'相机+存储卡', cat:'electronics'},
+  {name:'Kindle', cat:'electronics'}, {name:'笔记本电脑', cat:'electronics'}, {name:'移动WiFi', cat:'electronics'},
+  // 证件
+  {name:'护照(有效期>6月)', cat:'docs'}, {name:'身份证', cat:'docs'}, {name:'签证复印件', cat:'docs'},
+  {name:'护照照片(2张)', cat:'docs'}, {name:'行程单打印件', cat:'docs'}, {name:'酒店预订单', cat:'docs'},
+  {name:'保险单', cat:'docs'}, {name:'驾驶证(国际)', cat:'docs'}, {name:'现金(美元/欧元)', cat:'docs'},
+  {name:'银行卡', cat:'docs'},
+  // 药品
+  {name:'感冒药', cat:'medicine'}, {name:'退烧药', cat:'medicine'}, {name:'止泻药', cat:'medicine'},
+  {name:'创可贴', cat:'medicine'}, {name:'晕车药', cat:'medicine'}, {name:'蚊虫叮咬药', cat:'medicine'},
+  {name:'肠胃药', cat:'medicine'}, {name:'维生素', cat:'medicine'}, {name:'口罩', cat:'medicine'},
+  // 其他
+  {name:'水杯', cat:'other'}, {name:'眼罩/耳塞', cat:'other'}, {name:'收纳袋', cat:'other'},
+  {name:'晾衣绳', cat:'other'}, {name:'雨伞', cat:'other'}, {name:'指南针', cat:'other'},
+  {name:'翻译App', cat:'other'}, {name:'密封袋', cat:'other'}
+];
+
+// 行李自动分类关键词
+const LUGGAGE_CAT_KEYWORDS = {
+  clothes: ['衣','裤','袜','鞋','帽','围巾','披肩','手套','外套','羽绒','冲锋','速干','内衣','睡衣','拖鞋','墨镜'],
+  toiletry: ['牙','洗发','沐浴','毛巾','防晒','唇膏','梳子','指甲','剃须','洗衣','洗面','面霜','护肤'],
+  electronics: ['充电','数据线','电源','插头','耳机','相机','kindle','电脑','笔记本','wifi','移动电源','平板','转接','转换'],
+  docs: ['护照','身份证','签证','照片','行程单','酒店','保险单','驾照','驾驶证','银行卡','现金','美元','欧元','证件'],
+  medicine: ['药','感冒','退烧','止泻','创可贴','晕车','蚊虫','肠胃','维生素','口罩','绷带','消毒']
+};
+
+// ===== 签证预设数据 =====
+const PRESET_VISA = [
+  {name:'哈萨克斯坦', type:'free', status:0, note:'免签，护照有效期>6个月即可入境'},
+  {name:'乌兹别克斯坦', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'阿塞拜疆', type:'free', status:0, note:'免签(2024-8起)，护照有效期>6个月'},
+  {name:'格鲁吉亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'亚美尼亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'土耳其', type:'free', status:0, note:'电子签，约$60，建议提前1周申请 evisa.gov.tr'},
+  {name:'塞尔维亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'波黑', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'埃及', type:'evisa', status:0, note:'电子签$25或落地签$25，建议提前办电子签 visa2egypt.gov.eg'},
+  {name:'泰国', type:'free', status:0, note:'免签(临时政策)，护照有效期>6个月'}
+];
+
+// 签证状态步骤
+const VISA_STEPS = ['准备资料', '提交申请', '等待审批', '获批/完成'];
+
+// ===== 汇率数据（离线参考 2026-07，1单位外币≈人民币） =====
+const EXCHANGE_RATES = {
+  CNY: { name:'人民币', rate: 1 },
+  USD: { name:'美元', rate: 7.25 },
+  EUR: { name:'欧元', rate: 7.85 },
+  KZT: { name:'哈萨克斯坦坚戈', rate: 0.015 },
+  UZS: { name:'乌兹别克斯坦苏姆', rate: 0.00057 },
+  AZN: { name:'阿塞拜疆马纳特', rate: 4.27 },
+  GEL: { name:'格鲁吉亚拉里', rate: 2.68 },
+  AMD: { name:'亚美尼亚德拉姆', rate: 0.018 },
+  TRY: { name:'土耳其里拉', rate: 0.21 },
+  RSD: { name:'塞尔维亚第纳尔', rate: 0.066 },
+  BAM: { name:'波黑马克', rate: 4.03 },
+  EGP: { name:'埃及镑', rate: 0.15 },
+  THB: { name:'泰国铢', rate: 0.20 }
+};
+
+// 天气查询城市映射（中文名→英文）
+const WEATHER_CITIES = [
+  {cn:'阿拉木图', en:'Almaty', cc:'KZ'},
+  {cn:'阿斯塔纳', en:'Astana', cc:'KZ'},
+  {cn:'塔什干', en:'Tashkent', cc:'UZ'},
+  {cn:'撒马尔罕', en:'Samarkand', cc:'UZ'},
+  {cn:'巴库', en:'Baku', cc:'AZ'},
+  {cn:'第比利斯', en:'Tbilisi', cc:'GE'},
+  {cn:'埃里温', en:'Yerevan', cc:'AM'},
+  {cn:'伊斯坦布尔', en:'Istanbul', cc:'TR'},
+  {cn:'卡帕多奇亚', en:'Nevsehir', cc:'TR'},
+  {cn:'安塔利亚', en:'Antalya', cc:'TR'},
+  {cn:'贝尔格莱德', en:'Belgrade', cc:'RS'},
+  {cn:'萨拉热窝', en:'Sarajevo', cc:'BA'},
+  {cn:'开罗', en:'Cairo', cc:'EG'},
+  {cn:'卢克索', en:'Luxor', cc:'EG'},
+  {cn:'曼谷', en:'Bangkok', cc:'TH'},
+  {cn:'长沙', en:'Changsha', cc:'CN'},
+  {cn:'乌鲁木齐', en:'Urumqi', cc:'CN'}
+];
+
 // ===== 状态管理 =====
 let state = {
   trip: { dest:'', date:'', days:'' },
@@ -1232,7 +1558,9 @@ let state = {
   luggage: [],
   shopping: [],
   savings: { target:0, current:0, history:[] },
-  notes: ''
+  notes: '',
+  visa: [],
+  weatherCache: []
 };
 
 let currentLuggageFilter = 'all';
@@ -1522,6 +1850,61 @@ function renderPrepare() {
 }
 
 // ===== 行李清单 =====
+function renderLuggagePresets() {
+  const box = document.getElementById('presetChips');
+  if (!box) return;
+  box.innerHTML = LUGGAGE_PRESETS.map((p, i) => {
+    const added = state.luggage.some(l => l.name === p.name);
+    return `<span class="preset-chip${added ? ' added' : ''}" onclick="addPresetLuggage(${i})">${added ? '✓ ' : ''}${p.name}</span>`;
+  }).join('');
+}
+
+function addPresetLuggage(i) {
+  const p = LUGGAGE_PRESETS[i];
+  if (state.luggage.some(l => l.name === p.name)) { showToast('已添加过了'); return; }
+  state.luggage.push({ name:p.name, cat:p.cat, checked:false });
+  saveState(); renderLuggage(); renderLuggagePresets(); showToast('已添加：' + p.name);
+}
+
+function addAllPresets() {
+  let count = 0;
+  LUGGAGE_PRESETS.forEach(p => {
+    if (!state.luggage.some(l => l.name === p.name)) {
+      state.luggage.push({ name:p.name, cat:p.cat, checked:false });
+      count++;
+    }
+  });
+  saveState(); renderLuggage(); renderLuggagePresets();
+  showToast(count > 0 ? `已添加 ${count} 件推荐物品` : '推荐物品已全部添加');
+}
+
+function clearLuggage() {
+  if (!state.luggage.length) { showToast('清单已空'); return; }
+  state.luggage = [];
+  saveState(); renderLuggage(); renderLuggagePresets();
+  showToast('已清空行李清单');
+}
+
+function autoCategorize(name) {
+  for (const cat in LUGGAGE_CAT_KEYWORDS) {
+    if (LUGGAGE_CAT_KEYWORDS[cat].some(kw => name.includes(kw))) return cat;
+  }
+  return 'other';
+}
+
+function suggestLuggageCat() {
+  const input = document.getElementById('luggageInput');
+  const hint = document.getElementById('autoCatHint');
+  const sel = document.getElementById('luggageCat');
+  const name = input.value.trim();
+  if (!name) { hint.style.display = 'none'; return; }
+  const cat = autoCategorize(name);
+  const catNames = { clothes:'衣物', toiletry:'洗漱', electronics:'电子', docs:'证件', medicine:'药品', other:'其他' };
+  hint.textContent = '自动识别分类：' + catNames[cat];
+  hint.style.display = 'block';
+  sel.value = cat;
+}
+
 function renderLuggage() {
   const list = document.getElementById('luggageList');
   const badge = document.getElementById('luggageBadge');
@@ -1550,10 +1933,11 @@ function renderLuggage() {
 function addLuggage() {
   const name = document.getElementById('luggageInput').value.trim();
   if (!name) { showToast('请输入物品名称'); return; }
-  const cat = document.getElementById('luggageCat').value;
+  const cat = autoCategorize(name); // 自动分类
   state.luggage.push({ name, cat, checked:false });
   document.getElementById('luggageInput').value = '';
-  saveState(); renderLuggage(); showToast('已添加：' + name);
+  document.getElementById('autoCatHint').style.display = 'none';
+  saveState(); renderLuggage(); renderLuggagePresets(); showToast('已添加：' + name);
 }
 
 function toggleLuggage(i) {
@@ -1687,6 +2071,489 @@ function delHistory(i) {
   saveState(); renderSavings();
 }
 
+// ===== 天气查询 =====
+function renderWeatherQuickCities() {
+  const box = document.getElementById('weatherQuickCities');
+  if (!box) return;
+  box.innerHTML = WEATHER_CITIES.slice(0, 10).map(c =>
+    `<span class="weather-quick-city" onclick="document.getElementById('weatherCity').value='${c.cn}';searchWeather()">${c.cn}</span>`
+  ).join('');
+}
+
+function renderWeatherCache() {
+  const box = document.getElementById('weatherCacheBox');
+  const list = document.getElementById('weatherCacheList');
+  if (!box || !list) return;
+  if (!state.weatherCache || !state.weatherCache.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  list.innerHTML = state.weatherCache.map((w, i) => {
+    const time = new Date(w.time).toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+    return `<div class="weather-cache-item">
+      <span class="wc-cache-name" onclick="displayWeatherFromCache(${i})">${w.city} ${w.temp}°C ${w.desc}</span>
+      <span style="font-size:0.78rem;color:var(--text-light)">${time}</span>
+      <span class="wc-cache-del" onclick="delWeatherCache(${i})">✕</span>
+    </div>`;
+  }).join('');
+}
+
+function delWeatherCache(i) {
+  state.weatherCache.splice(i, 1);
+  saveState(); renderWeatherCache();
+}
+
+function displayWeatherFromCache(i) {
+  const w = state.weatherCache[i];
+  displayWeatherResult(w);
+}
+
+function displayWeatherResult(data) {
+  const box = document.getElementById('weatherResult');
+  const iconMap = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'⛈',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+  const icon = iconMap[data.code] || '🌡';
+  let html = `<div class="weather-card">
+    <div class="wc-city">${data.city}</div>
+    <div class="wc-temp">${data.temp}°C</div>
+    <div class="wc-desc">${icon} ${data.desc}</div>
+    <div class="wc-meta">
+      <span>体感 ${data.feelsLike}°C</span>
+      <span>湿度 ${data.humidity}%</span>
+      <span>风速 ${data.windSpeed} km/h</span>
+    </div>
+  </div>`;
+  if (data.forecast && data.forecast.length) {
+    html += `<div class="weather-forecast">`;
+    data.forecast.forEach(f => {
+      const fIcon = iconMap[f.code] || '🌡';
+      html += `<div class="weather-forecast-day">
+        <div class="wfd-day">${f.date}</div>
+        <div class="wfd-icon">${fIcon}</div>
+        <div class="wfd-temp">${f.high}°</div>
+        <div class="wfd-low">${f.low}°</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+  box.innerHTML = html;
+}
+
+async function searchWeather() {
+  const cityInput = document.getElementById('weatherCity').value.trim();
+  if (!cityInput) { showToast('请输入城市名'); return; }
+
+  // 查找城市映射
+  let cityMatch = WEATHER_CITIES.find(c => c.cn === cityInput || c.en.toLowerCase() === cityInput.toLowerCase());
+  if (!cityMatch) {
+    // 模糊匹配
+    cityMatch = WEATHER_CITIES.find(c => c.cn.includes(cityInput) || c.en.toLowerCase().includes(cityInput.toLowerCase()));
+  }
+
+  document.getElementById('weatherResult').innerHTML = '<div class="empty-hint">正在查询天气...</div>';
+
+  try {
+    let lat, lon, cityName;
+    if (cityMatch) {
+      // 使用预置城市坐标
+      const cityCoords = {
+        'Almaty':[43.22,76.85], 'Astana':[51.16,71.43], 'Tashkent':[41.30,69.24],
+        'Samarkand':[39.65,66.97], 'Baku':[40.39,49.86], 'Tbilisi':[41.71,44.83],
+        'Yerevan':[40.17,44.51], 'Istanbul':[41.01,28.98], 'Nevsehir':[38.69,34.68],
+        'Antalya':[36.90,30.71], 'Belgrade':[44.79,20.46], 'Sarajevo':[43.85,18.41],
+        'Cairo':[30.05,31.24], 'Luxor':[25.69,32.65], 'Bangkok':[13.76,100.50],
+        'Changsha':[28.23,112.94], 'Urumqi':[43.83,87.62]
+      };
+      const coords = cityCoords[cityMatch.en];
+      if (coords) { lat = coords[0]; lon = coords[1]; cityName = cityMatch.cn; }
+    }
+
+    if (lat === undefined) {
+      // 通过 Open-Meteo Geocoding API 搜索
+      const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cityInput)}&count=1&language=zh`;
+      const geoResp = await fetch(geoUrl);
+      const geoData = await geoResp.json();
+      if (geoData.results && geoData.results.length) {
+        lat = geoData.results[0].latitude;
+        lon = geoData.results[0].longitude;
+        cityName = geoData.results[0].name;
+      } else {
+        document.getElementById('weatherResult').innerHTML = '<div class="empty-hint">未找到该城市，请尝试英文名</div>';
+        return;
+      }
+    }
+
+    // 查询天气
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=5&timezone=auto`;
+    const resp = await fetch(weatherUrl);
+    const data = await resp.json();
+
+    const codeMap = {
+      0:'晴天',1:'大部晴',2:'多云',3:'阴天',45:'雾',48:'冻雾',
+      51:'小毛雨',53:'毛毛雨',55:'大毛毛雨',56:'冻雨',57:'强冻雨',
+      61:'小雨',63:'中雨',65:'大雨',66:'冻雨',67:'强冻雨',
+      71:'小雪',73:'中雪',75:'大雪',77:'雪粒',
+      80:'阵雨',81:'中阵雨',82:'大阵雨',85:'阵雪',86:'大阵雪',
+      95:'雷暴',96:'雷暴夹冰雹',99:'强雷暴夹冰雹'
+    };
+
+    const code = data.current.weather_code;
+    const weatherData = {
+      city: cityName,
+      temp: Math.round(data.current.temperature_2m),
+      feelsLike: Math.round(data.current.apparent_temperature),
+      humidity: data.current.relative_humidity_2m,
+      windSpeed: Math.round(data.current.wind_speed_10m),
+      code: code,
+      desc: codeMap[code] || '未知',
+      time: Date.now(),
+      forecast: data.daily ? data.daily.time.map((t, i) => ({
+        date: t.substring(5),
+        high: Math.round(data.daily.temperature_2m_max[i]),
+        low: Math.round(data.daily.temperature_2m_min[i]),
+        code: data.daily.weather_code[i]
+      })) : []
+    };
+
+    displayWeatherResult(weatherData);
+
+    // 存入缓存（最多保留5条）
+    if (!state.weatherCache) state.weatherCache = [];
+    state.weatherCache = state.weatherCache.filter(w => w.city !== weatherData.city);
+    state.weatherCache.unshift(weatherData);
+    if (state.weatherCache.length > 5) state.weatherCache = state.weatherCache.slice(0, 5);
+    saveState();
+    renderWeatherCache();
+  } catch (err) {
+    document.getElementById('weatherResult').innerHTML = '<div class="empty-hint">查询失败，请检查网络后重试</div>';
+  }
+}
+
+// ===== 签证进度追踪 =====
+function renderVisa() {
+  const list = document.getElementById('visaList');
+  const overview = document.getElementById('visaOverview');
+  const badge = document.getElementById('visaBadge');
+  if (!list || !overview) return;
+
+  const total = state.visa.length;
+  const done = state.visa.filter(v => v.status >= VISA_STEPS.length).length;
+  const inProgress = state.visa.filter(v => v.status > 0 && v.status < VISA_STEPS.length).length;
+  const notStarted = state.visa.filter(v => v.status === 0).length;
+  badge.textContent = total + ' 国';
+
+  overview.innerHTML = `
+    <div class="vo-item"><div class="vo-num">${total}</div><div class="vo-label">总计</div></div>
+    <div class="vo-item"><div class="vo-num">${done}</div><div class="vo-label">已完成</div></div>
+    <div class="vo-item"><div class="vo-num">${inProgress}</div><div class="vo-label">进行中</div></div>
+    <div class="vo-item"><div class="vo-num">${notStarted}</div><div class="vo-label">未开始</div></div>
+  `;
+
+  if (!state.visa.length) {
+    list.innerHTML = '<div class="empty-hint">还没有添加签证项目</div>';
+    return;
+  }
+
+  const typeNames = { free:'免签', evisa:'电子签', conditional:'有条件免签', other:'其他' };
+  list.innerHTML = state.visa.map((v, i) => {
+    let stepsHtml = '<div class="visa-status-bar">';
+    let labelsHtml = '<div class="visa-status-labels">';
+    VISA_STEPS.forEach((step, si) => {
+      const stepDone = v.status > si;
+      const stepCurrent = v.status === si;
+      stepsHtml += `<div class="visa-status-step${stepDone ? ' done' : ''}${stepCurrent ? ' current' : ''}"></div>`;
+      labelsHtml += `<div class="visa-status-label${stepDone ? ' done' : ''}${stepCurrent ? ' current' : ''}">${step}</div>`;
+    });
+    stepsHtml += '</div>';
+    labelsHtml += '</div>';
+
+    return `<div class="visa-card">
+      <div class="visa-card-head">
+        <span class="vc-name">${v.name}</span>
+        <span class="vc-type ${v.type}">${typeNames[v.type] || v.type}</span>
+      </div>
+      ${stepsHtml}${labelsHtml}
+      <div class="vc-note">${v.note || '点击下方按钮更新进度'}</div>
+      <div class="vc-actions">
+        ${v.status < VISA_STEPS.length ? `<button class="btn-next" onclick="advanceVisa(${i})">推进到「${VISA_STEPS[v.status]}」</button>` : '<button disabled style="opacity:.5;cursor:default">已完成</button>'}
+        ${v.status > 0 ? `<button onclick="resetVisa(${i})">重置</button>` : ''}
+        <button class="btn-del" onclick="delVisa(${i})">删除</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addVisa() {
+  const name = document.getElementById('visaCountry').value.trim();
+  if (!name) { showToast('请输入国家名称'); return; }
+  const type = document.getElementById('visaType').value;
+  state.visa.push({ name, type, status:0, note:'' });
+  document.getElementById('visaCountry').value = '';
+  saveState(); renderVisa(); showToast('已添加：' + name);
+}
+
+function advanceVisa(i) {
+  if (state.visa[i].status < VISA_STEPS.length) {
+    state.visa[i].status++;
+    if (state.visa[i].status >= VISA_STEPS.length) {
+      showToast(state.visa[i].name + ' 签证已完成！');
+    }
+    saveState(); renderVisa();
+  }
+}
+
+function resetVisa(i) {
+  state.visa[i].status = 0;
+  saveState(); renderVisa();
+}
+
+function delVisa(i) {
+  state.visa.splice(i, 1);
+  saveState(); renderVisa(); showToast('已删除');
+}
+
+function loadPresetVisa() {
+  state.visa = PRESET_VISA.map(v => ({...v}));
+  saveState(); renderVisa(); showToast('已导入大环线签证清单（' + PRESET_VISA.length + '国）');
+}
+
+// ===== 汇率换算器 =====
+function initExchangeRate() {
+  const fromSel = document.getElementById('exFromCurrency');
+  const toSel = document.getElementById('exToCurrency');
+  if (!fromSel || !toSel) return;
+  fromSel.innerHTML = Object.keys(EXCHANGE_RATES).map(k =>
+    `<option value="${k}">${EXCHANGE_RATES[k].name} (${k})</option>`
+  ).join('');
+  toSel.innerHTML = Object.keys(EXCHANGE_RATES).map(k =>
+    `<option value="${k}">${EXCHANGE_RATES[k].name} (${k})</option>`
+  ).join('');
+  fromSel.value = 'CNY';
+  toSel.value = 'USD';
+  calcExchange();
+}
+
+function calcExchange() {
+  const fromAmt = parseFloat(document.getElementById('exFromAmount').value) || 0;
+  const fromCur = document.getElementById('exFromCurrency').value;
+  const toCur = document.getElementById('exToCurrency').value;
+  const fromRate = EXCHANGE_RATES[fromCur].rate;
+  const toRate = EXCHANGE_RATES[toCur].rate;
+  // 先换成人民币，再换目标货币
+  const cny = fromAmt * fromRate;
+  const result = cny / toRate;
+  document.getElementById('exToAmount').value = result.toFixed(2);
+  document.getElementById('exResult').textContent =
+    fromAmt + ' ' + EXCHANGE_RATES[fromCur].name + ' ≈ ' + result.toFixed(2) + ' ' + EXCHANGE_RATES[toCur].name;
+}
+
+function swapExchange() {
+  const fromSel = document.getElementById('exFromCurrency');
+  const toSel = document.getElementById('exToCurrency');
+  const tmp = fromSel.value;
+  fromSel.value = toSel.value;
+  toSel.value = tmp;
+  calcExchange();
+}
+
+// ===== 行程分享导出 =====
+function exportShareText() {
+  let text = '=== 追寻旅迹 · 亚欧非大环线 ===\n';
+  if (state.trip.dest) text += '目的地：' + state.trip.dest + '\n';
+  if (state.trip.date) text += '出发日期：' + state.trip.date + '\n';
+  if (state.trip.days) text += '预计天数：' + state.trip.days + '天\n';
+
+  if (state.route.length) {
+    text += '\n--- 路线规划 ---\n';
+    state.route.forEach((r, i) => {
+      const visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
+      text += `${i+1}. ${r.name} [${visaText}] ${r.days ? r.days+'天 ' : ''}${r.budget ? '¥'+r.budget : ''}${r.visited ? ' ✓' : ''}\n`;
+      if (r.notes) text += '   ' + r.notes + '\n';
+    });
+  }
+
+  if (state.savings.target || state.savings.current) {
+    text += '\n--- 攒钱进度 ---\n';
+    text += `目标：¥${state.savings.target} 已攒：¥${state.savings.current}\n`;
+  }
+
+  if (state.luggage.length) {
+    const checked = state.luggage.filter(l => l.checked).length;
+    text += `\n--- 行李清单 (${checked}/${state.luggage.length}) ---\n`;
+    state.luggage.forEach(l => { text += (l.checked ? '[x] ' : '[ ] ') + l.name + '\n'; });
+  }
+
+  if (state.shopping.length) {
+    text += '\n--- 购物清单 ---\n';
+    state.shopping.forEach(s => { text += (s.checked ? '[x] ' : '[ ] ') + s.name + ' ¥' + (s.price||0) + '\n'; });
+  }
+
+  if (state.notes) text += '\n--- 旅行笔记 ---\n' + state.notes + '\n';
+
+  text += '\n=== 由「追寻旅迹」生成 ===';
+
+  // 复制到剪贴板
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('行程摘要已复制到剪贴板');
+    }).catch(() => {
+      // fallback
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('行程摘要已复制到剪贴板');
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('行程摘要已复制到剪贴板');
+  }
+}
+
+function exportShareImage() {
+  // 使用 Canvas 绘制行程图片
+  const canvas = document.createElement('canvas');
+  canvas.width = 750;
+  canvas.height = 1200;
+  const ctx = canvas.getContext('2d');
+
+  // 背景
+  const grad = ctx.createLinearGradient(0, 0, 0, 1200);
+  grad.addColorStop(0, '#2C3E50');
+  grad.addColorStop(0.5, '#4A90D9');
+  grad.addColorStop(1, '#1ABC9C');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 750, 1200);
+
+  // 标题
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 36px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('追寻旅迹 · 亚欧非大环线', 375, 60);
+
+  let y = 120;
+  ctx.font = '16px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+
+  if (state.trip.dest) { ctx.fillText('目的地：' + state.trip.dest, 40, y); y += 28; }
+  if (state.trip.date) { ctx.fillText('出发日期：' + state.trip.date, 40, y); y += 28; }
+  if (state.trip.days) { ctx.fillText('预计天数：' + state.trip.days + '天', 40, y); y += 28; }
+
+  // 路线
+  if (state.route.length) {
+    y += 20;
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = '#FFD93D';
+    ctx.fillText('路线规划', 40, y);
+    y += 30;
+    ctx.font = '15px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    state.route.forEach((r, i) => {
+      if (y > 1150) return;
+      const visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : '';
+      const line = `${i+1}. ${r.name} [${visaText}] ${r.days ? r.days+'天' : ''} ${r.budget ? '¥'+r.budget : ''}${r.visited ? ' ✓' : ''}`;
+      ctx.fillText(line, 40, y);
+      y += 26;
+    });
+  }
+
+  // 攒钱
+  if (state.savings.target || state.savings.current) {
+    y += 20;
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = '#FFD93D';
+    ctx.fillText('攒钱进度', 40, y);
+    y += 30;
+    ctx.font = '16px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    const pct = state.savings.target > 0 ? Math.round(state.savings.current / state.savings.target * 100) : 0;
+    ctx.fillText(`目标 ¥${state.savings.target}  已攒 ¥${state.savings.current}  (${pct}%)`, 40, y);
+    y += 28;
+  }
+
+  // 行李进度
+  if (state.luggage.length) {
+    y += 20;
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = '#FFD93D';
+    ctx.fillText('行李清单', 40, y);
+    y += 30;
+    ctx.font = '15px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    const checked = state.luggage.filter(l => l.checked).length;
+    ctx.fillText(`已打包 ${checked}/${state.luggage.length} 件`, 40, y);
+    y += 28;
+  }
+
+  // 签证进度
+  if (state.visa && state.visa.length) {
+    y += 20;
+    ctx.font = 'bold 22px sans-serif';
+    ctx.fillStyle = '#FFD93D';
+    ctx.fillText('签证进度', 40, y);
+    y += 30;
+    ctx.font = '15px sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    const done = state.visa.filter(v => v.status >= 4).length;
+    ctx.fillText(`已完成 ${done}/${state.visa.length} 国`, 40, y);
+    y += 28;
+  }
+
+  // 底部
+  ctx.font = '13px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.textAlign = 'center';
+  ctx.fillText('由「追寻旅迹」生成 · 追寻旅迹 · 亚欧非大环线', 375, 1180);
+
+  // 下载
+  canvas.toBlob(function(blob) {
+    const link = document.createElement('a');
+    link.download = '追寻旅迹-行程分享.png';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    showToast('行程图片已下载');
+  });
+}
+
+function exportShareJSON() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.download = '追寻旅迹-数据备份.json';
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  showToast('数据备份已下载');
+}
+
+function importShareJSON() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const data = JSON.parse(ev.target.result);
+        state = data;
+        saveState();
+        init();
+        showToast('数据导入成功，页面已刷新');
+      } catch(err) {
+        showToast('导入失败：文件格式错误');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
 // ===== 旅行笔记 =====
 function bindNotes() {
   const area = document.getElementById('notesArea');
@@ -1711,8 +2578,13 @@ function init() {
   renderGuideGrid();
   renderPrepare();
   renderLuggage();
+  renderLuggagePresets();
   renderShopping();
   renderSavings();
+  renderVisa();
+  renderWeatherQuickCities();
+  renderWeatherCache();
+  initExchangeRate();
   bindNotes();
 }
 
