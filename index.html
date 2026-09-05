@@ -7,8 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
 <title>追寻旅迹 · 亚欧非大环线</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12/dist/pptxgen.bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5/build/index.umd.js"></script>
 <style>
@@ -38,26 +36,24 @@ body {
   overscroll-behavior-y: contain;
 }
 
-/* ===== Header & Sidebar ===== */
-.app-sidebar {
-  position: static;
-  background: var(--card);
-}
+/* ===== Header & Nav ===== */
 .app-header {
   background: var(--card);
   padding: calc(env(safe-area-inset-top, 0px) + 12px) 20px 12px;
   border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 50;
+  text-align: center;
 }
 .app-header h1 { font-size: 1.1rem; font-weight: 700; }
 .app-header .subtitle { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
-.sidebar-footer { display: none; }
 
 /* ===== Bottom Nav ===== */
 .bottom-nav {
-  position: fixed; bottom: 0; left: 0; right: 0;
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  max-width: 640px; width: 100%;
   background: var(--card);
   display: flex;
+  justify-content: center;
   border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   z-index: 100;
@@ -73,7 +69,7 @@ body {
 .nav-btn.active { color: var(--primary); font-weight: 600; }
 
 /* ===== Pages ===== */
-.page { display: none; max-width: 640px; margin: 0 auto; padding: 16px; }
+.page { display: none; max-width: 640px; margin: 0 auto; padding: 16px; padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
 .page.active { display: block; }
 
 /* ===== Section Title ===== */
@@ -95,6 +91,64 @@ body {
   border: 1px solid var(--border);
 }
 .card-sm { padding: 12px 14px; }
+
+/* ===== Sub Tabs (攻略页内) ===== */
+.sub-tabs {
+  display: flex; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  margin-bottom: 12px; scrollbar-width: none;
+}
+.sub-tabs::-webkit-scrollbar { display: none; }
+.sub-tab {
+  flex-shrink: 0; padding: 7px 13px; border: none; background: var(--bg);
+  border-radius: 8px; cursor: pointer; font-size: 0.8rem; color: var(--text2);
+  font-weight: 500; white-space: nowrap; transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.sub-tab.active { background: var(--text); color: #fff; }
+.sub-panel { display: none; }
+.sub-panel.active { display: block; }
+
+/* ===== 攻略专用样式 ===== */
+.country-header { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.country-flag { font-size:1.4rem; }
+.country-name { font-size:0.95rem; font-weight:700; }
+.country-days { margin-left:auto; font-size:0.75rem; color:var(--text2); font-weight:600; }
+.day-badge { display:inline-block; background:var(--primary); color:#fff; font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:8px; margin-right:5px; vertical-align:middle; }
+.route-line-v { position:relative; padding-left:22px; margin:8px 0; }
+.route-line-v::before { content:''; position:absolute; left:6px; top:8px; bottom:8px; width:2px; background:var(--border); border-radius:1px; }
+.route-stop-v { position:relative; padding:4px 0 4px 4px; font-size:0.82rem; }
+.route-stop-v::before { content:''; position:absolute; left:-20px; top:10px; width:9px; height:9px; border-radius:50%; background:var(--primary); border:2px solid var(--card); box-shadow:0 0 0 1px var(--primary); }
+.route-stop-v .days { font-size:0.72rem; color:var(--text2); display:block; }
+.accom-option { border-left:3px solid var(--border); padding:7px 11px; margin:5px 0; border-radius:0 8px 8px 0; background:#f8f9fa; }
+.accom-option.budget { border-color:var(--red); }
+.accom-option.mid { border-color:var(--primary); }
+.accom-option.lux { border-color:var(--purple); }
+.accom-option .price { float:right; font-weight:700; color:var(--orange); }
+.route-option-s { border:1px solid var(--border); border-radius:10px; padding:11px; margin:7px 0; }
+.route-option-s .r-title { font-weight:700; font-size:0.82rem; margin-bottom:3px; }
+.route-option-s .r-desc { font-size:0.78rem; color:var(--text2); }
+.tip-box { background:linear-gradient(135deg,#e3f2fd,#e8f5e9); border-radius:10px; padding:10px; margin:7px 0; font-size:0.78rem; line-height:1.6; }
+.warn-box { background:#fff3e0; border-radius:10px; padding:10px; margin:7px 0; font-size:0.78rem; line-height:1.6; }
+.checklist-item-v { display:flex; align-items:center; padding:5px 0; font-size:0.82rem; cursor:pointer; }
+.checklist-item-v input { margin-right:9px; width:18px; height:18px; accent-color:var(--green); flex-shrink:0; }
+.checklist-item-v.checked span { text-decoration:line-through; color:var(--text3); }
+.budget-row-v { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #f0f0f0; font-size:0.82rem; }
+.budget-row-v:last-child { border-bottom:none; }
+.budget-row-v .lbl { font-weight:500; }
+.budget-row-v input { width:75px; padding:3px 7px; border:1px solid var(--border); border-radius:8px; font-size:0.78rem; text-align:right; }
+.stat-grid-v { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin:7px 0; }
+.stat-box-v { background:#f8f9fa; border-radius:10px; padding:9px; text-align:center; }
+.stat-box-v .num { font-size:1.25rem; font-weight:800; color:var(--primary); }
+.stat-box-v .lbl { font-size:0.68rem; color:var(--text2); }
+.info-table-v { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.info-table-v th { background:#f8f9fa; padding:7px; text-align:left; font-weight:600; border-radius:6px 6px 0 0; }
+.info-table-v td { padding:7px; border-bottom:1px solid #f0f0f0; }
+.info-table-v tr:last-child td { border-bottom:none; }
+.collapsible-h { cursor:pointer; user-select:none; font-size:0.88rem; font-weight:600; margin-bottom:6px; }
+.collapsible-h::after { content:'▶'; float:right; font-size:0.72rem; color:var(--text2); transition:transform .2s; }
+.collapsible-h.open::after { transform:rotate(90deg); }
+.collapsible-content-v { display:none; margin-top:6px; }
+.collapsible-content-v.open { display:block; }
 
 /* ===== Buttons ===== */
 .btn {
@@ -241,18 +295,6 @@ select.input { max-width: 120px; appearance: auto; }
 .visa-tag.conditional { background: #E3F2FD; color: var(--primary); }
 .visa-tag.other { background: var(--bg); color: var(--text2); }
 
-/* ===== Map ===== */
-.map-section { margin-bottom: 16px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
-.map-header {
-  padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
-  background: var(--card); border-bottom: 1px solid var(--border); cursor: pointer;
-}
-.map-header .map-title { font-size: 0.85rem; font-weight: 600; }
-.map-header .map-toggle { font-size: 0.78rem; color: var(--text2); }
-.map-container { width: 100%; height: 300px; transition: height .3s; }
-.map-container.collapsed { height: 0; }
-#travelMap { width: 100%; height: 100%; }
-
 /* ===== Guide ===== */
 .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px; }
 .guide-chip {
@@ -398,17 +440,6 @@ select.input { max-width: 120px; appearance: auto; }
 .vc-note { font-size:0.82rem; color:var(--text2); background:var(--bg); padding:6px 10px; border-radius:6px; margin-bottom:8px; min-height:20px; }
 .vc-actions { display:flex; gap:6px; flex-wrap:wrap; }
 
-/* ===== Exchange ===== */
-.exchange-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px; }
-.exchange-row .input { min-width:0; flex:1; }
-.exchange-row select.input { max-width:120px; }
-.ex-arrow { font-size:1.4rem; cursor:pointer; color:var(--primary); padding:4px 6px; border-radius:8px; flex-shrink:0; }
-.ex-arrow:active { background:var(--bg); }
-.ex-result { font-size:1rem; font-weight:700; margin-top:8px; padding:8px 12px; background:var(--bg); border-radius:8px; text-align:center; }
-.ex-row-label { font-size:0.75rem; color:var(--text3); margin-bottom:4px; }
-.exchange-block { background:var(--bg); border-radius:10px; padding:12px; margin-bottom:10px; }
-.exchange-block .input { width:100%; }
-
 /* ===== Travel Apps ===== */
 .app-section { margin-bottom:16px; }
 .app-section h4 { font-size:0.88rem; font-weight:600; margin-bottom:8px; }
@@ -456,84 +487,14 @@ select.input { max-width: 120px; appearance: auto; }
 .filter-btn.active { background:var(--text); color:#fff; border-color:var(--text); }
 footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3); }
 
-/* Leaflet mobile */
-.leaflet-container { font-family:inherit !important; }
-.leaflet-control-zoom a { width:34px!important; height:34px!important; line-height:34px!important; font-size:16px!important; }
-.leaflet-popup-content-wrapper { border-radius:10px!important; }
-.leaflet-popup-content { margin:8px 12px!important; font-size:13px!important; }
-
 /* ===== Desktop Layout (>=768px) ===== */
 @media (min-width:768px) {
-  body {
-    display: flex;
-    padding-bottom: 0 !important;
-    overflow: hidden;
-    height: 100vh;
-  }
-
-  /* 侧边栏 */
-  .app-sidebar {
-    width: 200px;
-    min-height: 100vh;
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-    position: static;
-  }
-  .app-header {
-    position: static;
-    border-bottom: none;
-    padding: 28px 16px 20px;
-  }
-  .app-header h1 { font-size: 1.3rem; margin-bottom: 4px; }
-  .app-header .subtitle { margin-bottom: 0; }
-  .sidebar-footer {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--text3);
-    padding: 16px;
-    margin-top: auto;
-    line-height: 1.6;
-  }
-
-  /* 底部导航改为侧边栏 */
-  .bottom-nav {
-    position: static;
-    flex-direction: column;
-    border-top: none;
-    padding-bottom: 0;
-    gap: 4px;
-    flex: 1;
-  }
-  .nav-btn {
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
-    border-radius: 10px;
-    font-size: 0.88rem;
-    min-height: auto;
-    transition: background .15s;
-  }
-  .nav-btn:hover { background: var(--bg); }
-  .nav-btn .nav-icon { font-size: 1.1rem; }
-  .nav-btn.active { background: var(--primary); color: #fff; }
-  .nav-btn.active:hover { background: var(--primary); }
-
-  /* 主内容区 */
-  .main-content {
-    flex: 1;
-    overflow-y: auto;
-    height: 100vh;
-    -webkit-overflow-scrolling: touch;
-  }
-
   /* 页面宽度放开 */
   .page {
     max-width: 960px;
     margin: 0 auto;
-    padding: 24px 32px 40px;
+    padding: 24px 32px;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
   }
 
   /* 倒计时居中 */
@@ -546,16 +507,8 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
   /* 路线概览更大 */
   .route-summary .rs-val { font-size: 1.6rem; }
 
-  /* 地图更高 */
-  .map-container { height: 450px; }
-
   /* 攻略网格更宽 */
   .guide-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-
-  /* 汇率换算横排 */
-  .exchange-row { flex-direction: row; }
-  .exchange-block { display: flex; gap: 12px; align-items: center; }
-  .exchange-block .input { width: auto; }
 
   /* AI聊天区域更大 */
   .ai-chat-area { max-height: 400px; }
@@ -575,9 +528,6 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
     animation: fadeIn .2s ease;
   }
   @keyframes fadeIn { from { opacity:0; transform:scale(.95); } to { opacity:1; transform:scale(1); } }
-
-  /* footer隐藏（侧边栏已有品牌信息） */
-  footer { display: none; }
 
   /* 打车酒店APP双栏 */
   .app-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -603,32 +553,11 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 /* 大屏 (>=1200px) */
 @media (min-width:1200px) {
   .page { max-width: 1100px; }
-  .app-sidebar { width: 220px; }
-  .app-header { padding: 28px 20px; }
-  .map-container { height: 500px; }
   .guide-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-  /* 路线页：地图+详情双栏 */
-  .route-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
 }
 
 /* ===== Mobile (default / <768px) ===== */
 .main-content { width: 100%; }
-
-@media (max-width:767px) {
-  /* 手机端：侧边栏只显示header，导航在底部 */
-  .app-sidebar { position: static; }
-  .app-header {
-    position: sticky; top: 0; z-index: 50;
-  }
-  .sidebar-footer { display: none; }
-  .bottom-nav {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    z-index: 100;
-  }
-  .main-content {
-    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px));
-  }
-}
 
 /* 小屏手机 (<=480px) */
 @media (max-width:480px) {
@@ -637,18 +566,11 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
   .add-row { flex-direction:column; }
   .add-row .input { width:100%; min-width:0; }
   .add-row .btn { width:100%; }
-  .exchange-row { flex-direction:column; gap:6px; }
-  .exchange-row .input { width:100%; min-width:0; flex:none; }
-  .exchange-row select.input { max-width:none; width:100%; }
-  .ex-arrow { transform:rotate(90deg); text-align:center; width:100%; }
-  .exchange-block select.input { width:100%; }
-  #exFromCurrency, #exToCurrency { width:100%; max-width:none; }
   .guide-grid { grid-template-columns:repeat(3,1fr); }
 }
 
 /* 手机端（<768px）取消桌面双栏grid */
 @media (max-width:767px) {
-  .route-layout { display: block; }
   .tools-grid { display: block; }
   .ai-grid { display: block; }
   .prepare-grid { display: block; }
@@ -660,21 +582,11 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 </head>
 <body>
 
-<!-- 侧边栏（桌面端）/ 头部（手机端） -->
-<aside class="app-sidebar">
-  <header class="app-header">
-    <h1>追寻旅迹</h1>
-    <div class="subtitle">亚欧非大环线</div>
-  </header>
-  <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-btn active" data-page="route"><span class="nav-icon">📍</span>路线</button>
-    <button class="nav-btn" data-page="guide"><span class="nav-icon">📖</span>攻略</button>
-    <button class="nav-btn" data-page="prepare"><span class="nav-icon">🎒</span>准备</button>
-    <button class="nav-btn" data-page="tools"><span class="nav-icon">🔧</span>工具</button>
-    <button class="nav-btn" data-page="ai"><span class="nav-icon">🤖</span>AI</button>
-  </nav>
-  <footer class="sidebar-footer">数据保存在本地浏览器<br>攻略整合自环线SILKLOOP</footer>
-</aside>
+<!-- 顶部标题 -->
+<header class="app-header">
+  <h1>追寻旅迹</h1>
+  <div class="subtitle">亚欧非大环线</div>
+</header>
 
 <!-- 主内容区 -->
 <div class="main-content">
@@ -698,19 +610,6 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
     <div class="rs-box"><div class="rs-val" id="rsBudget">¥0</div><div class="rs-lbl">预算</div></div>
   </div>
 
-  <div class="route-layout">
-  <div class="route-map-col">
-  <div class="map-section">
-    <div class="map-header" onclick="toggleMap()">
-      <span class="map-title">行程地图</span>
-      <span class="map-toggle" id="mapToggleText">收起</span>
-    </div>
-    <div class="map-container" id="mapContainer">
-      <div id="travelMap"></div>
-    </div>
-  </div>
-  </div>
-  <div class="route-detail-col">
   <div class="sec-title">路线详情</div>
   <div id="routeList"></div>
 
@@ -727,7 +626,7 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-dark" onclick="addRoute()">添加站点</button>
-      <button class="btn btn-outline" onclick="loadPresetRoute()">导入亚欧非大环线（11站）</button>
+      <button class="btn btn-outline" onclick="loadPresetRoute()">导入亚欧非大环线（13站）</button>
     </div>
   </div>
 
@@ -740,16 +639,600 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
       <input class="input" type="number" id="tripDays" placeholder="天数" style="max-width:70px" min="1">
     </div>
   </div>
-  </div>
-  </div>
 </div>
 
 <!-- ===== Page 2: 攻略 ===== -->
 <div class="page" id="page-guide">
-  <div class="sec-title">攻略参考 <span class="badge">13国</span></div>
-  <div style="margin-bottom:12px"><input class="input" style="width:100%" type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
-  <div class="guide-grid" id="guideGrid"></div>
-  <div id="guideDetail"></div>
+  <!-- 子标签 -->
+  <div class="sub-tabs" id="guideSubTabs">
+    <button class="sub-tab active" data-gtab="countries">13国速查</button>
+    <button class="sub-tab" data-gtab="itinerary">63天行程</button>
+    <button class="sub-tab" data-gtab="stay">住宿推荐</button>
+    <button class="sub-tab" data-gtab="routes">游玩路线</button>
+    <button class="sub-tab" data-gtab="save">省钱攻略</button>
+    <button class="sub-tab" data-gtab="budget">预算记账</button>
+    <button class="sub-tab" data-gtab="visa">签证信息</button>
+    <button class="sub-tab" data-gtab="tips">实用贴士</button>
+  </div>
+
+  <!-- 13国速查（原攻略） -->
+  <div class="sub-panel active" id="gpanel-countries">
+    <div class="sec-title">攻略参考 <span class="badge">13国</span></div>
+    <div style="margin-bottom:12px"><input class="input" style="width:100%" type="text" id="guideSearch" placeholder="搜索国家或关键词..." oninput="filterGuide()"></div>
+    <div class="guide-grid" id="guideGrid"></div>
+    <div id="guideDetail"></div>
+  </div>
+
+  <!-- 63天行程 -->
+  <div class="sub-panel" id="gpanel-itinerary">
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇨🇳</span><span class="country-name">中国段</span><span class="country-days">Day 1-5 · 5天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D1</span><b>长沙→乌鲁木齐</b> — 飞机约4.5小时（提前买约¥800-1500），落地换汇、买SIM卡</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D2</span>新疆博物馆（楼兰美女干尸）+国际大巴扎，傍晚高铁/动车去伊宁（约5小时）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D3</span><b>赛里木湖</b> — 伊宁拼车/包车约2小时，环湖拍照+果子沟大桥观景，宿伊宁</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D4</span>伊宁喀赞其民俗村（蓝色小屋街拍），下午前往霍尔果斯口岸</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D5</span>口岸过境→哈萨克斯坦（8:30开门，建议上午到），拼车/大巴去阿拉木图约5-6小时</p>
+      <div class="tip-box">💡 口岸开关时间8:00-20:00（北京时间），建议上午到达避免排队。过境后直接坐车去阿拉木图</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇰🇿</span><span class="country-name">哈萨克斯坦</span><span class="country-days">Day 6-8 · 3天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D6</span>阿拉木图：绿色巴扎（干果/香料）、升天大教堂（全木结构无钉）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D7</span><b>大阿拉木图湖</b>（高山蓝绿湖水）+科克托别山观景台（缆车俯瞰全城+雪山）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D8</span><b>恰伦峡谷</b>（中亚大峡谷，拼团约15-24美元），傍晚出发去塔什干（夜巴16h/Talgo火车17h）</p>
+      <div class="tip-box">💡 免签30天！当地用坚戈KZT，约1元≈63坚戈。火车票提前在bilet.railways.kz买</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇺🇿</span><span class="country-name">乌兹别克斯坦</span><span class="country-days">Day 9-10 · 2天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D9</span>塔什干：哈兹拉特伊玛目建筑群（最古老古兰经手抄本）、楚苏巴扎（吃抓饭）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D10</span>塔什干地铁巡礼（苏联风格深埋地铁）+应用艺术博物馆，下午<b>飞巴库</b>（约2.5小时，¥500-800）</p>
+      <div class="tip-box">💡 免签30天！时间够可顺道去撒马尔罕（高铁2h），雷吉斯坦广场日落绝美</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇦🇿</span><span class="country-name">阿塞拜疆</span><span class="country-days">Day 11-13 · 3天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D11</span>巴库：老城（少女塔+希尔万沙宫）、滨海大道+火焰塔，夜景超美</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D12</span><b>戈布斯坦岩画+泥火山一日游</b>（史前岩画+冒泡泥火山，拼团约30-40美元）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D13</span><b>舍基</b>— 大巴/拼车约5小时。舍基可汗宫（彩窗世界遗产）+老城，吃果仁蜜饼</p>
+      <div class="tip-box">💡 免签30天！巴库是"里海迪拜"油价便宜。舍基→格鲁吉亚边境约3-4小时</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇬🇪</span><span class="country-name">格鲁吉亚</span><span class="country-days">Day 14-18 · 5天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D14</span><b>西格纳吉</b>（爱情之城）—城墙小镇漫步+卡赫季酒庄品酒+城墙日落远眺高加索山</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D15</span>西格纳吉→第比利斯（大巴约2小时），老城漫步+硫磺浴区+缆车上纳里卡拉要塞看日落</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D16</span>第比利斯：圣三一大教堂（金顶）、姆茨赫塔古都一日游（生命之柱大教堂+Jvari修道院）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D17</span><b>卡兹别克</b>—军事大道（俄格友谊纪念碑+安南努里城堡）拼车/小巴约2.5h</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D18</span>斯特潘茨明达圣三教堂（雪山下的孤独教堂）+冰川徒步约4h往返</p>
+      <div class="tip-box">💡 免签30天！第比利斯物价极低青旅¥30-50/晚，格鲁吉亚葡萄酒世界遗产级</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇦🇲</span><span class="country-name">亚美尼亚</span><span class="country-days">Day 19-20 · 2天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D19</span>第比利斯→埃里温（小巴约5-6h，约¥60）。共和国广场+阶梯广场（远眺亚拉拉特山）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D20</span><b>塞凡湖</b>（湖边修道院）+Garni神庙+Geghard岩穴修道院</p>
+      <div class="warn-box">⚠️ 亚美尼亚→土耳其陆路边境关闭！须返回第比利斯，经格鲁吉亚北部入境土耳其</div>
+    </div>
+    <div class="card" style="border:2px solid var(--orange)">
+      <div class="country-header"><span class="country-flag">🇹🇷</span><span class="country-name">土耳其 ★重点12天</span><span class="country-days">Day 21-32</span></div>
+      <p style="font-size:0.75rem;color:var(--orange);font-weight:600;margin-bottom:6px">★ 5城12天深度游 · 从东到西不回头</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>安卡拉 D21（1天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D21</span>格鲁吉亚→土耳其入境（卡尔斯口岸），安卡拉：国父陵+安纳托利亚文明博物馆</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>格雷梅（卡帕多奇亚） D22-24（3天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D22</span><b>热气球日出！</b>（约$200-250提前预订）+红线游览：乌奇希萨尔城堡、爱情谷</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D23</span>绿线游览：代林库尤地下城（8层深！）、厄赫拉热峡谷、鸽子谷日落</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D24</span>格雷梅→安塔利亚（飞机约1h或夜巴），夜宿安塔利亚</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>安塔利亚 D25-26（2天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D25</span>安塔利亚老城Kaleici、哈德良门、瀑布</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D26</span><b>D400海景公路</b>（《国家地理》"封神路线"），安塔利亚→卡什（地中海小镇）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>卡什 D27-28（2天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D27</span>卡什小镇：地中海潜水/划皮划艇，沉没之城（Kekova）一日游</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D28</span>卡什慵懒一日：海边咖啡馆、费特希耶方向远眺，下午回安塔利亚</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>伊斯坦布尔 D29-32（4天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D29</span>安塔利亚飞伊斯坦布尔。圣索菲亚大教堂、蓝色清真寺、地下水宫</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D30</span>托普卡帕宫、大巴扎、香料巴扎</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D31</span>博斯普鲁斯海峡游船、多尔玛巴赫切宫、塔克西姆广场</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D32</span>加拉塔塔、Karaköy街区、土耳其浴。傍晚<b>飞贝尔格莱德</b>（¥500-800）</p>
+      <div class="tip-box">💡 <b>2026年1月起土耳其免签！</b>热气球务必提前在官网预订。卡帕洞穴酒店需提前2-3个月订</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇷🇸</span><span class="country-name">塞尔维亚</span><span class="country-days">Day 33-35 · 3天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D33</span>贝尔格莱德：卡莱梅格丹城堡日落（看多瑙河+萨瓦河交汇）、圣萨瓦大教堂</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D34</span>泽蒙小镇、阿达切甘利加岛散步、斯卡达尔利亚波西米亚街</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D35</span>诺维萨德（火车1小时）+彼德罗瓦拉丁要塞，傍晚大巴→萨拉热窝（约5-6h，¥60-80）</p>
+      <div class="tip-box">💡 免签30天！贝尔格莱德夜生活欧洲顶级</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇧🇦</span><span class="country-name">波黑</span><span class="country-days">Day 36-38 · 3天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D36</span>萨拉热窝老城、塞比利喷泉、波斯尼亚咖啡</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D37</span>隧道博物馆、拉丁桥（一战导火索）、黄堡俯瞰全城</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D38</span><b>莫斯塔尔老桥</b>（世界遗产）+跳水表演，傍晚大巴→阿尔巴尼亚地拉那（约7-8h）</p>
+      <div class="tip-box">💡 免签30天！"欧洲耶路撒冷"，多宗教共存</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇦🇱</span><span class="country-name">阿尔巴尼亚</span><span class="country-days">Day 39-41 · 3天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D39</span>地拉那：斯坎德培广场、恩德恩玛博物馆（地堡博物馆）、国家历史博物馆</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D40</span><b>培拉特</b>（"千窗之城"世界遗产）一日游，奥斯曼白墙古宅</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D41</span>地拉那→埃及开罗（经伊斯坦布尔转机，约¥800-1200）</p>
+      <div class="tip-box">💡 免签90天！物价极低的巴尔干国家，咖啡€1，海景超美</div>
+    </div>
+    <div class="card" style="border:2px solid var(--orange)">
+      <div class="country-header"><span class="country-flag">🇪🇬</span><span class="country-name">埃及 ★重点13天</span><span class="country-days">Day 42-54</span></div>
+      <p style="font-size:0.75rem;color:var(--orange);font-weight:600;margin-bottom:6px">★ 环形路线不回头：开罗→马特鲁→锡瓦→赫尔格达→卢克索→回开罗 · 落地签$25</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>开罗 D42-44（3天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D42</span>抵达开罗办落地签（$25）。埃及博物馆（图坦卡蒙黄金面具！）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D43</span><b>吉萨金字塔群</b>——胡夫金字塔、狮身人面像。骑骆驼看日落</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D44</span>大埃及博物馆（新开！）+开罗老城：悬空教堂、哈利利市场</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>马特鲁 D45（1天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D45</span>开罗大巴→马特鲁（约4-5h），<b>克莉奥佩特拉海滩</b>（梦幻蓝绿海水）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>锡瓦 D46-47（2天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D46</span>马特鲁→锡瓦（约3h），盐湖漂浮（如死海）、沙里古城堡</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D47</span>锡瓦神庙遗址+沙漠绿洲日落，晚上的星空超美</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>赫尔格达（红海） D48-50（3天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D48</span>锡瓦→开罗→赫尔格达（大巴约7-8h全程）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D49</span><b>出海追海豚！</b>红海潜水世界顶级，Giftun岛浮潜</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D50</span>深海潜水体验（PADI约$60-80）+赫尔格达老城海鲜大餐</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>卢克索 D51-53（3天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D51</span>赫尔格达→卢克索（大巴约4h，¥50）。卡纳克神庙+卢克索神庙夜游</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D52</span><b>西岸</b>——帝王谷（图坦卡蒙墓）、女王庙、门农巨像。<b>热气球日出</b>（约$80-100）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D53</span>丹德拉神庙（保存最好的彩色浮雕）+哈布城，傍晚回开罗</p>
+      <p style="font-size:0.82rem;margin:4px 0"><b>开罗 D54（1天）</b></p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D54</span>回开罗采购纸莎草画、香料、香精瓶，准备飞马尔代夫</p>
+      <div class="tip-box">💡 <b>落地签$25</b>，备好美元现金。准备大量1美元零钞小费。进清真寺穿长裤带头巾</div>
+      <div class="warn-box"><b>⚠️ 锡瓦在利比亚边境附近：</b>需提前确认安全状况，建议找当地向导，不要夜间自驾</div>
+    </div>
+    <div class="card" style="border:2px solid var(--orange)">
+      <div class="country-header"><span class="country-flag">🇲🇻</span><span class="country-name">马尔代夫 ★4天</span><span class="country-days">Day 55-58</span></div>
+      <p style="font-size:0.75rem;color:var(--orange);font-weight:600;margin-bottom:6px">★ 顺路去马尔代夫比直接去泰国更近！</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D55</span>开罗<b>飞马累</b>（约7.5小时，¥1500-2500），入住马累/机场岛</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D56</span>快艇/公共渡轮到<b>居民岛</b>（如Maafushi），水屋体验（¥400-800）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D57</span>浮潜看珊瑚+魔鬼鱼、沙滩躺平</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D58</span>马累飞曼谷（约4.5小时，¥1000-1600）</p>
+      <div class="tip-box">💡 免签30天！选居民岛+公共船，人均¥600/天就能住水草房，比度假岛便宜10倍</div>
+    </div>
+    <div class="card">
+      <div class="country-header"><span class="country-flag">🇹🇭</span><span class="country-name">泰国</span><span class="country-days">Day 59-63 · 5天</span></div>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D59</span>曼谷：大皇宫+玉佛寺、卧佛寺、郑王庙（对岸渡轮看日落）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D60</span>曼谷→清迈，飞机1.5h（¥150-200）或夜火车12h（¥80）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D61</span>清迈古城：双龙寺、周日夜市+大象保护区（ethical，不骑乘）</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D62</span>清迈→曼谷，最后采购庆祝，冬阴功+芒果糯米饭</p>
+      <p style="font-size:0.82rem;margin:4px 0"><span class="day-badge">D63</span>曼谷飞长沙（约4小时，¥800-1500），回家！</p>
+      <div class="tip-box">💡 免签60天！清迈物价更低、节奏更慢，适合收尾</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.95rem">🏠 Day 63 回家</h3>
+      <p style="font-size:0.82rem">抵达长沙，旅程圆满结束 🎉 全程13站63天亚欧非三大洲</p>
+    </div>
+  </div>
+
+  <!-- 住宿推荐 -->
+  <div class="sub-panel" id="gpanel-stay">
+    <div class="card">
+      <h3 style="font-size:0.9rem">🏨 住宿说明</h3>
+      <p style="font-size:0.82rem;margin:4px 0">每个城市3个档次，价格均为约价（2026年淡季参考，旺季可能翻倍）</p>
+      <p style="font-size:0.78rem;color:var(--text2);margin:4px 0"><span class="visa-tag free">省钱</span>青旅¥30-80/晚 · <span class="visa-tag evisa">舒适</span>三星¥150-350 · <span class="visa-tag other">品质</span>特色¥400-800</p>
+      <div class="tip-box">💡 长线旅行建议混合住：省钱档为主，重点城市选品质档（洞穴酒店、金字塔景观房等一辈子一次的体验）</div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇨🇳 乌鲁木齐</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥40</span><b>停栈青旅</b><br><span style="font-size:0.75rem;color:var(--text2)">大巴扎附近，交通方便</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥180</span><b>如家/汉庭(南门店)</b><br><span style="font-size:0.75rem;color:var(--text2)">连锁品质稳定，近地铁</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇰🇿 阿拉木图</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥40</span><b>Apple Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">老城中心，英文沟通方便，有厨房</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥150</span><b>Hotel Caspian</b><br><span style="font-size:0.75rem;color:var(--text2)">市中心三星</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥400</span><b>Hotel Kazakhstan</b><br><span style="font-size:0.75rem;color:var(--text2)">地标建筑，五星</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇺🇿 塔什干 & 撒马尔罕</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">塔什干</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥35</span><b>Topchan Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">老城旁，氛围好</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥120</span><b>Hotel Uzbekistan</b><br><span style="font-size:0.75rem;color:var(--text2)">苏联风格地标</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">撒马尔罕</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Bahodir B&B</b><br><span style="font-size:0.75rem;color:var(--text2)">雷吉斯坦广场步行5分钟</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥300</span><b>Orient Star Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">推窗就是三座神学院</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇦🇿 巴库</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥45</span><b>Caspian Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">老城内</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥200</span><b>Atropat Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">老城精品</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥500</span><b>Intourist Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">海滨大道旁，看火焰塔夜景</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇦🇿 舍基</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥35</span><b>Sheki Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">老城旁，老板可安排拼车</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥160</span><b>Sheki Saray Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">花园酒店近可汗宫</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇬🇪 第比利斯</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Fabrika Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">废弃纺织厂改造，文青聚集地</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥120</span><b>Hotel Terrace</b><br><span style="font-size:0.75rem;color:var(--text2)">阳台看全城日落</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥350</span><b>Rooms Hotel Tbilisi</b><br><span style="font-size:0.75rem;color:var(--text2)">设计酒店天花板</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇬🇪 西格纳吉</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Guesthouse Nino</b><br><span style="font-size:0.75rem;color:var(--text2)">家庭旅馆，房东家自酿葡萄酒</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥150</span><b>Kabadoni Boutique Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">山景露台看城墙日落</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇦🇲 埃里温</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥35</span><b>Envoy Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">组织拼车去景点</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥130</span><b>Republica Boutique</b><br><span style="font-size:0.75rem;color:var(--text2)">共和国广场旁</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇹🇷 土耳其（5城） ★</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">安卡拉（1晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥40</span><b>Deeps Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">Kızılay中心区</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥180</span><b>Büyük Ankara Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">老牌酒店近国父陵</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">格雷梅（卡帕，3晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥60</span><b>Dorm Cave Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">真正的洞穴青旅</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥300</span><b>Traveller's Cave Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">洞穴房间+露台看热气球日出，性价比之王</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥800</span><b>Museum Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">世界级奢华洞穴酒店，每一间都是古迹改造</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">安塔利亚（2晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥45</span><b>Shellie's Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">老城Kaleici</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥500</span><b>Akra Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">海滨五星，无边泳池看地中海</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">卡什（2晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥50</span><b>Feronia Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">地中海小镇，海景露台</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥220</span><b>Kaş Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">阳台看海湾日落</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">伊斯坦布尔（4晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥50</span><b>Shuttle Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">Sultanahmet老城区</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥250</span><b>Sultan's Inn Boutique</b><br><span style="font-size:0.75rem;color:var(--text2)">奥斯曼老宅改造，屋顶露台看海</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥600</span><b>Hotel Amira</b><br><span style="font-size:0.75rem;color:var(--text2)">屋顶早餐看博斯普鲁斯海峡</span></div>
+      <div class="tip-box">💡 卡帕热气球日出时从酒店露台就能看到上百个球升空，住有露台的酒店很重要！Museum Hotel需提前2-3个月订</div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇪🇬 埃及（5城） ★</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">开罗（4晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥40</span><b>Wake Up! Cairo Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">解放广场旁，埃及博物馆步行2分钟</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥200</span><b>Nile Plaza Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">尼罗河景观房</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥600</span><b>Marriott Mena House</b><br><span style="font-size:0.75rem;color:var(--text2)">⭐金字塔景观五星！花园里直接看金字塔</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">马特鲁（1晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Mersa Matruh Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">近克莉奥佩特拉海滩</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥150</span><b>Bianchi Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">滨海老牌酒店</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">锡瓦绿洲（2晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥35</span><b>Siwa Safari Guesthouse</b><br><span style="font-size:0.75rem;color:var(--text2)">棕榈园里的家庭旅馆</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥180</span><b>Adrere Amellal</b><br><span style="font-size:0.75rem;color:var(--text2)">无电环保酒店，泥砖房星空超赞</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">赫尔格达（3晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥40</span><b>Red Sea Beach Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">海边青旅，帮安排潜水/出海</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥200</span><b>Sunrise Royal Makadi</b><br><span style="font-size:0.75rem;color:var(--text2)">All-inclusive全包度假村</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:8px 0">卢克索（2晚）</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥35</span><b>El Mesala Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">西岸（靠近帝王谷）</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥450</span><b>Sofitel Winter Palace</b><br><span style="font-size:0.75rem;color:var(--text2)">⭐阿加莎写《尼罗河惨案》的酒店！</span></div>
+      <div class="tip-box">💡 开罗Mena House金字塔景观房、卢克索冬宫、锡瓦星空——埃及住宿体验天花板，值得在预算里特别留出空间</div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇷🇸 贝尔格莱德</div>
+    <div class="collapsible-content-v">
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥35</span><b>Lounge Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">市中心</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥150</span><b>Prince Rose Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">城堡旁</span></div>
+      <div class="accom-option lux"><span class="visa-tag other">品质</span><span class="price">¥400</span><b>Hotel Moskva</b><br><span style="font-size:0.75rem;color:var(--text2)">百年地标酒店</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇧🇦 萨拉热窝 & 莫斯塔尔</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">萨拉热窝</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Hostel Lena</b><br><span style="font-size:0.75rem;color:var(--text2)">老城中心</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥130</span><b>Hotel Hecco</b><br><span style="font-size:0.75rem;color:var(--text2)">老城精品</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">莫斯塔尔</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Nina's Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">老桥旁，推窗看桥</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇦🇱 阿尔巴尼亚（地拉那 & 培拉特）</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">地拉那</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Tirana Backpacker Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">中心广场旁，氛围好</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥130</span><b>Hotel Mondial</b><br><span style="font-size:0.75rem;color:var(--text2)">老牌舒适酒店</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">培拉特</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>Berat Backpackers</b><br><span style="font-size:0.75rem;color:var(--text2)">老城内奥斯曼老宅</span></div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇲🇻 马尔代夫（马累 & 居民岛）★</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">马累</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥100</span><b>Novina Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">马累市区，转机过渡</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">居民岛 Maafushi</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥250</span><b>Kaani Beach Hotel</b><br><span style="font-size:0.75rem;color:var(--text2)">居民岛高性价比，含早餐</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥600</span><b>水屋体验（居民岛）</b><br><span style="font-size:0.75rem;color:var(--text2)">比度假岛便宜10倍！</span></div>
+      <div class="tip-box">💡 马尔代夫选居民岛+公共渡轮，人均¥600/天就能玩转，度假岛水屋动辄¥5000+</div>
+    </div>
+
+    <div class="collapsible-h" onclick="toggleCollapseV(this)">🇹🇭 曼谷 & 清迈</div>
+    <div class="collapsible-content-v">
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">曼谷</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥40</span><b>Bed Station Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">暹罗商圈旁</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥180</span><b>Salil Hotel Sukhumvit</b><br><span style="font-size:0.75rem;color:var(--text2)">交通方便</span></div>
+      <p style="font-size:0.8rem;font-weight:600;margin:6px 0">清迈</p>
+      <div class="accom-option budget"><span class="visa-tag free">省钱</span><span class="price">¥30</span><b>SP Hostel</b><br><span style="font-size:0.75rem;color:var(--text2)">古城内，泳池</span></div>
+      <div class="accom-option mid"><span class="visa-tag evisa">舒适</span><span class="price">¥150</span><b>U Chiang Mai</b><br><span style="font-size:0.75rem;color:var(--text2)">设计感十足</span></div>
+    </div>
+  </div>
+
+  <!-- 游玩路线 -->
+  <div class="sub-panel" id="gpanel-routes">
+    <div class="card">
+      <h3 style="font-size:0.9rem">🎯 各国游玩路线方案</h3>
+      <p style="font-size:0.82rem;color:var(--text2)">每国2-3条路线，带★为推荐</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇰🇿 哈萨克斯坦</h3>
+      <div class="route-option-s"><div class="r-title">★ 精华路线</div><div class="r-desc">D1绿色巴扎+升天大教堂→D2大阿拉木图湖+科克托别山缆车→D3恰伦峡谷，傍晚去塔什干</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇺🇿 乌兹别克斯坦</h3>
+      <div class="route-option-s"><div class="r-title">★ 塔什干+撒马尔罕</div><div class="r-desc">D1塔什干老城→D2高铁去撒马尔罕，雷吉斯坦日落→D3夏伊辛达陵墓群→D4高铁回塔什干飞巴库</div></div>
+      <div class="route-option-s"><div class="r-title">三国古城（+2天）</div><div class="r-desc">+布哈拉+希瓦，都是世界遗产古城。时间够强烈推荐</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇦🇿 阿塞拜疆</h3>
+      <div class="route-option-s"><div class="r-title">★ 巴库+舍基</div><div class="r-desc">D1老城+火焰塔夜景→D2戈布斯坦岩画+泥火山→D3舍基可汗宫+老城，跨境去格鲁吉亚</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇬🇪 格鲁吉亚</h3>
+      <div class="route-option-s"><div class="r-title">★ 西格纳吉+第比利斯+卡兹别克</div><div class="r-desc">D1西格纳吉爱情之城+酒庄品酒→D2-3第比利斯老城+硫磺浴+姆茨赫塔古都→D4-5卡兹别克雪山圣三教堂+冰川徒步</div></div>
+      <div class="route-option-s"><div class="r-title">葡萄酒深度</div><div class="r-desc">卡赫季产区是世界葡萄酒发源地，家庭酒庄品酒超便宜</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇦🇲 亚美尼亚</h3>
+      <div class="route-option-s"><div class="r-title">★ 埃里温+周边</div><div class="r-desc">D1共和国广场+阶梯广场→D2塞凡湖+Garni神庙+Geghard修道院</div></div>
+      <div class="route-option-s"><div class="r-title">深探（+1天）</div><div class="r-desc">+1天去塔特夫修道院（世界最长缆车5.7km！）</div></div>
+    </div>
+    <div class="card" style="border:2px solid var(--orange)">
+      <h3 style="font-size:0.88rem">🇹🇷 土耳其 ★12天5城（从东到西）</h3>
+      <div class="route-option-s" style="border-color:var(--orange)"><div class="r-title">★ 从东到西经典线</div><div class="r-desc">安卡拉1天→格雷梅（卡帕）3天→安塔利亚2天→卡什2天→伊斯坦布尔4天，一路向西不回头</div></div>
+      <div class="route-option-s"><div class="r-title">方案B 历史人文版</div><div class="r-desc">+科尼亚（旋转舞发源地）、以弗所古城</div></div>
+      <div class="route-option-s"><div class="r-title">方案C 海滨度假版</div><div class="r-desc">卡什加到3天，+博德鲁姆</div></div>
+      <div class="tip-box">💡 D400公路被誉为"世界最美海岸公路之一"，安塔利亚→卡什段建议拼车/租车自驾</div>
+    </div>
+    <div class="card" style="border:2px solid var(--orange)">
+      <h3 style="font-size:0.88rem">🇪🇬 埃及 ★13天环形</h3>
+      <div class="route-option-s" style="border-color:var(--orange)"><div class="r-title">★ 环形路线不回头</div><div class="r-desc">开罗3天→马特鲁1天（克莉奥佩特拉海滩）→锡瓦2天（盐湖+星空）→赫尔格达3天（红海潜水）→卢克索3天（帝王谷+热气球）→回开罗1天</div></div>
+      <div class="route-option-s"><div class="r-title">方案B 法老陵墓版</div><div class="r-desc">卢克索加1天，帝王谷深度+丹德拉</div></div>
+      <div class="warn-box">⚠️ 锡瓦靠近利比亚边境，务必确认安全+找当地向导</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇷🇸 塞尔维亚</h3>
+      <div class="route-option-s"><div class="r-title">★ 贝尔格莱德+诺维萨德</div><div class="r-desc">D1城堡日落→D2圣萨瓦+步行街→D3泽蒙小镇→D4诺维萨德+彼德罗瓦拉丁要塞</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇧🇦 波黑</h3>
+      <div class="route-option-s"><div class="r-title">★ 萨拉热窝+莫斯塔尔</div><div class="r-desc">D1老城+波斯尼亚咖啡→D2隧道博物馆+拉丁桥→D3莫斯塔尔老桥+跳水表演</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇦🇱 阿尔巴尼亚</h3>
+      <div class="route-option-s"><div class="r-title">★ 地拉那+培拉特</div><div class="r-desc">D1地拉那斯坎德培广场+地堡博物馆→D2培拉特千窗之城一日游→D3飞开罗</div></div>
+      <div class="route-option-s"><div class="r-title">方案B 海岸线</div><div class="r-desc">+萨兰达/科萨米尔海滩（爱奥尼亚海，平价希腊）</div></div>
+    </div>
+    <div class="card" style="border:2px solid var(--orange)">
+      <h3 style="font-size:0.88rem">🇲🇻 马尔代夫 ★4天</h3>
+      <div class="route-option-s" style="border-color:var(--orange)"><div class="r-title">★ 居民岛经济版</div><div class="r-desc">D1马累→公共渡轮到Maafushi→D2水屋+浮潜看魔鬼鱼→D3沙滩躺平+跳岛→D4飞曼谷</div></div>
+      <div class="route-option-s"><div class="r-title">方案B 度假岛版</div><div class="r-desc">预算充足可升级1晚度假岛水屋（¥2000+）</div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🇹🇭 泰国</h3>
+      <div class="route-option-s"><div class="r-title">★ 曼谷+清迈</div><div class="r-desc">D1-2曼谷大皇宫+水上市场→D3飞清迈→D4双龙寺+大象保护区→D5回曼谷飞长沙</div></div>
+      <div class="route-option-s"><div class="r-title">方案B 海岛版</div><div class="r-desc">曼谷3天→飞普吉/甲米2天→曼谷收尾</div></div>
+    </div>
+  </div>
+
+  <!-- 省钱攻略 -->
+  <div class="sub-panel" id="gpanel-save">
+    <div class="card">
+      <h3 style="font-size:0.9rem">💰 63天¥2.58万省钱全攻略</h3>
+      <p style="font-size:0.82rem">有人35天7国只花1.05万，你63天13站2.58万很充裕。<b>交通占大头(60%+)，省交通=省大钱</b></p>
+      <div class="stat-grid-v"><div class="stat-box-v"><div class="num">¥14k</div><div class="lbl">交通预算</div></div><div class="stat-box-v"><div class="num">¥7k</div><div class="lbl">食宿预算</div></div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">✈️ 交通省钱方案（3选1）</h3>
+      <div class="route-option-s"><div class="r-title">★ 方案A 陆路为主（最省）</div><div class="r-desc">火车硬卧+绿皮火车+夜巴+拼车。交通总花费约¥10000-12000</div></div>
+      <div class="route-option-s"><div class="r-title">方案B 廉航+陆路混合</div><div class="r-desc">长途段坐廉航（Flydubai/Wizz Air/Pegasus），短途陆路。约¥12000-14000</div></div>
+      <div class="route-option-s"><div class="r-title">方案C 舒适但省钱</div><div class="r-desc">土耳其和埃及内段买廉航省时间，其余陆路。约¥13000-15000</div></div>
+      <div class="tip-box">💡 买廉航提前1-2个月官网买最便宜。Pegasus（土耳其）、Wizz Air（东欧）、Flydubai（中东）</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🏨 住宿省钱</h3>
+      <p style="font-size:0.82rem">🔹 青旅为主，¥30-50/晚，能拼车拼信息</p>
+      <p style="font-size:0.82rem">🔹 重点城市花一次大的：卡帕洞穴¥300、开罗金字塔房¥600</p>
+      <p style="font-size:0.82rem">🔹 夜交通省住宿：长沙→乌鲁木齐硬卧、巴库→第比利斯夜火车</p>
+      <p style="font-size:0.82rem">🔹 住3晚以上可谈折扣；长租报WhatsApp联系老板优惠10-20%</p>
+      <p style="font-size:0.82rem">🔹 估算：62晚=52晚青旅×¥40+10晚品质×¥400=约¥6080</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🍜 吃饭省钱</h3>
+      <p style="font-size:0.82rem">🔹 中亚：馕/抓饭/拉面，路边摊¥5-10一顿</p>
+      <p style="font-size:0.82rem">🔹 高加索：格鲁吉亚葡萄酒¥10一杯，奶酪饼¥10吃饱</p>
+      <p style="font-size:0.82rem">🔹 土耳其：烤肉卷饼¥10-15，Pide（土耳其披萨）¥20</p>
+      <p style="font-size:0.82rem">🔹 埃及：Koshari（国民美食）¥5一份！赫尔格达整条烤鱼¥30-50</p>
+      <p style="font-size:0.82rem">🔹 泰国：街边摊¥8-15一顿，芒果糯米饭¥5</p>
+      <p style="font-size:0.82rem">🔹 选有厨房的青旅，超市买菜自己做省一半。日均¥50-60，63天约¥3500</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🎟️ 门票/体验省钱</h3>
+      <p style="font-size:0.82rem">🔹 免签省签证费¥1000+，土耳其2026起也免签，埃及落地签$25</p>
+      <p style="font-size:0.82rem">🔹 国际学生证ISIC：很多景点半价</p>
+      <p style="font-size:0.82rem">🔹 土耳其博物馆通票Müze Kart约¥85，700+景点</p>
+      <p style="font-size:0.82rem">🔹 埃及：开罗通票约¥300，卢克索通票约¥200</p>
+      <p style="font-size:0.82rem">🔹 免费体验：D400公路自驾本身免费、红海浮潜自带装备不花钱</p>
+      <p style="font-size:0.82rem">🔹 门票+体验总计约¥2000-3000</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">📱 其他省钱</h3>
+      <p style="font-size:0.82rem">🔹 电话卡：每国当地流量卡约¥20-30，比国际漫游便宜十倍</p>
+      <p style="font-size:0.82rem">🔹 取钱：带免境外取款费银行卡（华夏银行/成都银行），ATM取当地货币汇率最优</p>
+      <p style="font-size:0.82rem">🔹 保险：旅行保险约¥150-200/63天，一定要买</p>
+      <p style="font-size:0.82rem">🔹 砍价：埃及/土耳其/泰国市场/出租/包车一定要砍，尤其埃及从1/3开始</p>
+      <p style="font-size:0.82rem">🔹 Google Maps离线下载每个城市，省流量不迷路</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">📊 省钱总结</h3>
+      <table class="info-table-v"><tr><th>项目</th><th>预算</th><th>省钱后</th></tr>
+      <tr><td>国际/城际交通</td><td>¥14000</td><td>¥11000-12000</td></tr>
+      <tr><td>住宿62晚</td><td>¥6080</td><td>¥5000-6080</td></tr>
+      <tr><td>餐饮63天</td><td>¥4000</td><td>¥3000-3500</td></tr>
+      <tr><td>门票/体验</td><td>¥3000</td><td>¥2000-2500</td></tr>
+      <tr><td>签证</td><td>¥200</td><td>¥200</td></tr>
+      <tr><td>保险+通讯+杂费</td><td>¥500</td><td>¥500</td></tr>
+      <tr><td><b>合计</b></td><td><b>¥27700</b></td><td><b>¥21700-24200</b></td></tr>
+      </table>
+      <div class="tip-box">💡 按省钱方案走，<b>¥2.58万预算完全够用还有余</b>！多出来的可升级关键体验</div>
+    </div>
+  </div>
+
+  <!-- 预算记账 -->
+  <div class="sub-panel" id="gpanel-budget">
+    <div class="card">
+      <h3 style="font-size:0.9rem">📊 预算清单 & 记账</h3>
+      <div style="font-size:1.2rem;font-weight:800;color:var(--primary);text-align:center;padding:8px 0" id="budgetTotalDisplay2">总支出：¥0</div>
+      <div style="text-align:center;font-size:0.82rem;margin-bottom:8px"><span style="color:var(--text2)">总预算¥25,800 · 剩余：</span><b style="color:var(--green)" id="budgetRemain2">¥25,000</b></div>
+      <div style="height:6px;background:#e0e0e0;border-radius:3px;margin:8px 0;overflow:hidden"><div id="budgetBar2" style="height:100%;background:var(--green);border-radius:3px;width:0%;transition:width .3s"></div></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🚄 交通费用</h3>
+      <div class="budget-row-v"><span class="lbl">长沙→乌鲁木齐 飞机</span><input type="number" class="budget-input2" id="c1" value="1000" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">阿拉木图→塔什干 廉航/火车</span><input type="number" class="budget-input2" id="c2" value="300" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">塔什干→巴库 飞机</span><input type="number" class="budget-input2" id="c3" value="600" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">巴库→舍基→西格纳吉 大巴</span><input type="number" class="budget-input2" id="c4" value="150" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">格鲁吉亚↔亚美尼亚 往返小巴</span><input type="number" class="budget-input2" id="c5" value="120" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">土耳其内陆交通（5城）</span><input type="number" class="budget-input2" id="c6" value="1500" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">伊斯坦布尔→贝尔格莱德 飞机</span><input type="number" class="budget-input2" id="c7" value="600" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">贝尔格莱德→萨拉热窝→地拉那→开罗</span><input type="number" class="budget-input2" id="c8" value="1300" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">埃及内陆交通（5城环形）</span><input type="number" class="budget-input2" id="c9" value="1200" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">开罗→马累 飞机</span><input type="number" class="budget-input2" id="c10" value="2000" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">马累→曼谷+曼谷→长沙 飞机</span><input type="number" class="budget-input2" id="c11" value="1900" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">各城市内交通（63天）</span><input type="number" class="budget-input2" id="c12" value="700" oninput="calcBudget2()"></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🏨 住宿费用（62晚）</h3>
+      <div class="budget-row-v"><span class="lbl">中亚+高加索住宿（14晚×¥40）</span><input type="number" class="budget-input2" id="c13" value="560" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">土耳其住宿（12晚混合）</span><input type="number" class="budget-input2" id="c14" value="1600" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">埃及住宿（13晚混合）</span><input type="number" class="budget-input2" id="c15" value="1300" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">巴尔干住宿（9晚×¥100）</span><input type="number" class="budget-input2" id="c16" value="900" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">马尔代夫住宿（4晚居民岛）</span><input type="number" class="budget-input2" id="c17" value="1000" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">泰国住宿（5晚×¥80）</span><input type="number" class="budget-input2" id="c18b" value="400" oninput="calcBudget2()"></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">🍽️ 餐饮 & 门票 & 体验</h3>
+      <div class="budget-row-v"><span class="lbl">日均餐费×63天</span><input type="number" class="budget-input2" id="c19" value="3500" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">各国景点门票</span><input type="number" class="budget-input2" id="c20" value="1500" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">🔥 卡帕多奇亚热气球</span><input type="number" class="budget-input2" id="c21" value="1600" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">🎈 卢克索热气球</span><input type="number" class="budget-input2" id="c22" value="600" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">🤿 红海潜水体验</span><input type="number" class="budget-input2" id="c23" value="400" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">🛶 卡什沉没之城（Kekova）划船</span><input type="number" class="budget-input2" id="c24" value="300" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">🏝 马尔代夫浮潜船+水屋</span><input type="number" class="budget-input2" id="c25" value="800" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">🏜 锡瓦盐湖漂浮+向导</span><input type="number" class="budget-input2" id="c26" value="200" oninput="calcBudget2()"></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">📋 其他</h3>
+      <div class="budget-row-v"><span class="lbl">埃及落地签$25</span><input type="number" class="budget-input2" id="c27" value="180" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">旅行保险63天</span><input type="number" class="budget-input2" id="c28" value="200" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">各国电话卡</span><input type="number" class="budget-input2" id="c29" value="200" oninput="calcBudget2()"></div>
+      <div class="budget-row-v"><span class="lbl">纪念品&杂费</span><input type="number" class="budget-input2" id="c30" value="500" oninput="calcBudget2()"></div>
+    </div>
+  </div>
+
+  <!-- 签证信息 -->
+  <div class="sub-panel" id="gpanel-visa">
+    <div class="card">
+      <h3 style="font-size:0.9rem">🛂 签证总览</h3>
+      <p style="font-size:0.88rem;color:var(--green);font-weight:700;margin-bottom:8px">2026年全线几乎免签！</p>
+      <table class="info-table-v"><tr><th>国家</th><th>签证</th><th>停留</th></tr>
+      <tr><td>🇰🇿 哈萨克斯坦</td><td><span class="visa-tag free">免签</span></td><td>30天</td></tr>
+      <tr><td>🇺🇿 乌兹别克斯坦</td><td><span class="visa-tag free">免签</span></td><td>30天</td></tr>
+      <tr><td>🇦🇿 阿塞拜疆</td><td><span class="visa-tag free">免签</span></td><td>30天</td></tr>
+      <tr><td>🇬🇪 格鲁吉亚</td><td><span class="visa-tag free">免签</span></td><td>30天</td></tr>
+      <tr><td>🇦🇲 亚美尼亚</td><td><span class="visa-tag free">免签</span></td><td>90天</td></tr>
+      <tr><td>🇹🇷 土耳其</td><td><span class="visa-tag free">免签(2026.1起)</span></td><td>90天/180天</td></tr>
+      <tr><td>🇷🇸 塞尔维亚</td><td><span class="visa-tag free">免签</span></td><td>30天</td></tr>
+      <tr><td>🇧🇦 波黑</td><td><span class="visa-tag free">免签</span></td><td>90天</td></tr>
+      <tr><td>🇦🇱 阿尔巴尼亚</td><td><span class="visa-tag free">免签</span></td><td>90天</td></tr>
+      <tr><td>🇪🇬 埃及</td><td><span class="visa-tag evisa">落地签$25</span></td><td>30天</td></tr>
+      <tr><td>🇲🇻 马尔代夫</td><td><span class="visa-tag free">落地免费签</span></td><td>30天</td></tr>
+      <tr><td>🇹🇭 泰国</td><td><span class="visa-tag free">免签</span></td><td>60天</td></tr>
+      </table>
+      <div class="tip-box">💡 整条路线只有埃及需要落地签$25，其余全部免签/落地免费签</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">埃及落地签详情</h3>
+      <p style="font-size:0.82rem"><b>费用：</b>$25美元，备好美元现金</p>
+      <p style="font-size:0.82rem"><b>材料：</b>护照（6个月以上）、往返机票行程单、酒店预订单</p>
+      <p style="font-size:0.82rem"><b>地点：</b>开罗机场落地签窗口，约30-60分钟</p>
+      <div class="warn-box">⚠️ 有时要求出示$1000以上现金或信用卡，建议备好</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem">📋 出发前证件准备</h3>
+      <div class="checklist-item-v" id="gv1" onclick="toggleCheckV('gv1')"><input type="checkbox"><span>护照有效期6个月以上</span></div>
+      <div class="checklist-item-v" id="gv2" onclick="toggleCheckV('gv2')"><input type="checkbox"><span>护照复印件×3</span></div>
+      <div class="checklist-item-v" id="gv3" onclick="toggleCheckV('gv3')"><input type="checkbox"><span>护照照片×6（白底2寸）</span></div>
+      <div class="checklist-item-v" id="gv4" onclick="toggleCheckV('gv4')"><input type="checkbox"><span>身份证</span></div>
+      <div class="checklist-item-v" id="gv5" onclick="toggleCheckV('gv5')"><input type="checkbox"><span>国际驾照（自驾D400公路用）</span></div>
+      <div class="checklist-item-v" id="gv6" onclick="toggleCheckV('gv6')"><input type="checkbox"><span>美元现金$300</span></div>
+      <div class="checklist-item-v" id="gv7" onclick="toggleCheckV('gv7')"><input type="checkbox"><span>人民币现金¥1000</span></div>
+      <div class="checklist-item-v" id="gv8" onclick="toggleCheckV('gv8')"><input type="checkbox"><span>国际信用卡/借记卡</span></div>
+      <div class="checklist-item-v" id="gv9" onclick="toggleCheckV('gv9')"><input type="checkbox"><span>旅行保险单</span></div>
+      <div class="checklist-item-v" id="gv10" onclick="toggleCheckV('gv10')"><input type="checkbox"><span>疫苗本</span></div>
+    </div>
+  </div>
+
+  <!-- 实用贴士 -->
+  <div class="sub-panel" id="gpanel-tips">
+    <div class="card">
+      <h3 style="font-size:0.9rem">🎒 必备物品清单</h3>
+      <div class="checklist-item-v" id="gt1" onclick="toggleCheckV('gt1')"><input type="checkbox"><span>背包（50-65L+20L日用包）</span></div>
+      <div class="checklist-item-v" id="gt2" onclick="toggleCheckV('gt2')"><input type="checkbox"><span>快干衣裤×3套（长袖长裤进清真寺）</span></div>
+      <div class="checklist-item-v" id="gt3" onclick="toggleCheckV('gt3')"><input type="checkbox"><span>冲锋衣/薄羽绒服（新疆早晚冷+卡帕清晨热气球冷）</span></div>
+      <div class="checklist-item-v" id="gt4" onclick="toggleCheckV('gt4')"><input type="checkbox"><span>泳衣（红海+土耳其温泉+棉花堡）</span></div>
+      <div class="checklist-item-v" id="gt5" onclick="toggleCheckV('gt5')"><input type="checkbox"><span>头巾/围巾（进清真寺，防晒）</span></div>
+      <div class="checklist-item-v" id="gt6" onclick="toggleCheckV('gt6')"><input type="checkbox"><span>防晒霜SPF50+墨镜遮阳帽</span></div>
+      <div class="checklist-item-v" id="gt7" onclick="toggleCheckV('gt7')"><input type="checkbox"><span>欧标圆头转换插头（中亚/高加索/土耳其/埃及用欧标，马代/泰国需另备英标）</span></div>
+      <div class="checklist-item-v" id="gt8" onclick="toggleCheckV('gt8')"><input type="checkbox"><span>充电宝20000mAh</span></div>
+      <div class="checklist-item-v" id="gt9" onclick="toggleCheckV('gt9')"><input type="checkbox"><span>浮潜面镜+呼吸管（红海用）</span></div>
+      <div class="checklist-item-v" id="gt10" onclick="toggleCheckV('gt10')"><input type="checkbox"><span>常备药品（肠胃药、感冒药、创可贴、晕车药）</span></div>
+      <div class="checklist-item-v" id="gt11" onclick="toggleCheckV('gt11')"><input type="checkbox"><span>便携水壶、锁头×2、睡袋内胆</span></div>
+      <div class="checklist-item-v" id="gt12" onclick="toggleCheckV('gt12')"><input type="checkbox"><span>Google Translate离线包</span></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.9rem">⚠️ 安全提醒</h3>
+      <div class="warn-box"><b>埃及：</b>卢克索是防骗警惕级别最高城市；开罗景区不理搭讪"好心人"；打车用Uber/Careem；砍价从1/3开始</div>
+      <div class="warn-box"><b>土耳其：</b>伊斯坦布尔注意扒手（大巴扎/电车）；打车用BiTaksi/Uber；东部边境不建议前往</div>
+      <div class="warn-box"><b>通用：</b>护照复印件+电子备份；现金分散放；夜间避免独行；紧急电话+86-10-12308</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.9rem">📱 实用APP</h3>
+      <table class="info-table-v"><tr><th>用途</th><th>APP</th></tr>
+      <tr><td>导航</td><td>Google Maps（离线下载）</td></tr>
+      <tr><td>翻译</td><td>Google Translate（离线包）</td></tr>
+      <tr><td>打车</td><td>Uber/BiTaksi(土)/Careem(埃及)</td></tr>
+      <tr><td>住宿</td><td>Booking/Hostelworld</td></tr>
+      <tr><td>机票</td><td>Skyscanner/各廉航官网</td></tr>
+      <tr><td>汇率</td><td>XE Currency</td></tr>
+      <tr><td>攻略</td><td>Maps.me（离线地图）</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.9rem">📅 最佳旅行时间</h3>
+      <p style="font-size:0.82rem"><b>推荐出发：9月-10月</b></p>
+      <p style="font-size:0.82rem">• 中亚9-10月金秋最美 • 高加索9-10月葡萄丰收季</p>
+      <p style="font-size:0.82rem">• 土耳其4-6月和9-10月最佳 • 埃及10-4月最佳（11-2月最舒适）</p>
+      <p style="font-size:0.82rem">• 泰国11-2月凉季最佳</p>
+      <div class="tip-box">💡 9月出发→11月初到埃及（最佳季节）→11月中到泰国（凉季），完美匹配</div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.9rem">🆘 紧急联系</h3>
+      <table class="info-table-v"><tr><th>用途</th><th>号码</th></tr>
+      <tr><td>中国领事保护</td><td>+86-10-12308（24小时）</td></tr>
+      <tr><td>中国驻土耳其使馆</td><td>+90-312-490066</td></tr>
+      <tr><td>中国驻埃及使馆</td><td>+20-2-27361219</td></tr>
+      <tr><td>国际SOS</td><td>+33-1-55633835</td></tr>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- ===== Page 3: 准备 ===== -->
@@ -848,22 +1331,23 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
   <div class="tools-grid">
     <!-- 左栏：汇率+天气 -->
     <div class="tools-col">
-      <!-- 汇率换算 -->
-      <div class="sec-title">汇率换算</div>
+      <!-- 汇率速查 -->
+      <div class="sec-title">💰 货币汇率速查</div>
       <div class="card">
-        <div class="exchange-block">
-          <div class="ex-row-label">从</div>
-          <input class="input" type="number" id="exFromAmount" placeholder="输入金额" value="100" oninput="calcExchange()" style="font-size:1.1rem;margin-bottom:4px">
-          <select class="input" id="exFromCurrency" onchange="calcExchange()"></select>
-        </div>
-        <div style="text-align:center;margin:-2px 0"><span class="ex-arrow" onclick="swapExchange()">⇄</span></div>
-        <div class="exchange-block">
-          <div class="ex-row-label">到</div>
-          <input class="input" type="text" id="exToAmount" readonly placeholder="结果" style="font-size:1.1rem;margin-bottom:4px;background:var(--card)">
-          <select class="input" id="exToCurrency" onchange="calcExchange()"></select>
-        </div>
-        <div class="ex-result" id="exResult"></div>
-        <div style="font-size:0.72rem;color:var(--text3);margin-top:6px;text-align:center">离线参考值（2026-07），实际以兑换时为准</div>
+        <div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">参考值（2026），实际以兑换时为准。100人民币约等于：</div>
+        <table class="sim-table"><thead><tr><th>国家</th><th>币种</th><th>100元≈</th><th>当地1元≈人民币</th></tr></thead><tbody>
+          <tr><td>哈萨克斯坦</td><td>坚戈KZT</td><td>6,800坚戈</td><td>1坚戈≈0.015元</td></tr>
+          <tr><td>乌兹别克斯坦</td><td>苏姆UZS</td><td>175,000苏姆</td><td>1,000苏姆≈0.57元</td></tr>
+          <tr><td>阿塞拜疆</td><td>马纳特AZN</td><td>23.5马纳特</td><td>1马纳特≈4.26元</td></tr>
+          <tr><td>格鲁吉亚</td><td>拉里GEL</td><td>37.5拉里</td><td>1拉里≈2.67元</td></tr>
+          <tr><td>亚美尼亚</td><td>德拉姆AMD</td><td>5,560德拉姆</td><td>100德拉姆≈1.8元</td></tr>
+          <tr><td>土耳其</td><td>里拉TRY</td><td>480里拉</td><td>1里拉≈0.21元</td></tr>
+          <tr><td>塞尔维亚</td><td>第纳尔RSD</td><td>1,515第纳尔</td><td>100第纳尔≈6.6元</td></tr>
+          <tr><td>波黑</td><td>马克BAM</td><td>25马克</td><td>1马克≈4.03元</td></tr>
+          <tr><td>埃及</td><td>埃镑EGP</td><td>667埃镑</td><td>1埃镑≈0.15元</td></tr>
+          <tr><td>泰国</td><td>泰铢THB</td><td>500泰铢</td><td>1泰铢≈0.2元</td></tr>
+        </tbody></table>
+        <div style="font-size:0.78rem;color:var(--text3);margin-top:8px">💡 到当地ATM直接取当地货币汇率最优。带一张免境外取款费的银行卡（华夏银行等）。美元现金在各国兑换点通用。</div>
       </div>
 
       <!-- 天气查询 -->
@@ -948,6 +1432,15 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
           <button class="share-btn" onclick="exportWord()" style="border-color:#2B579A;color:#2B579A">导出Word</button>
         </div>
       </div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+        <div style="font-size:0.82rem;color:var(--text2);margin-bottom:4px">粘贴分享旅途</div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-bottom:8px;line-height:1.5">把全部数据生成一串分享码，复制粘贴到任意设备即可恢复，不用云同步</div>
+        <div class="share-btns" style="margin-bottom:8px">
+          <button class="share-btn" onclick="exportShareCode()" style="border-color:var(--green);color:var(--green)">生成分享码</button>
+          <button class="share-btn" onclick="importShareCode()" style="border-color:var(--primary);color:var(--primary)">粘贴导入</button>
+        </div>
+        <textarea id="shareCodeBox" style="display:none;width:100%;min-height:80px;font-size:0.7rem;font-family:monospace;border:1px solid var(--border);border-radius:8px;padding:8px;resize:vertical" placeholder="分享码将显示在这里..." readonly></textarea>
+      </div>
     </div>
   </div>
   </div>
@@ -956,6 +1449,15 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 <footer>追寻旅迹 · 数据保存在本地浏览器 · 攻略整合自环线SILKLOOP</footer>
 
 </div><!-- main-content -->
+
+<!-- 底部导航 -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-btn active" data-page="route"><span class="nav-icon">📍</span>路线</button>
+  <button class="nav-btn" data-page="guide"><span class="nav-icon">📖</span>攻略</button>
+  <button class="nav-btn" data-page="prepare"><span class="nav-icon">🎒</span>准备</button>
+  <button class="nav-btn" data-page="tools"><span class="nav-icon">🔧</span>工具</button>
+  <button class="nav-btn" data-page="ai"><span class="nav-icon">🤖</span>AI</button>
+</nav>
 
 <div id="toast"></div>
 
@@ -1238,18 +1740,17 @@ const GUIDES = {
       '卡什镇上不少地方刷不了卡，现金务必备足',
       '蓝色清真寺门口可免费借用女士头巾'
     ],
-    transit:[
-      {from:'巴统', to:'伊斯坦布尔', mode:'飞机/大巴', time:'直飞约2小时，大巴约18-20小时', price:'机票提前订', note:'土耳其航空/飞马航空每日直飞'},
-      {from:'第比利斯', to:'安卡拉', mode:'飞机', time:'直飞', price:'约¥449', note:'AJet直飞，每周3-4班非每日'},
-      {from:'伊斯坦布尔', to:'安卡拉', mode:'YHT高铁/飞机', time:'高铁约4-4.5小时', price:'需提前购票', note:'TCDD官网或Obilet购票'},
-      {from:'伊斯坦布尔', to:'卡帕多奇亚', mode:'飞机/夜巴', time:'飞行约1.5小时+接驳1小时，夜巴约11小时', price:'机票提前订常有特价', note:'飞开塞利或内夫谢希尔机场'},
+transit:[
+      {from:'第比利斯', to:'安卡拉', mode:'飞机', time:'直飞', price:'约¥449', note:'AJet直飞每周3-4班；陆路经卡尔斯口岸约10-12小时'},
+      {from:'安卡拉', to:'卡帕多奇亚', mode:'夜巴/高铁+接驳', time:'夜巴约3-4小时', price:'约¥150-300', note:'主线顺序：安卡拉→格雷梅（卡帕多奇亚）'},
       {from:'卡帕多奇亚', to:'安塔利亚', mode:'夜巴/飞机', time:'夜巴过夜直达', price:'大巴更省钱', note:'Obilet App购票'},
       {from:'安塔利亚', to:'卡什', mode:'中巴/自驾', time:'中巴约3.5-4小时', price:'现场购票', note:'长途车站乘Batı Antalya中巴'},
       {from:'卡什', to:'伊斯坦布尔', mode:'巴士+飞机', time:'接驳巴士约3小时+飞行1.5小时', price:'机票约¥252', note:'谷歌地图搜Kaş Özgür Turizm预约'},
-      {from:'卡帕多奇亚', to:'棉花堡', mode:'夜巴', time:'约9-11小时', price:'线上购票', note:'格雷梅发车，代尼兹利下车转小巴约20分钟'},
-      {from:'棉花堡', to:'以弗所', mode:'火车/大巴', time:'约3-4小时', price:'票价低廉', note:'代尼兹利与塞尔丘克之间区域火车与大巴'},
-      {from:'以弗所', to:'伊兹密尔', mode:'区域火车/小巴', time:'约1-1.5小时', price:'票价低廉', note:'塞尔丘克乘TCDD区域火车直达伊兹密尔'},
-      {from:'伊斯坦布尔', to:'开罗', mode:'飞机', time:'直飞约2.5小时', price:'提前比价', note:'土耳其航空/埃及航空直飞班次多'}
+      {from:'伊斯坦布尔', to:'开罗', mode:'飞机', time:'直飞约2.5小时', price:'提前比价', note:'土耳其航空/埃及航空直飞班次多'},
+      {from:'伊斯坦布尔', to:'安卡拉', mode:'YHT高铁', time:'高铁约4-4.5小时', price:'需提前购票', note:'可选支线：往返参观首都'},
+      {from:'卡帕多奇亚', to:'棉花堡', mode:'夜巴', time:'约9-11小时', price:'线上购票', note:'可选支线：格雷厄德发车，代尼兹利转小巴'},
+      {from:'棉花堡', to:'以弗所', mode:'火车/大巴', time:'约3-4小时', price:'票价低廉', note:'可选支线'},
+      {from:'以弗所', to:'伊兹密尔', mode:'区域火车/小巴', time:'约1-1.5小时', price:'票价低廉', note:'可选支线'}
     ]
   },
 
@@ -1391,13 +1892,10 @@ const GUIDES = {
     desc:'尼罗河畔的古文明现场，金字塔、神庙与红海潜水。',
     cities:[
       {name:'开罗', stay:'3-4天', desc:'首都，金字塔、博物馆与老城市集', spots:'吉萨金字塔与狮身人面像 · 埃及博物馆 · 大埃及博物馆 · 汗·哈利利市场 · 萨拉丁城堡 · 科普特老城区'},
-      {name:'卢克索', stay:'2-3天', desc:'古底比斯所在地，尼罗河两岸满是神庙和帝王陵', spots:'卡尔纳克神庙 · 卢克索神庙 · 帝王谷 · 哈特谢普苏特神庙 · 门农巨像'},
-      {name:'阿斯旺', stay:'1-2天', desc:'尼罗河上游的悠闲城市，努比亚村落和阿布辛贝的门户', spots:'菲莱神庙 · 阿布辛贝神庙 · 努比亚村与尼罗河风帆船 · 未完成方尖碑'},
+{name:'卢克索', stay:'2-3天', desc:'古底比斯所在地，尼罗河两岸满是神庙和帝王陵', spots:'卡尔纳克神庙 · 卢克索神庙 · 帝王谷 · 哈特谢普苏特神庙 · 门农巨像'},
       {name:'赫尔格达', stay:'2-3天', desc:'红海西岸潜水度假地，吉夫通岛出海浮潜', spots:'吉夫通岛出海 · 赫尔格达码头区 · 达哈尔老城集市'},
-      {name:'沙姆沙伊赫', stay:'2-3天', desc:'西奈半岛南端红海度假城市', spots:'拉斯穆罕默德国家公园 · 萨哈巴清真寺 · 蒂朗岛浮潜'},
-      {name:'马特鲁', stay:'1-2天', desc:'地中海岸度假城市，前往锡瓦绿洲的门户', spots:'阿吉巴海滩 · 克利奥帕特拉海滩与海之眼'},
-      {name:'锡瓦绿洲', stay:'2-3天', desc:'撒哈拉深处的绿洲，柏柏尔古堡、盐湖漂浮与大沙海越野', spots:'沙利古堡 · 锡瓦盐湖 · 大沙海冲沙 · 阿蒙神谕庙'},
-      {name:'亚历山大', stay:'1-2天', desc:'地中海畔历史名城，开罗出发一日可达', spots:'盖贝依城堡 · 亚历山大图书馆 · 孔姆·舒卡法地下墓穴 · 蒙塔扎宫花园'}
+      {name:'马特鲁', stay:'1-2天', desc:'地中海沿岸度假城市，前往锡瓦绿洲的门户', spots:'阿吉巴海滩 · 克利奥帕特拉海滩与海之眼'},
+      {name:'锡瓦绿洲', stay:'2-3天', desc:'撒哈拉深处的绿洲，柏柏尔古堡、盐湖漂浮与大沙海越野', spots:'沙利古堡 · 锡瓦盐湖 · 大沙海冲沙 · 阿蒙神谕庙'}
     ],
     food:'代表作是国民拌饭Koshari、Falafel和薄荷茶；用餐尽量跟着本地人的推荐走，绕开游客坑。',
     souvenirs:'纸莎草画 · 香精油 · 洛神花茶 · 长绒棉制品 · 雕花铜灯与铜盘',
@@ -1422,18 +1920,75 @@ const GUIDES = {
       '合影留念前先把价钱谈妥；骑骆驼的价格可当场再谈',
       '身上有伤口别下锡瓦盐湖，会刺痛'
     ],
-    transit:[
+transit:[
       {from:'伊斯坦布尔', to:'开罗', mode:'飞机', time:'直飞约2.5小时', price:'提前比价', note:'土耳其航空/埃及航空直飞班次多'},
-      {from:'开罗', to:'亚历山大', mode:'火车/大巴', time:'火车约2.5-3小时', price:'票价低廉', note:'火车班次密集，Ramses车站乘车'},
       {from:'开罗', to:'马特鲁', mode:'长途大巴', time:'约5-7小时', price:'行李费10埃镑/件', note:'GoBus线上购票或车站购票'},
       {from:'马特鲁', to:'锡瓦绿洲', mode:'包车/拼车', time:'约4小时', price:'现场议价', note:'从开罗直接包车约10小时'},
       {from:'开罗', to:'锡瓦绿洲', mode:'直达夜巴/夜发小巴', time:'大巴约10-12小时', price:'车站或线上购票', note:'West & Mid Delta自Turgoman车站发车；Siwa Bus小巴快2-3小时'},
       {from:'开罗', to:'卢克索', mode:'夜火车/飞机', time:'火车睡一晚，或飞约1小时', price:'火车更省钱', note:'夜卧铺由吉萨Bashteel站发车，Abela官网可订'},
-      {from:'卢克索', to:'阿斯旺', mode:'火车/包车/游轮', time:'火车约3-4小时，游轮3晚4天', price:'票价低廉', note:'包车可顺访埃德夫与康翁波双神庙'},
       {from:'卢克索', to:'赫尔格达', mode:'大巴/拼车/包车', time:'大巴约4-5小时', price:'线上购票', note:'GoBus线上购票；拼车约$25-30/人'},
-      {from:'开罗', to:'沙姆沙伊赫', mode:'飞机/夜巴', time:'飞行约1小时，大巴约8-10小时', price:'机票常有特价', note:'GoBus夜巴经苏伊士隧道进西奈'},
       {from:'赫尔格达', to:'开罗', mode:'大巴/飞机', time:'大巴约6小时，飞行1小时', price:'大巴更省钱', note:'GoBus线上购票选直达班次'},
-      {from:'开罗', to:'中国·上海', mode:'飞机（回国）', time:'直飞或中转', price:'约¥2091', note:'环线收尾的回国航段，宜提早比价'}
+      {from:'开罗', to:'马尔代夫·马累', mode:'飞机', time:'约7.5小时，经多哈/迪拜转机约8-10小时', price:'常见¥1500-2500', note:'埃及航空/卡塔尔航空/阿联酋航空'}
+    ]
+  },
+
+  maldives: {
+    name:'马尔代夫', en:'Maldives', region:'印度洋', visa:'free', visaText:'落地免费签',
+    days:'4-7天', currency:'拉菲亚 MVR', timezone:'比北京慢3小时',
+    desc:'印度洋上的千岛之国，居民岛平民价度假，水屋浮潜都安排上。',
+    cities:[
+      {name:'马累', stay:'1天', desc:'首都与交通枢纽，机场岛与马累岛隔海相望', spots:'苏丹公园 · 星期五清真寺 · 马尔代夫国家博物馆 · 马累本地鱼市'},
+      {name:'居民岛（Maafushi）', stay:'3-5天', desc:'平民价度假首选，公共渡轮可达，沙滩与浮潜不输度假岛', spots:'比基尼海滩 · 出海浮潜 · 鲨鱼/海龟同游 · 公共渡轮跳岛 · 日落巡航'}
+    ],
+    food:'海鱼与椰子主题：马尔代夫鱼汤、Mas Huni（椰丝吞拿鱼早餐）、Roshuni等本地咖喱；度假区餐饮另计。',
+    souvenirs:'贝壳工艺品 · 椰壳雕刻 · 马尔代夫鱼干 · 传统Dhoni船模',
+    tips:[
+      '落地免费签30天，护照有效期6个月以上即可',
+      '居民岛人均¥300-500/天就能玩转，比度假岛便宜10倍',
+      '公共渡轮（约MVR 22）比快艇便宜得多，马累→Maafushi约1.5小时',
+      '水屋体验只在度假岛有，预算有限可选1晚水屋过过瘾',
+      '浮潜装备可自带或在居民岛租，约$5-10/天',
+      '马累机场到市区：机场岛与马累之间有免费往返渡轮'
+    ],
+    warnings:[
+      '居民岛是伊斯兰区，着装偏保守，比基尼只在海滩区域穿',
+      '带好防晒与驱蚊液，珊瑚礁潜水注意不要触碰活珊瑚',
+      '出海浮潜以安全为先，听从向导安排'
+    ],
+    transit:[
+      {from:'开罗', to:'马累', mode:'飞机', time:'约7.5小时，经多哈/迪拜转机约8-10小时', price:'常见¥1500-2500', note:'埃及航空/卡塔尔航空/阿联酋航空'},
+      {from:'马累', to:'Maafushi', mode:'公共渡轮/快艇', time:'渡轮约1.5小时，快艇约30分钟', price:'渡轮约MVR 10-50', note:'公共码头购票'},
+      {from:'马累', to:'曼谷', mode:'飞机', time:'约4.5小时', price:'常见¥1000-1600', note:'曼谷航空/亚航中转可接回国'}
+    ]
+  },
+
+  thailand: {
+    name:'泰国', en:'Thailand', region:'东南亚', visa:'free', visaText:'免签',
+    days:'5-8天', currency:'泰铢 THB', timezone:'比北京慢1小时',
+    desc:'微笑之国，曼谷大皇宫与清迈古城，吃住行都亲民。',
+    cities:[
+      {name:'曼谷', stay:'2-3天', desc:'首都，寺庙、夜市、水上市场一应俱全', spots:'大皇宫与玉佛寺 · 卧佛寺 · 郑王庙 · 考山路夜市 · 恰图恰周末市集 · 美功铁道市场 · 丹嫩沙多水上市场'},
+      {name:'清迈', stay:'2-3天', desc:'泰北古城，寺庙、夜市与大象保护区', spots:'双龙寺 · 清迈古城 · 周日夜市 · 素贴山 · 大象保护区（不骑乘）'}
+    ],
+    food:'街头小吃便宜又惊艳：冬阴功、Pad Thai、芒果糯米饭、泰式奶茶；曼谷路边摊一顿约¥8-15。',
+    souvenirs:'泰丝 · 泰银 · 芒果干 · 草药膏与青草膏 · 曼谷包',
+    tips:[
+      '免签停留最长60天（2025起），进出记得盖章',
+      '曼谷BTS/地铁绿线可买一日票（约¥20）',
+      '大皇宫着装要求严格，长裤+有袖上衣',
+      '清迈大象保护区选ethical营地，不骑乘',
+      '夜市小吃找本地人排队多的摊子，跟着吃不会踩雷',
+      '曼谷→清迈夜火车性价比高，订票提前在官网12Go'
+    ],
+    warnings:[
+      '曼谷水上市场、夜市有流动商贩价格虚高，砍价从1/3开始',
+      '大皇宫附近有"朋友请帮忙买票"等骗局，一概不理',
+      '摩托车出租务必戴头盔、留足保险'
+    ],
+    transit:[
+      {from:'马累', to:'曼谷', mode:'飞机', time:'约4.5小时', price:'常见¥1000-1600', note:'咸阳航空/亚航，可衔接回国'},
+      {from:'曼谷', to:'清迈', mode:'飞机/夜火车', time:'飞机1.5小时，夜火车12小时', price:'机票约¥150-200，火车约¥80', note:'12Go上订票'},
+      {from:'曼谷', to:'长沙', mode:'飞机（回国）', time:'约3-4小时', price:'常见¥800-1500', note:'环线收尾回国段，提早比价'}
     ]
   }
 };
@@ -1452,8 +2007,10 @@ const PREPARE = {
     {country:'塞尔维亚', type:'免签', note:'每次入境不超30天；持美/英/申根签可累计90天'},
     {country:'波黑', type:'免签', note:'任意180天内累计不超90天'},
     {country:'黑山', type:'有条件免签', note:'随团或持申根/美/英/日/爱多次签证，不超30天'},
-    {country:'阿尔巴尼亚', type:'免签', note:'任意180天内累计不超90天'},
-    {country:'埃及', type:'落地签/电子签', note:'落地签约30美元；eVisa约25美元，建议在线办'}
+{country:'阿尔巴尼亚', type:'免签', note:'任意180天内累计不超90天'},
+    {country:'埃及', type:'落地签/电子签', note:'落地签约30美元；eVisa约25美元，建议在线办'},
+    {country:'马尔代夫', type:'落地免费签', note:'落地免费签30天，护照有效期6个月以上'},
+    {country:'泰国', type:'免签', note:'免签停留最长60天，2025年起'}
   ],
   luggage: [
     '护照与身份证（有效期6个月以上，空白页留足5页以上，备复印件和电子版）',
@@ -1489,8 +2046,10 @@ const PREPARE = {
     {country:'阿塞拜疆', price:'约60-150元', note:'Nar游客卡14马纳特7GB约59元更省'},
     {country:'格鲁吉亚', price:'约55-120元', note:'Magti不限量流量周包10拉里、月包35拉里'},
     {country:'亚美尼亚', price:'约46元', note:'Ucom uWelcome 2500德拉姆不限量15天，仅机场柜台有售'},
-    {country:'土耳其', price:'约165-250元', note:'Turkcell游客包1800里拉/28天20GB，市区门店更便宜'},
-    {country:'埃及', price:'约20-75元', note:'Vodafone 505埃镑30GB+200分钟约73元，24小时柜台'}
+{country:'土耳其', price:'约165-250元', note:'Turkcell游客包1800里拉/28天20GB，市区门店更便宜'},
+    {country:'埃及', price:'约20-75元', note:'Vodafone 505埃镑30GB+200分钟约73元，24小时柜台'},
+    {country:'马尔代夫', price:'约30-60元', note:'Dhiraagu/Ooredoo游客卡，机场柜台或市区店'},
+    {country:'泰国', price:'约30-60元', note:'AIS/True游客卡7天15GB约¥40，711也能买'}
   ],
   emergency: [
     {country:'中国', phone:'12308', note:'外交部全球领事保护应急热线 +86-10-12308'},
@@ -1501,8 +2060,10 @@ const PREPARE = {
     {country:'阿塞拜疆', phone:'112', note:'报警102/急救103；巴库大使馆'},
     {country:'亚美尼亚', phone:'911/112', note:'埃里温大使馆'},
     {country:'格鲁吉亚', phone:'112', note:'第比利斯大使馆'},
-    {country:'土耳其', phone:'112', note:'安卡拉大使馆·伊斯坦布尔总领馆'},
-    {country:'埃及', phone:'122/123', note:'开罗大使馆·亚历山大总领馆'}
+{country:'土耳其', phone:'112', note:'安卡拉大使馆·伊斯坦布尔总领馆'},
+    {country:'埃及', phone:'122/123', note:'开罗大使馆'},
+    {country:'马尔代夫', phone:'119', note:'马累大使馆'},
+    {country:'泰国', phone:'1155', note:'曼谷大使馆'}
   ],
   currency: [
     {country:'哈萨克斯坦', code:'KZT', rate:'68,000坚戈'},
@@ -1579,12 +2140,21 @@ const ROUTE_COORDS = {
   '波黑': [43.85, 18.41],
   '萨拉热窝': [43.85, 18.41],
   '莫斯塔尔': [43.34, 17.81],
-  '埃及': [30.04, 31.24],
+'埃及': [30.04, 31.24],
   '开罗': [30.04, 31.24],
   '卢克索': [25.69, 32.64],
   '红海': [27.25, 33.84],
+  '马特鲁': [31.35, 27.25],
+  '锡瓦': [29.20, 25.52],
+  '锡瓦绿洲': [29.20, 25.52],
+  '赫尔格达': [27.26, 33.81],
+  '马尔代夫': [4.17, 73.51],
+  '马累': [4.17, 73.51],
+  'Maafushi': [4.17, 73.51],
+  '居民岛': [4.17, 73.51],
   '泰国': [13.76, 100.50],
-  '曼谷': [13.76, 100.50]
+  '曼谷': [13.76, 100.50],
+  '清迈': [18.79, 98.98]
 };
 
 // 从站点名中提取坐标
@@ -1603,14 +2173,15 @@ const ROUTE_ICONS = {
   '长沙': '🏙️', '新疆': '🏔️', '乌鲁木齐': '🏙️', '赛里木湖': '🌊', '伊宁': '🏘️',
   '哈萨克斯坦': '⛰️', '阿拉木图': '⛰️',
   '乌兹别克斯坦': '🕌', '塔什干': '🕌', '撒马尔罕': '🕌', '布哈拉': '🕌', '希瓦': '🕌',
-  '阿塞拜疆': '🔥', '巴库': '🔥',
+'阿塞拜疆': '🔥', '巴库': '🔥', '舍基': '🏰',
   '格鲁吉亚': '🍷', '第比利斯': '🍷', '卡兹别克': '⛰️', '西格纳吉': '🏰',
   '亚美尼亚': '⛪', '埃里温': '⛪',
-  '土耳其': '🇹🇷', '伊斯坦布尔': '🕌', '卡帕多奇亚': '🎈', '安塔利亚': '🏖️', '以弗所': '🏛️',
+  '土耳其': '🇹🇷', '伊斯坦布尔': '🕌', '卡帕多奇亚': '🎈', '安塔利亚': '🏖️', '卡什': '🌊', '以弗所': '🏛️',
   '塞尔维亚': '🏰', '贝尔格莱德': '🏰', '诺维萨德': '🏘️',
   '波黑': '🌉', '萨拉热窝': '🌉', '莫斯塔尔': '🌉',
-  '埃及': '🏺', '开罗': '🏺', '卢克索': '🏺', '红海': '🌊',
-  '泰国': '🛕', '曼谷': '🛕'
+  '埃及': '🏺', '开罗': '🏺', '卢克索': '🏺', '红海': '🌊', '马特鲁': '🌊', '锡瓦': '🏜️', '锡瓦绿洲': '🏜️', '赫尔格达': '🤿',
+  '马尔代夫': '🏝️', '马累': '🏝️', 'Maafushi': '🏝️',
+  '泰国': '🛕', '曼谷': '🛕', '清迈': '🏮'
 };
 
 function getRouteIcon(name) {
@@ -1621,133 +2192,95 @@ function getRouteIcon(name) {
 }
 
 const PRESET_ROUTE = [
-  {name:'长沙→新疆', visa:'free', days:3, budget:2000, notes:'长沙飞乌鲁木齐，再去赛里木湖玩1-2天', dests:[
+  {name:'长沙→新疆', visa:'free', days:5, budget:2200, notes:'长沙飞乌鲁木齐，赛里木湖+伊宁，霍尔果斯出境', dests:[
     {city:'乌鲁木齐', transport:'长沙飞乌鲁木齐（约4.5小时，提前买票约800-1500元）', days:[
       {date:'第1天', spots:[
-        {time:'上午', name:'抵达乌鲁木齐', note:'落地取行李、换汇、买SIM卡'},
-        {time:'下午', name:'新疆维吾尔自治区博物馆', note:'免费，看楼兰美女干尸，2-3小时'},
+        {time:'下午', name:'抵达乌鲁木齐', note:'落地取行李、换汇、买SIM卡'},
         {time:'傍晚', name:'国际大巴扎', note:'逛巴扎、吃烤肉/抓饭，夜景漂亮'}
       ]},
       {date:'第2天', spots:[
-        {time:'全天', name:'赛里木湖一日游', note:'乌市包车/拼车约5-6小时，环湖拍照，果子沟大桥观景'}
+        {time:'上午', name:'新疆维吾尔自治区博物馆', note:'免费，看楼兰美女干尸，2-3小时'},
+        {time:'下午', name:'乌鲁木齐→伊宁', note:'高铁/动车约5小时，宿伊宁'}
       ]}
     ]},
-    {city:'伊宁→霍尔果斯', transport:'乌鲁木齐坐火车/大巴到伊宁（约10小时夜火车），伊宁包车到霍尔果斯口岸（约1.5小时）', days:[
+    {city:'赛里木湖+伊宁', transport:'伊宁拼车/包车去赛里木湖约2小时', days:[
       {date:'第3天', spots:[
+        {time:'全天', name:'赛里木湖一日游', note:'环湖拍照+果子沟大桥观景，宿伊宁'}
+      ]},
+      {date:'第4天', spots:[
         {time:'上午', name:'伊宁喀赞其民俗村', note:'蓝色小屋街拍，吃手工冰淇淋'},
-        {time:'下午', name:'前往霍尔果斯口岸', note:'准备出境材料，口岸附近住一晚，第二天出境去哈萨克斯坦'}
+        {time:'下午', name:'前往霍尔果斯口岸', note:'准备出境材料，次日一早出境去哈萨克斯坦'}
       ]}
     ]}
   ]},
-  {name:'哈萨克斯坦', visa:'free', days:5, budget:2000, notes:'霍尔果斯出境→阿拉木图2天+恰伦峡谷+大阿拉木图湖', dests:[
+  {name:'哈萨克斯坦', visa:'free', days:3, budget:1500, notes:'霍尔果斯出境→阿拉木图', dests:[
     {city:'阿拉木图', transport:'霍尔果斯口岸步行/大巴过境→阿拉木图Sayran车站（约5-6小时，票价约50-80元）', days:[
       {date:'第1天', spots:[
         {time:'上午', name:'过境+抵达阿拉木图', note:'霍尔果斯口岸8:30开门，过境后拼车/大巴到阿拉木图'},
-        {time:'下午', name:'绿色巴扎（Zelenyy Bazar）', note:'当地最热闹的市场，干果/香料/手工艺品'},
+        {time:'下午', name:'绿色巴扎', note:'当地最热闹的市场，干果/香料/手工艺品'},
         {time:'傍晚', name:'升天大教堂', note:'全木结构东正教堂，公园里散步'}
       ]},
       {date:'第2天', spots:[
         {time:'上午', name:'大阿拉木图湖', note:'高山湖泊，蓝绿色湖水，包车往返约4小时'},
         {time:'下午', name:'科克托别山观景台', note:'缆车往返3500坚戈，俯瞰全城+雪山'}
-      ]}
-    ]},
-    {city:'恰伦峡谷', transport:'阿拉木图拼车/一日团（约3.5小时车程，拼团约15-24美元）', days:[
+      ]},
       {date:'第3天', spots:[
-        {time:'全天', name:'恰伦峡谷', note:'"中亚大峡谷"，可和科尔赛湖/凯因迪湖拼一日团'},
-        {time:'傍晚', name:'返回阿拉木图', note:'晚班大巴或拼车回城'}
-      ]}
-    ]},
-    {city:'前往乌兹别克斯坦', transport:'阿拉木图→塔什干：夜行大巴约16小时（约¥160-180）或Talgo火车约17小时', days:[
-      {date:'第4-5天', spots:[
-        {time:'全天', name:'前往塔什干', note:'建议选Talgo火车更舒适，提前bilet.railways.kz购票'}
+        {time:'上午', name:'恰伦峡谷', note:'中亚大峡谷，拼一日团约15-24美元'},
+        {time:'傍晚', name:'准备前往塔什干', note:'可选夜行大巴或Talgo火车'}
       ]}
     ]}
   ]},
-  {name:'乌兹别克斯坦', visa:'free', days:10, budget:2500, notes:'塔什干2天→撒马尔罕3天→布哈拉3天→希瓦2天', dests:[
-    {city:'塔什干', transport:'从阿拉木图抵达', days:[
+  {name:'乌兹别克斯坦', visa:'free', days:2, budget:1000, notes:'塔什干2天，然后飞巴库', dests:[
+    {city:'塔什干', transport:'阿拉木图→塔什干：夜行大巴约16小时（约¥160-180）或Talgo火车约17小时', days:[
       {date:'第1天', spots:[
         {time:'上午', name:'哈兹拉特伊玛目建筑群', note:'乌兹别克伊斯兰教中心，古兰经手抄本'},
-        {time:'下午', name:'楚苏巴扎', note:'中亚最大圆顶集市，吃抓饭'}
+        {time:'下午', name:'楚苏巴扎', note:'中亚最大圆顶集市，吃抓饭'},
+        {time:'傍晚', name:'塔什干地铁巡礼', note:'苏联风格深埋地铁，每站不同主题'}
       ]},
       {date:'第2天', spots:[
-        {time:'上午', name:'塔什干地铁', note:'苏联风格深埋地铁，每站不同主题，拍照胜地'},
-        {time:'下午', name:'应用艺术博物馆', note:'乌兹别克传统手工艺品展示'},
-        {time:'傍晚', name:'乘Afrosiyob高铁前往撒马尔罕', note:'约2小时15分，提前在railway.uz购票'}
-      ]}
-    ]},
-    {city:'撒马尔罕', transport:'塔什干高铁约2小时15分', days:[
-      {date:'第3天', spots:[
-        {time:'上午', name:'雷吉斯坦广场', note:'三座经学院组成的壮丽广场，必去'},
-        {time:'下午', name:'古尔-埃米尔陵', note:'帖木儿大帝的陵墓，金碧辉煌'}
-      ]},
-      {date:'第4天', spots:[
-        {time:'上午', name:'沙赫静达陵墓群', note:'蓝色瓷砖长廊，拍照绝美'},
-        {time:'下午', name:'比比哈尼姆清真寺', note:'巨大的古清真寺遗址'},
-        {time:'傍晚', name:'Siab巴扎', note:'市场买干果和手信'}
-      ]},
-      {date:'第5天', spots:[
-        {time:'上午', name:'乘火车前往布哈拉', note:'高铁约1.5小时'}
-      ]}
-    ]},
-    {city:'布哈拉', transport:'撒马尔罕高铁约1.5小时', days:[
-      {date:'第6天', spots:[
-        {time:'上午', name:'波依卡扬建筑群', note:'清真寺+宣礼塔+神学院，布哈拉地标'},
-        {time:'下午', name:'雅克城堡', note:'昔班尼王朝宫殿遗址'}
-      ]},
-      {date:'第7天', spots:[
-        {time:'上午', name:'四塔穹顶', note:'四座小塔的独特建筑，拍照打卡'},
-        {time:'下午', name:'里亚比豪兹广场', note:'池塘边喝茶，拍夕阳'}
-      ]},
-      {date:'第8天', spots:[
-        {time:'上午', name:'乘火车前往希瓦', note:'约6小时，建议买卧铺'}
-      ]}
-    ]},
-    {city:'希瓦', transport:'布哈拉火车约6小时', days:[
-      {date:'第9天', spots:[
-        {time:'上午', name:'伊钦卡拉古城', note:'完整古城墙围起的露天博物馆'},
-        {time:'下午', name:'朱马清真寺+宣礼塔', note:'独特的218根木柱清真寺'},
-        {time:'傍晚', name:'古城墙日落', note:'爬上城墙看夕阳下的沙漠绿洲'}
-      ]},
-      {date:'第10天', spots:[
-        {time:'上午', name:'塔什豪利宫', note:'可汗宫殿，蓝瓷砖+审讯室'},
-        {time:'下午', name:'准备飞往巴库', note:'希瓦/乌尔根奇机场飞巴库（通常经塔什干转机）'}
+        {time:'上午', name:'应用艺术博物馆', note:'乌兹别克传统手工艺品展示'},
+        {time:'下午', name:'准备飞往巴库', note:'塔什干直飞巴库约2.5小时，提前订约¥500-800'}
       ]}
     ]}
-  ]},
-  {name:'阿塞拜疆', visa:'free', days:4, budget:2500, notes:'巴库老城+火焰塔+戈布斯坦', dests:[
-    {city:'巴库', transport:'塔什干飞巴库约2.5小时（经伊斯坦布尔或直飞）', days:[
+  ]},  {name:'阿塞拜疆', visa:'free', days:3, budget:1600, notes:'巴库2天+舍基1天，前往格鲁吉亚', dests:[
+    {city:'巴库', transport:'塔什干飞巴库约2.5小时（提前订约¥500-800）', days:[
       {date:'第1天', spots:[
         {time:'上午', name:'老城（Icherisheher）', note:'迷宫般的中世纪古城，少女塔+希尔万沙宫'},
-        {time:'下午', name:'滨海大道', note:'里海海边散步，火焰塔观景'},
-        {time:'傍晚', name:'火焰塔', note:'地标三座火焰形大楼，夜景超美'}
+        {time:'下午', name:'滨海大道+火焰塔', note:'里海海边散步，地标三座火焰形大楼'},
+        {time:'傍晚', name:'火焰塔夜景', note:'夜景超美'}
       ]},
       {date:'第2天', spots:[
         {time:'全天', name:'戈布斯坦+泥火山一日游', note:'史前岩画+会冒泡的泥火山，拼团约30-40美元'}
-      ]},
+      ]}
+    ]},
+    {city:'舍基', transport:'巴库大巴/拼车约5小时', days:[
       {date:'第3天', spots:[
-        {time:'上午', name:'黑达尔清真寺', note:'后现代主义清真寺，建筑独特'},
-        {time:'下午', name:'巴库购物/休息', note:'买手信、整理行李'},
-        {time:'晚上', name:'夜火车前往第比利斯', note:'约9.5小时，建议买1等卧铺'}
+        {time:'上午', name:'舍基可汗宫', note:'彩窗宫殿，世界遗产'},
+        {time:'下午', name:'舍基老城+传统美食', note:'吃果仁蜜饼，逛老城'},
+        {time:'傍晚', name:'前往格鲁吉亚', note:'舍基→西格纳吉约3-4小时（经Lagodekhi口岸）'}
       ]}
     ]}
   ]},
-  {name:'格鲁吉亚', visa:'free', days:7, budget:3000, notes:'第比利斯3天→卡兹别克2天→西格纳吉1天', dests:[
-    {city:'第比利斯', transport:'巴库夜火车约9.5小时', days:[
+  {name:'格鲁吉亚', visa:'free', days:5, budget:2300, notes:'西格纳吉1天+第比利斯2天+卡兹别克2天', dests:[
+    {city:'西格纳吉', transport:'舍基跨境大巴/拼车约3-4小时', days:[
       {date:'第1天', spots:[
-        {time:'上午', name:'抵达第比利斯', note:'火车站到老城步行/打车约15分钟'},
-        {time:'下午', name:'老城漫步', note:'硫磺浴场区+和平桥+纳里卡拉要塞'},
-        {time:'傍晚', name:'母亲堡垒日落', note:'坐缆车上山看全城'}
-      ]},
-      {date:'第2天', spots:[
-        {time:'上午', name:'圣三一大教堂', note:'格鲁吉亚最大东正教堂，金顶'},
-        {time:'下午', name:'旱桥市场', note:'跳蚤市场，古董/苏联旧物/手工'},
-        {time:'晚上', name:'格鲁吉亚葡萄酒馆', note:'格鲁吉亚是葡萄酒发源地，必喝！'}
-      ]},
-      {date:'第3天', spots:[
-        {time:'全天', name:'姆茨赫塔一日游', note:'古都+Jvari修道院+生命之柱大教堂，拼车约2小时往返'}
+        {time:'上午', name:'西格纳吉小镇', note:'爱情之城，城墙环绕的美丽小镇'},
+        {time:'下午', name:'酒庄品酒', note:'格鲁吉亚葡萄酒发源地，卡赫季产区'},
+        {time:'傍晚', name:'城墙日落', note:'远眺高加索山脉'}
       ]}
     ]},
-    {city:'卡兹别克', transport:'第比利斯拼车/小巴约2.5小时（经过军事大道，沿途超美）', days:[
+    {city:'第比利斯', transport:'西格纳吉大巴约2小时', days:[
+      {date:'第2天', spots:[
+        {time:'上午', name:'老城漫步', note:'硫磺浴场区+和平桥+纳里卡拉要塞'},
+        {time:'下午', name:'缆车上山', note:'母亲堡垒看全城日落'},
+        {time:'傍晚', name:'格鲁吉亚酒馆', note:'必喝格鲁吉亚葡萄酒'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'上午', name:'圣三一大教堂', note:'格鲁吉亚最大东正教堂，金顶'},
+        {time:'下午', name:'姆茨赫塔一日游', note:'古都+Jvari修道院，拼车约2小时往返'}
+      ]}
+    ]},
+    {city:'卡兹别克', transport:'第比利斯拼车/小巴约2.5小时（军事大道超美）', days:[
       {date:'第4天', spots:[
         {time:'上午', name:'军事大道沿途', note:'俄格友谊纪念碑+安南努里城堡，一路拍照'},
         {time:'下午', name:'斯特潘茨明达圣三一教堂', note:'雪山下的孤独教堂，格鲁吉亚标志'}
@@ -1756,106 +2289,98 @@ const PRESET_ROUTE = [
         {time:'上午', name:'冰川徒步', note:'Gergeti冰川徒步约4小时往返'},
         {time:'下午', name:'返回第比利斯', note:'小巴约2.5小时'}
       ]}
-    ]},
-    {city:'西格纳吉', transport:'第比利斯小巴约2小时', days:[
-      {date:'第6天', spots:[
-        {time:'上午', name:'西格纳吉小镇', note:'爱情之城，城墙环绕的美丽小镇'},
-        {time:'下午', name:'品酒', note:'附近的葡萄酒庄参观品酒'},
-        {time:'傍晚', name:'返回第比利斯', note:'小巴约2小时'}
-      ]},
-      {date:'第7天', spots:[
-        {time:'上午', name:'前往亚美尼亚', note:'第比利斯拼车去埃里温约6-7小时'}
-      ]}
     ]}
   ]},
-  {name:'亚美尼亚', visa:'free', days:4, budget:1500, notes:'埃里温+周边', dests:[
+  {name:'亚美尼亚', visa:'free', days:2, budget:1000, notes:'埃里温2天，回第比利斯转土耳其', dests:[
     {city:'埃里温', transport:'第比利斯拼车约6-7小时（途经Dilijan/Sevan湖）', days:[
       {date:'第1天', spots:[
         {time:'上午', name:'抵达埃里温', note:'途经塞凡湖，可中途下车拍照'},
-        {time:'下午', name:'共和广场', note:'粉色建筑+喷泉'},
-        {time:'傍晚', name:'大阶梯（Cascade）', note:'爬上去看亚拉拉特山+全城'}
+        {time:'下午', name:'共和广场+大阶梯', note:'粉色建筑+爬上去看亚美尼亚山'}
       ]},
       {date:'第2天', spots:[
-        {time:'上午', name:'Khor Virap修道院', note:'亚拉拉特山最佳观景点，修道院+地下牢房'},
-        {time:'下午', name:'埃奇米阿津大教堂', note:'世界最古老主教座堂'}
-      ]},
-      {date:'第3天', spots:[
-        {time:'全天', name:'Geghard修道院+加尼神庙', note:'石窟修道院+希腊式神庙，拼团约15-20美元'}
-      ]},
-      {date:'第4天', spots:[
-        {time:'上午', name:'飞往伊斯坦布尔', note:'埃里温直飞伊斯坦布尔约2小时'}
+        {time:'上午', name:'Khor Virap修道院', note:'亚美尼亚圣山最佳观景点'},
+        {time:'下午', name:'埃奇米阿津大教堂', note:'世界最古老主教座堂'},
+        {time:'傍晚', name:'返回第比利斯', note:'拼车约6-7小时，次日转土耳其'}
       ]}
     ]}
   ]},
-  {name:'土耳其', visa:'free', days:12, budget:4000, notes:'伊斯坦布尔4天+卡帕多奇亚3天+安塔利亚/以弗所5天', dests:[
-    {city:'伊斯坦布尔', transport:'埃里温直飞伊斯坦布尔约2小时', days:[
+  {name:'土耳其', visa:'free', days:12, budget:4500, notes:'安卡拉→格雷梅→安塔利亚→卡什→伊斯坦布尔', dests:[
+    {city:'安卡拉', transport:'从第比利斯飞安卡拉（经伊斯坦布尔中转约3-4小时）', days:[
       {date:'第1天', spots:[
-        {time:'上午', name:'圣索菲亚大教堂', note:'拜占庭建筑巅峰，必去'},
-        {time:'下午', name:'蓝色清真寺', note:'6根宣礼塔，对面就是圣索菲亚'},
-        {time:'傍晚', name:'大巴扎', note:'4000+店铺的世界最古老集市'}
-      ]},
-      {date:'第2天', spots:[
-        {time:'上午', name:'托普卡帕宫', note:'奥斯曼苏丹宫殿+后宫'},
-        {time:'下午', name:'地下水宫', note:'美杜莎石柱的地下蓄水池'},
-        {time:'傍晚', name:'加拉塔桥看日落', note:'桥上钓鱼+看博斯普鲁斯海峡'}
-      ]},
-      {date:'第3天', spots:[
-        {time:'上午', name:'加拉塔塔', note:'中世纪石塔，360度观景'},
-        {time:'下午', name:'独立大街', note:'步行街+叮当车+甜品店'},
-        {time:'晚上', name:'博斯普鲁斯海峡夜游', note:'坐船看两岸灯光'}
-      ]},
-      {date:'第4天', spots:[
-        {time:'上午', name:'新清真寺+香料市场', note:'埃及香料市场买茶/土耳其软糖'},
-        {time:'下午', name:'飞往卡帕多奇亚', note:'伊斯坦布尔飞内夫谢希尔约1.5小时'}
+        {time:'上午', name:'安卡拉城堡', note:'首都制高点，俯瞰全城'},
+        {time:'下午', name:'安纳托利亚文明博物馆', note:'赫梯文明珍宝，世界级博物馆'},
+        {time:'傍晚', name:'国父陵（Anitkabir）', note:'土耳其国父凯末尔陵墓'}
       ]}
     ]},
-    {city:'卡帕多奇亚', transport:'伊斯坦布尔飞内夫谢希尔约1.5小时', days:[
-      {date:'第5天', spots:[
-        {time:'清晨', name:'热气球（如果天气允许）', note:'约150-250欧元/人，提前预订！卡帕多奇亚必做'},
+    {city:'格雷梅', transport:'安卡拉大巴约5小时（或飞机）', days:[
+      {date:'第2天', spots:[
+        {time:'清晨', name:'热气球', note:'卡帕多奇亚必做！约150-250欧元/人，提前预订'},
         {time:'下午', name:'格雷梅露天博物馆', note:'石窟教堂+壁画'}
       ]},
-      {date:'第6天', spots:[
-        {time:'上午', name:'红谷/玫瑰谷徒步', note:'奇特岩石地貌，徒步约2-3小时'},
-        {time:'下午', name:'乌奇希萨尔城堡', note:'最高观景点看全景'},
-        {time:'傍晚', name:'ATV日落巡游', note:'驾驶ATV穿越山谷看日落'}
-      ]},
-      {date:'第7天', spots:[
-        {time:'上午', name:'代林库尤地下城', note:'深达85米的地下城市，可容纳2万人'},
-        {time:'下午', name:'飞往安塔利亚', note:'约1小时'}
+      {date:'第3天', spots:[
+        {time:'上午', name:'红线游览', note:'乌奇希萨尔城堡+爱情谷'},
+        {time:'下午', name:'代林库尤地下城', note:'深达85米的地下城市'},
+        {time:'傍晚', name:'ATV日落巡游', note:'山谷看日落'}
       ]}
     ]},
-    {city:'安塔利亚', transport:'卡帕多奇亚飞安塔利亚约1小时', days:[
-      {date:'第8天', spots:[
+    {city:'安塔利亚', transport:'格雷梅飞安塔利亚约1小时（或夜巴）', days:[
+      {date:'第4天', spots:[
         {time:'上午', name:'老城卡勒伊奇', note:'罗马港口+奥斯曼老宅+窄巷'},
         {time:'下午', name:'阿斯潘多斯剧场', note:'世界保存最完好的罗马剧场'},
         {time:'傍晚', name:'海滩日落', note:'地中海蓝旗海滩'}
       ]},
-      {date:'第9-10天', spots:[
-        {time:'全天', name:'以弗所古城', note:'从安塔利亚坐大巴约4小时，塞尔丘克下，看图书馆+大剧场'},
-        {time:'晚上', name:'返回安塔利亚或飞伊斯坦布尔', note:'准备前往塞尔维亚'}
+      {date:'第5天', spots:[
+        {time:'全天', name:'D400海景公路', note:'《国家地理》封神自驾路线，安塔利亚→卡什'}
       ]}
     ]},
-    {city:'飞塞尔维亚', transport:'伊斯坦布尔飞贝尔格莱德约1小时（廉航约50-80欧）', days:[
-      {date:'第11-12天', spots:[
-        {time:'上午', name:'安塔利亚→伊斯坦布尔→贝尔格莱德', note:'通常需在伊斯坦布尔中转'}
+    {city:'卡什', transport:'D400公路自驾/拼车约3小时', days:[
+      {date:'第6天', spots:[
+        {time:'上午', name:'卡什海边+老城', note:'地中海小镇，蓝白配色'},
+        {time:'下午', name:'沉船岛出海（Kekova）', note:'乘船看水下古城，浮潜'},
+        {time:'傍晚', name:'海边晚餐', note:'海鲜+落日'}
+      ]},
+      {date:'第7天', spots:[
+        {time:'上午', name:'卡什→安塔利亚', note:'原路返回或大巴'},
+        {time:'下午', name:'飞往伊斯坦布尔', note:'安塔利亚飞伊斯坦布尔约1小时'}
+      ]}
+    ]},
+    {city:'伊斯坦布尔', transport:'安塔利亚飞伊斯坦布尔约1小时', days:[
+      {date:'第8天', spots:[
+        {time:'上午', name:'圣索菲亚大教堂', note:'拜占庭建筑巅峰，必去'},
+        {time:'下午', name:'蓝色清真寺', note:'6根宣礼塔，对面就是圣索菲亚'},
+        {time:'傍晚', name:'大巴扎', note:'4000+店铺的世界最古老集市'}
+      ]},
+      {date:'第9天', spots:[
+        {time:'上午', name:'托普卡帕宫', note:'奥斯曼苏丹宫殿+后宫'},
+        {time:'下午', name:'地下水宫', note:'美杜莎石柱的地下蓄水池'},
+        {time:'傍晚', name:'加拉塔桥看日落', note:'桥上钓鱼+看博斯普鲁斯海峡'}
+      ]},
+      {date:'第10天', spots:[
+        {time:'上午', name:'加拉塔塔', note:'中世纪石塔，360度观景'},
+        {time:'下午', name:'独立大街', note:'步行街+叮当车+甜品店'},
+        {time:'晚上', name:'博斯普鲁斯海峡夜游', note:'坐船看两岸灯光'}
+      ]},
+      {date:'第11天', spots:[
+        {time:'上午', name:'香料市场', note:'买茶/土耳其软糖'},
+        {time:'下午', name:'飞往贝尔格莱德', note:'约1.5小时'}
       ]}
     ]}
   ]},
   {name:'塞尔维亚', visa:'free', days:3, budget:1200, notes:'贝尔格莱德2天+诺维萨德1天', dests:[
-    {city:'贝尔格莱德', transport:'伊斯坦布尔飞贝尔格莱德约1小时', days:[
+    {city:'贝尔格莱德', transport:'伊斯坦布尔飞贝尔格莱德约1小时（廉航约50-80欧）', days:[
       {date:'第1天', spots:[
         {time:'上午', name:'卡莱梅格丹城堡', note:'萨瓦河与多瑙河交汇处的古堡'},
         {time:'下午', name:'斯卡达利亚波西米亚街', note:'老式酒馆+现场民谣'},
         {time:'晚上', name:'萨瓦河滨夜生活', note:'塞尔维亚夜生活很有名'}
       ]},
       {date:'第2天', spots:[
-        {time:'上午', name:'圣萨瓦教堂', note:'世界最大东正教堂之一，内部金碧辉煌'},
-        {time:'下午', name:'尼古拉·特斯拉博物馆', note:'科学迷必去'}
+        {time:'上午', name:'圣萨瓦教堂', note:'世界最大东正教堂之一'},
+        {time:'下午', name:'泽蒙小镇', note:'多瑙河边，喂天鹅看日落'}
       ]}
     ]},
     {city:'诺维萨德', transport:'贝尔格莱德火车/大巴约1.5小时', days:[
       {date:'第3天', spots:[
-        {time:'上午', name:'彼得罗瓦拉丁城堡', note:'多瑙河上的"直布罗陀"，俯瞰全城'},
+        {time:'上午', name:'彼得罗瓦拉丁城堡', note:'多瑙河上的直布罗陀，俯瞰全城'},
         {time:'下午', name:'诺维萨德老城', note:'色彩丰富的巴洛克建筑'},
         {time:'傍晚', name:'大巴前往萨拉热窝', note:'约7-9小时，建议白天出发'}
       ]}
@@ -1870,21 +2395,32 @@ const PRESET_ROUTE = [
       ]},
       {date:'第2天', spots:[
         {time:'上午', name:'战争隧道博物馆', note:'波黑战争时期的地道'},
-        {time:'下午', name:'Vrelo Bosne公园', note:'波斯尼亚河源头，绿意盎然'},
-        {time:'傍晚', name:'大巴前往莫斯塔尔', note:'约2.5小时'}
-      ]}
-    ]},
-    {city:'莫斯塔尔', transport:'萨拉热窝大巴约2.5小时', days:[
-      {date:'第3天', spots:[
-        {time:'上午', name:'莫斯塔尔老桥', note:'世界遗产，奥斯曼石桥'},
-        {time:'中午', name:'老桥跳水', note:'当地年轻人的传统，夏天可看'},
-        {time:'下午', name:'科斯基·穆罕默德帕夏清真寺', note:'爬上宣礼塔看全城'},
-        {time:'傍晚', name:'准备飞埃及', note:'莫斯塔尔/萨拉热窝→伊斯坦布尔→开罗'}
+        {time:'下午', name:'莫斯塔尔', note:'老桥世界遗产+跳水表演'},
+        {time:'傍晚', name:'前往阿尔巴尼亚', note:'萨拉热窝→地拉那约7小时（经黑山）'}
       ]}
     ]}
   ]},
-  {name:'埃及', visa:'evisa', days:10, budget:3000, notes:'开罗4天+卢克索3天+红海3天', dests:[
-    {city:'开罗', transport:'萨拉热窝飞开罗（经伊斯坦布尔中转，约6-8小时含转机）', days:[
+  {name:'阿尔巴尼亚', visa:'free', days:3, budget:1200, notes:'地拉那2天+贝拉特/吉诺卡斯特', dests:[
+    {city:'地拉那', transport:'萨拉热窝→地拉那约7小时（经黑山）或直飞', days:[
+      {date:'第1天', spots:[
+        {time:'上午', name:'斯坎德培广场', note:'城市中心'},
+        {time:'下午', name:'地拉那金字塔', note:'后现代建筑，可攀爬'},
+        {time:'傍晚', name:'BunkArt地堡博物馆', note:'冷战防核地堡'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'全天', name:'贝拉特一日游', note:'千窗之城，世界遗产'},
+        {time:'傍晚', name:'返回地拉那', note:'约2.5小时'}
+      ]}
+    ]},
+    {city:'吉诺卡斯特', transport:'地拉那大巴约3.5小时', days:[
+      {date:'第3天', spots:[
+        {time:'上午', name:'吉诺卡斯特城堡', note:'石头之城，世界遗产'},
+        {time:'下午', name:'返回地拉那', note:'傍晚飞往开罗'}
+      ]}
+    ]}
+  ]},
+  {name:'埃及', visa:'evisa', days:13, budget:3800, notes:'开罗→马特鲁→锡瓦→赫尔格达→卢克索→回开罗', dests:[
+    {city:'开罗', transport:'地拉那飞开罗（经雅典/伊斯坦布尔转机约4-5小时）', days:[
       {date:'第1天', spots:[
         {time:'全天', name:'抵达开罗', note:'机场办落地签/电子签，换埃镑，打车到市区'}
       ]},
@@ -1893,45 +2429,74 @@ const PRESET_ROUTE = [
         {time:'下午', name:'埃及博物馆', note:'图坦卡蒙黄金面具+木乃伊'}
       ]},
       {date:'第3天', spots:[
-        {time:'上午', name:'哈利利市场', note:'开罗最大传统市场，香精/纸莎草/铜器'},
-        {time:'下午', name:'萨拉丁城堡+穆罕默德阿里清真寺', note:'开罗天际线地标'},
-        {time:'傍晚', name:'尼罗河游船', note:'含晚餐+肚皮舞表演'}
+        {time:'上午', name:'哈利利市场', note:'开罗最大传统市场'},
+        {time:'下午', name:'萨拉丁城堡+穆罕默德阿里清真寺', note:'开罗天际线地标'}
       ]},
       {date:'第4天', spots:[
         {time:'上午', name:'阶梯金字塔（塞加拉）', note:'比吉萨更古老的金字塔'},
-        {time:'下午', name:'孟菲斯古城遗址', note:'拉美西斯二世巨像'},
-        {time:'晚上', name:'夜火车前往卢克索', note:'卧铺约10小时'}
+        {time:'下午', name:'前往马特鲁', note:'大巴约4-6小时'}
       ]}
     ]},
-    {city:'卢克索', transport:'开罗夜火车约10小时/飞约1小时', days:[
+    {city:'马特鲁', transport:'开罗大巴/拼车约4-6小时', days:[
       {date:'第5天', spots:[
-        {time:'上午', name:'帝王谷', note:'图坦卡蒙墓+拉美西斯墓，限制人数'},
-        {time:'下午', name:'哈特谢普苏特神庙', note:'女法老的阶梯式神庙'}
-      ]},
+        {time:'全天', name:'马特鲁海滩（Ageeba Beach）', note:'清澈海水+白沙滩，本地度假胜地'},
+        {time:'傍晚', name:'海边日落+海鲜晚餐', note:'新鲜便宜'}
+      ]}
+    ]},
+    {city:'锡瓦绿洲', transport:'马特鲁拼车/大巴约4小时', days:[
       {date:'第6天', spots:[
-        {time:'上午', name:'卡尔纳克神庙', note:'世界最大古神庙群，震撼'},
-        {time:'下午', name:'卢克索神庙', note:'市中心的神庙，傍晚光影好看'},
-        {time:'傍晚', name:'尼罗河帆船（Felucca）', note:'传统三角帆船，看日落'}
+        {time:'全天', name:'锡瓦绿洲', note:'沙漠绿洲+盐湖漂浮+神谕神庙'},
+        {time:'傍晚', name:'沙丘日落', note:'骑骆驼看沙漠日落'}
       ]},
       {date:'第7天', spots:[
-        {time:'上午', name:'大巴前往红海', note:'约3-4小时到赫尔加达/达哈卜'}
+        {time:'上午', name:'盐湖漂浮', note:'死海同款体验'},
+        {time:'下午', name:'返回开罗', note:'大巴约8-9小时'}
       ]}
     ]},
-    {city:'红海（赫尔加达/达哈卜）', transport:'卢克索大巴约3-4小时', days:[
+    {city:'赫尔格达', transport:'开罗大巴约6小时或飞机1小时', days:[
       {date:'第8天', spots:[
-        {time:'全天', name:'浮潜/深潜', note:'红海世界顶级潜水地，珊瑚+热带鱼'}
+        {time:'全天', name:'红海浮潜/深潜', note:'红海世界顶级潜水地'}
       ]},
       {date:'第9天', spots:[
-        {time:'全天', name:'沙漠摩托/贝都因人村落', note:'冲沙+骑骆驼+星空晚餐'}
-      ]},
+        {time:'全天', name:'出海追海豚', note:'Giftun岛浮潜+船上午餐'},
+        {time:'傍晚', name:'赫尔格达老城', note:'海鲜大餐'}
+      ]}
+    ]},
+    {city:'卢克索', transport:'赫尔格达大巴约4小时', days:[
       {date:'第10天', spots:[
-        {time:'上午', name:'红海休整/最后浮潜', note:'收尾'},
-        {time:'下午', name:'飞往曼谷中转', note:'红海→开罗→曼谷'}
+        {time:'上午', name:'帝王谷', note:'图坦卡蒙墓+拉美西斯墓'},
+        {time:'下午', name:'哈特谢普苏特神庙', note:'女法老的阶梯式神庙'}
+      ]},
+      {date:'第11天', spots:[
+        {time:'上午', name:'卡尔纳克神庙', note:'世界最大古神庙群'},
+        {time:'下午', name:'卢克索神庙+帆船', note:'傍晚光影+尼罗河日落'}
+      ]}
+    ]},
+    {city:'回开罗', transport:'卢克索夜火车/飞机约10小时', days:[
+      {date:'第12天', spots:[
+        {time:'上午', name:'回开罗', note:'夜火车约10小时'},
+        {time:'下午', name:'开罗购物', note:'纸莎草画、香料、香精瓶'}
+      ]},
+      {date:'第13天', spots:[
+        {time:'全天', name:'开罗飞马尔代夫', note:'经多哈/迪拜转机，约8-10小时'}
       ]}
     ]}
   ]},
-  {name:'泰国中转回国', visa:'free', days:2, budget:1500, notes:'开罗飞曼谷中转', dests:[
-    {city:'曼谷', transport:'开罗飞曼谷（约8-9小时，经多哈/迪拜中转）', days:[
+  {name:'马尔代夫', visa:'free', days:4, budget:2500, notes:'马累+居民岛度假', dests:[
+    {city:'马累', transport:'开罗飞马累约8-10小时（经多哈/迪拜）', days:[
+      {date:'第1天', spots:[
+        {time:'全天', name:'抵达马累', note:'机场岛过夜或乘快艇上岛'}
+      ]},
+      {date:'第2天', spots:[
+        {time:'全天', name:'居民岛（如Maafushi）', note:'人均¥300-500/晚，沙滩+浮潜'}
+      ]},
+      {date:'第3天', spots:[
+        {time:'全天', name:'出海+浮潜', note:'看海豚、海龟，珊瑚礁浮潜'}
+      ]}
+    ]}
+  ]},
+  {name:'泰国', visa:'free', days:5, budget:2000, notes:'曼谷2天+清迈2天，回国', dests:[
+    {city:'曼谷', transport:'马尔代夫飞曼谷约4-5小时', days:[
       {date:'第1天', spots:[
         {time:'上午', name:'抵达曼谷', note:'素万那普机场到市区约40分钟'},
         {time:'下午', name:'大皇宫+玉佛寺', note:'曼谷必去，注意着装'},
@@ -1939,11 +2504,22 @@ const PRESET_ROUTE = [
       ]},
       {date:'第2天', spots:[
         {time:'上午', name:'四面佛+暹罗广场', note:'拜四面佛+购物'},
-        {time:'下午', name:'曼谷飞长沙', note:'约3小时，回家！'}
+        {time:'下午', name:'曼谷→清迈', note:'飞机1.5小时或夜火车12小时'}
+      ]}
+    ]},
+    {city:'清迈', transport:'曼谷飞机约1.5小时', days:[
+      {date:'第3天', spots:[
+        {time:'上午', name:'清迈古城+双龙寺', note:'古城漫步，双龙寺看全城'},
+        {time:'下午', name:'周日夜市', note:'清迈最大夜市'}
+      ]},
+      {date:'第4天', spots:[
+        {time:'上午', name:'大象保护区', note:'ethical，不骑乘'},
+        {time:'下午', name:'清迈→曼谷→长沙', note:'曼谷飞长沙约3小时，回家！'}
       ]}
     ]}
   ]}
 ];
+
 
 // ===== 行李预设数据 =====
 const LUGGAGE_PRESETS = [
@@ -1992,11 +2568,13 @@ const PRESET_VISA = [
   {name:'乌兹别克斯坦', type:'free', status:0, note:'免签，护照有效期>6个月'},
   {name:'阿塞拜疆', type:'free', status:0, note:'免签(2024-8起)，护照有效期>6个月'},
   {name:'格鲁吉亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
-  {name:'亚美尼亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
-  {name:'土耳其', type:'free', status:0, note:'电子签，约$60，建议提前1周申请 evisa.gov.tr'},
+{name:'亚美尼亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'土耳其', type:'free', status:0, note:'2026年1月起免签，180天内累计不超90天'},
   {name:'塞尔维亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
   {name:'波黑', type:'free', status:0, note:'免签，护照有效期>6个月'},
+  {name:'阿尔巴尼亚', type:'free', status:0, note:'免签，护照有效期>6个月'},
   {name:'埃及', type:'evisa', status:0, note:'电子签$25或落地签$25，建议提前办电子签 visa2egypt.gov.eg'},
+  {name:'马尔代夫', type:'free', status:0, note:'落地免费签30天，护照有效期>6个月'},
   {name:'泰国', type:'free', status:0, note:'免签(临时政策)，护照有效期>6个月'}
 ];
 
@@ -2016,7 +2594,8 @@ const EXCHANGE_RATES = {
   TRY: { name:'土耳其里拉', rate: 0.21 },
   RSD: { name:'塞尔维亚第纳尔', rate: 0.066 },
   BAM: { name:'波黑马克', rate: 4.03 },
-  EGP: { name:'埃及镑', rate: 0.15 },
+EGP: { name:'埃及镑', rate: 0.15 },
+  MVR: { name:'马尔代夫拉菲亚', rate: 0.46 },
   THB: { name:'泰国铢', rate: 0.20 }
 };
 
@@ -2034,9 +2613,12 @@ const WEATHER_CITIES = [
   {cn:'安塔利亚', en:'Antalya', cc:'TR'},
   {cn:'贝尔格莱德', en:'Belgrade', cc:'RS'},
   {cn:'萨拉热窝', en:'Sarajevo', cc:'BA'},
-  {cn:'开罗', en:'Cairo', cc:'EG'},
+{cn:'开罗', en:'Cairo', cc:'EG'},
   {cn:'卢克索', en:'Luxor', cc:'EG'},
+  {cn:'马累', en:'Male', cc:'MV'},
+  {cn:'Maafushi', en:'Maafushi', cc:'MV'},
   {cn:'曼谷', en:'Bangkok', cc:'TH'},
+  {cn:'清迈', en:'Chiang Mai', cc:'TH'},
   {cn:'长沙', en:'Changsha', cc:'CN'},
   {cn:'乌鲁木齐', en:'Urumqi', cc:'CN'}
 ];
@@ -2083,9 +2665,6 @@ document.querySelectorAll('.nav-btn').forEach(item => {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (page === 'route' && travelMap) {
-      setTimeout(function() { travelMap.invalidateSize(); }, 300);
-    }
   });
 });
 
@@ -2124,126 +2703,6 @@ function updateCountdown() {
   document.getElementById('cdSec').textContent = String(s).padStart(2,'0');
 }
 
-// ===== 地图管理 =====
-let travelMap = null;
-let mapMarkers = [];
-let mapPolyline = null;
-let mapInitialized = false;
-
-function initMap() {
-  if (mapInitialized) return;
-  if (typeof L === 'undefined') return;
-  travelMap = L.map('travelMap', {
-    zoomControl: true,
-    attributionControl: false,
-    scrollWheelZoom: true,
-    dragging: true,
-    touchZoom: true,
-    tap: true
-  }).setView([35, 60], 3);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    subdomains: ['a','b','c']
-  }).addTo(travelMap);
-
-  // 移动端：防止地图滑动时触发页面滚动
-  var mapEl = document.getElementById('travelMap');
-  mapEl.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 1) {
-      // 单指：允许地图拖拽，阻止页面滚动
-      e.stopPropagation();
-    }
-  }, { passive: true });
-  mapEl.addEventListener('touchmove', function(e) {
-    e.stopPropagation();
-  }, { passive: true });
-
-  // 移动端：点击地图标记的popup改善
-  travelMap.on('popupopen', function() {
-    // 让popup在移动端更好点击
-    setTimeout(function() {
-      var closeBtn = document.querySelector('.leaflet-popup-close-button');
-      if (closeBtn) {
-        closeBtn.style.width = '28px';
-        closeBtn.style.height = '28px';
-        closeBtn.style.fontSize = '18px';
-      }
-    }, 100);
-  });
-
-  mapInitialized = true;
-  renderMapRoute();
-}
-
-function toggleMap() {
-  const container = document.getElementById('mapContainer');
-  const toggleText = document.getElementById('mapToggleText');
-  if (container.classList.contains('collapsed')) {
-    container.classList.remove('collapsed');
-    toggleText.textContent = '收起';
-    setTimeout(function() { if (travelMap) travelMap.invalidateSize(); }, 300);
-  } else {
-    container.classList.add('collapsed');
-    toggleText.textContent = '展开';
-  }
-}
-
-function renderMapRoute() {
-  if (!travelMap || !mapInitialized) return;
-
-  // 清除旧标记
-  mapMarkers.forEach(function(m) { travelMap.removeLayer(m); });
-  mapMarkers = [];
-  if (mapPolyline) { travelMap.removeLayer(mapPolyline); mapPolyline = null; }
-
-  var coords = [];
-  state.route.forEach(function(r, i) {
-    var c = getRouteCoord(r.name);
-    if (!c) return;
-    coords.push(c);
-    var color = r.visited ? '#22C55E' : '#33C2FF';
-    var icon = L.divIcon({
-      className: 'custom-map-marker',
-      html: '<div style="width:24px;height:24px;border-radius:50%;background:' + color +
-            ';border:2px solid white;box-shadow:0 1px 4px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;">' +
-            (i + 1) + '</div>',
-      iconSize: [24, 24],
-      iconAnchor: [12, 12]
-    });
-    var marker = L.marker(c, { icon: icon }).addTo(travelMap);
-    var visaText = r.visa === 'free' ? '免签' : r.visa === 'evisa' ? '电子签' : r.visa === 'conditional' ? '有条件免签' : '其他';
-    var popupHtml = '<div style="font-size:13px;line-height:1.6;">' +
-      '<strong style="font-size:14px;">' + getRouteIcon(r.name) + ' ' + r.name + '</strong><br>' +
-      '<span style="color:#666;">' + visaText + (r.days ? ' · ' + r.days + '天' : '') + (r.budget ? ' · ¥' + r.budget : '') + '</span>' +
-      (r.notes ? '<br><span style="color:#999;font-size:12px;">' + r.notes + '</span>' : '') +
-      '</div>';
-    marker.bindPopup(popupHtml);
-    mapMarkers.push(marker);
-  });
-
-  // 画路线连线
-  if (coords.length >= 2) {
-    mapPolyline = L.polyline(coords, {
-      color: '#33C2FF',
-      weight: 2,
-      opacity: 0.6,
-      dashArray: '6, 6'
-    }).addTo(travelMap);
-    // 自适应缩放
-    travelMap.fitBounds(L.latLngBounds(coords), { padding: [30, 30] });
-  } else if (coords.length === 1) {
-    travelMap.setView(coords[0], 6);
-  }
-
-  // 更新地图信息栏
-  var totalDays = 0;
-  state.route.forEach(function(r) { totalDays += parseInt(r.days) || 0; });
-  // 更新地图信息（可选）
-  var mapSummaryEl = document.getElementById('mapRouteSummary');
-  if (mapSummaryEl) mapSummaryEl.textContent = state.route.length + ' 站 · ' + totalDays + ' 天';
-}
-
 // ===== 路线规划（3层展开：站→子目的地→每日景点）=====
 function renderRoute() {
   var list = document.getElementById('routeList');
@@ -2261,7 +2720,6 @@ function renderRoute() {
 
   if (!state.route.length) {
     list.innerHTML = '<div class="empty-hint">还没有添加路线，点击下方按钮导入或手动添加</div>';
-    renderMapRoute();
     return;
   }
 
@@ -2357,8 +2815,6 @@ function renderRoute() {
     '</div></div>'; // route-detail, route-item
     return html;
   }).join('');
-
-  renderMapRoute();
 }
 
 function toggleRouteDetail(i) {
@@ -2370,37 +2826,6 @@ function toggleRouteDetail(i) {
   } else {
     el.classList.add('open');
     header.classList.add('expanded');
-    // 地图飞到该站点
-    flyToRoute(i);
-  }
-}
-
-// 地图飞到指定站点
-function flyToRoute(routeIdx) {
-  if (!travelMap || !mapInitialized) return;
-  var r = state.route[routeIdx];
-  if (!r) return;
-  // 先尝试从子目的地获取坐标，再从站点名获取
-  var coords = [];
-  if (r.dests && r.dests.length) {
-    r.dests.forEach(function(d) {
-      var c = getRouteCoord(d.city);
-      if (c) coords.push(c);
-    });
-  }
-  if (!coords.length) {
-    var c = getRouteCoord(r.name);
-    if (c) coords.push(c);
-  }
-  if (coords.length > 1) {
-    travelMap.flyToBounds(L.latLngBounds(coords), { padding: [60, 60], maxZoom: 10, duration: 1.2 });
-  } else if (coords.length === 1) {
-    travelMap.flyTo(coords[0], 8, { duration: 1.0 });
-  }
-  // 展开地图（如果收起了）
-  var container = document.getElementById('mapContainer');
-  if (container.classList.contains('collapsed')) {
-    toggleMap();
   }
 }
 
@@ -2415,27 +2840,6 @@ function toggleDest(routeIdx, destIdx) {
   } else {
     body.classList.add('open');
     if (arrow) arrow.style.transform = 'rotate(90deg)';
-    // 地图飞到该子目的地
-    flyToDest(routeIdx, destIdx);
-  }
-}
-
-// 地图飞到指定子目的地
-function flyToDest(routeIdx, destIdx) {
-  if (!travelMap || !mapInitialized) return;
-  var dest = state.route[routeIdx] && state.route[routeIdx].dests && state.route[routeIdx].dests[destIdx];
-  if (!dest) return;
-  var c = getRouteCoord(dest.city);
-  if (c) {
-    travelMap.flyTo(c, 11, { duration: 1.0 });
-  } else {
-    // 子目的地城市没坐标，飞到站点
-    flyToRoute(routeIdx);
-  }
-  // 展开地图（如果收起了）
-  var container = document.getElementById('mapContainer');
-  if (container.classList.contains('collapsed')) {
-    toggleMap();
   }
 }
 
@@ -2690,7 +3094,7 @@ function delRoute(i) {
 
 function loadPresetRoute() {
   state.route = PRESET_ROUTE.map(r => ({...r, visited:false}));
-  saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（11站）');
+  saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（13站）');
 }
 
 // ===== 攻略参考 =====
@@ -2800,16 +3204,6 @@ function renderPrepare() {
   });
   html += `</tbody></table>
     <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">60天全程粗算：漫游包约714元最省心，逐国办卡约450-750元，网购流量卡分区段通常最省</div>
-  </div>`;
-
-  // 货币汇率
-  html += `<div class="prepare-card"><h4>💰 货币汇率速查（离线参考 2026-07）</h4>
-    <table class="currency-table"><thead><tr><th>国家</th><th>币种</th><th>≈100元人民币</th></tr></thead><tbody>`;
-  PREPARE.currency.forEach(c => {
-    html += `<tr><td>${c.country}</td><td><span class="cur-code">${c.code}</span></td><td>${c.rate}</td></tr>`;
-  });
-  html += `</tbody></table>
-    <div style="font-size:0.78rem;color:var(--text-light);margin-top:6px">中亚各国与埃及主要使用现金，可持美元在机场或市内兑换点换取</div>
   </div>`;
 
   // 紧急联络
@@ -3313,48 +3707,10 @@ function loadPresetVisa() {
   saveState(); renderVisa(); showToast('已导入大环线签证清单（' + PRESET_VISA.length + '国）');
 }
 
-// ===== 汇率换算器 =====
-function initExchangeRate() {
-  const fromSel = document.getElementById('exFromCurrency');
-  const toSel = document.getElementById('exToCurrency');
-  if (!fromSel || !toSel) return;
-  fromSel.innerHTML = Object.keys(EXCHANGE_RATES).map(k =>
-    `<option value="${k}">${EXCHANGE_RATES[k].name} (${k})</option>`
-  ).join('');
-  toSel.innerHTML = Object.keys(EXCHANGE_RATES).map(k =>
-    `<option value="${k}">${EXCHANGE_RATES[k].name} (${k})</option>`
-  ).join('');
-  fromSel.value = 'CNY';
-  toSel.value = 'USD';
-  calcExchange();
-}
-
-function calcExchange() {
-  const fromAmt = parseFloat(document.getElementById('exFromAmount').value) || 0;
-  const fromCur = document.getElementById('exFromCurrency').value;
-  const toCur = document.getElementById('exToCurrency').value;
-  const fromRate = EXCHANGE_RATES[fromCur].rate;
-  const toRate = EXCHANGE_RATES[toCur].rate;
-  // 先换成人民币，再换目标货币
-  const cny = fromAmt * fromRate;
-  const result = cny / toRate;
-  document.getElementById('exToAmount').value = result.toFixed(2);
-  document.getElementById('exResult').textContent =
-    fromAmt + ' ' + EXCHANGE_RATES[fromCur].name + ' ≈ ' + result.toFixed(2) + ' ' + EXCHANGE_RATES[toCur].name;
-}
-
-function swapExchange() {
-  const fromSel = document.getElementById('exFromCurrency');
-  const toSel = document.getElementById('exToCurrency');
-  const tmp = fromSel.value;
-  fromSel.value = toSel.value;
-  toSel.value = tmp;
-  calcExchange();
-}
-
 // ===== 行程分享导出 =====
 function exportShareText() {
   let text = '=== 追寻旅迹 · 亚欧非大环线 ===\n';
+
   if (state.trip.dest) text += '目的地：' + state.trip.dest + '\n';
   if (state.trip.date) text += '出发日期：' + state.trip.date + '\n';
   if (state.trip.days) text += '预计天数：' + state.trip.days + '天\n';
@@ -3551,6 +3907,52 @@ function importShareJSON() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+// ===== 粘贴分享码 =====
+function exportShareCode() {
+  try {
+    var json = JSON.stringify(state);
+    var code = btoa(unescape(encodeURIComponent(json)));
+    var box = document.getElementById('shareCodeBox');
+    box.style.display = 'block';
+    box.value = code;
+    box.select();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).then(function() {
+        showToast('分享码已生成并复制到剪贴板');
+      }).catch(function() {
+        document.execCommand('copy');
+        showToast('分享码已生成并复制到剪贴板');
+      });
+    } else {
+      document.execCommand('copy');
+      showToast('分享码已生成并复制到剪贴板');
+    }
+  } catch(err) {
+    showToast('生成分享码失败：' + err.message);
+  }
+}
+
+function importShareCode() {
+  var box = document.getElementById('shareCodeBox');
+  var code = '';
+  if (box && box.value.trim()) {
+    code = box.value.trim();
+  } else {
+    code = prompt('粘贴分享码：');
+  }
+  if (!code) { showToast('请先粘贴分享码'); return; }
+  try {
+    var json = decodeURIComponent(escape(atob(code)));
+    var data = JSON.parse(json);
+    state = data;
+    saveState();
+    init();
+    showToast('数据已从分享码恢复！');
+  } catch(err) {
+    showToast('分享码无效或损坏');
+  }
 }
 
 // ===== 导出PPT =====
@@ -4124,7 +4526,7 @@ function suggestRoute(input) {
   });
 
   if (mentioned.length === 0) {
-    return '你已经有了预设的大环线路线：\n长沙→新疆→哈萨克斯坦→乌兹别克斯坦→阿塞拜疆→格鲁吉亚→亚美尼亚→土耳其→塞尔维亚→波黑→埃及→泰国→长沙\n\n共11站约63天，预算约2.5万。可以在"首页"一键导入！\n\n或者告诉我你想去哪些国家，我帮你规划。';
+    return '你已经有了预设的大环线路线：\n长沙→新疆→哈萨克斯坦→乌兹别克斯坦→阿塞拜疆→格鲁吉亚→亚美尼亚→土耳其→塞尔维亚→波黑→阿尔巴尼亚→埃及→马尔代夫→泰国→长沙\n\n共13站约63天，预算约2.58万。可以在"首页"一键导入！\n\n或者告诉我你想去哪些国家，我帮你规划。';
   }
 
   var result = '🗺 根据你提到的国家，建议路线：\n\n';
@@ -4178,7 +4580,7 @@ function visaInfo(input) {
   });
 
   if (!mentioned.length) {
-    return '大环线各国签证情况：\n\n· 哈萨克斯坦 — 免签\n· 乌兹别克斯坦 — 免签\n· 阿塞拜疆 — 免签\n· 格鲁吉亚 — 免签\n· 亚美尼亚 — 免签\n· 土耳其 — 电子签约$60\n· 塞尔维亚 — 免签\n· 波黑 — 免签\n· 埃及 — 电子签$25或落地签$25\n· 泰国 — 免签\n\n大部分国家免签，只需土耳其和埃及需要提前办。去"工具→签证进度"可以追踪办理进度！';
+    return '大环线各国签证情况：\n\n· 哈萨克斯坦 — 免签\n· 乌兹别克斯坦 — 免签\n· 阿塞拜疆 — 免签\n· 格鲁吉亚 — 免签\n· 亚美尼亚 — 免签\n· 土耳其 — 2026年起免签\n· 塞尔维亚 — 免签\n· 波黑 — 免签\n· 阿尔巴尼亚 — 免签\n· 埃及 — 电子签$25或落地签$25\n· 马尔代夫 — 落地免费签30天\n· 泰国 — 免签\n\n整条路线只需埃及办签，其余全免。去"工具→签证进度"可以追踪办理进度！';
   }
 
   var result = '签证信息：\n\n';
@@ -4212,10 +4614,10 @@ function weatherInfo(input) {
 }
 
 function exchangeInfo(input) {
-  var result = '💰 汇率换算：\n\n';
-  result += '可以在"准备→汇率换算器"里实时换算13种货币！\n\n主要汇率参考（1外币≈人民币）：\n';
-  result += '· 美元 1≈¥7.25\n· 欧元 1≈¥7.85\n· 哈萨克坚戈 1≈¥0.015\n· 乌兹苏姆 1≈¥0.00057\n· 土耳其里拉 1≈¥0.21\n· 埃及镑 1≈¥0.15\n· 泰国铢 1≈¥0.20\n\n';
-  result += '建议在中亚带美元现金兑换，很多地方不接受刷卡。';
+  var result = '💰 汇率速查：\n\n';
+  result += '可在"工具→货币汇率速查"查看完整汇率表（13国货币）\n\n主要汇率参考（100元≈当地货币）：\n';
+  result += '· 哈萨克斯坦 100≈6800坚戈\n· 乌兹别克斯坦 100≈175000苏姆\n· 阿塞拜疆 100≈23.5马纳特\n· 格鲁吉亚 100≈37.5拉里\n· 亚美尼亚 100≈5560德拉姆\n· 土耳其 100≈480里拉\n· 塞尔维亚 100≈1515第纳尔\n· 波黑 100≈25马克\n· 阿尔巴尼亚 100≈12100列克\n· 埃及 100≈667埃镑\n· 马尔代夫 100≈217拉菲亚\n· 泰国 100≈500泰铢\n\n';
+  result += '建议在中亚带美元现金兑换，很多地方不接受刷卡。到当地ATM直接取当地货币汇率最优。';
   return result;
 }
 
@@ -4242,10 +4644,11 @@ const TRAVEL_APPS = {
     {country:'阿塞拜疆', apps:[{name:'Bolt', desc:'巴库打车首选'},{name:'Uber', desc:'巴库可用'}]},
     {country:'格鲁吉亚', apps:[{name:'Yandex Go', desc:'第比利斯常用'},{name:'Bolt', desc:'第比利斯/巴统可用'},{name:'Maxim', desc:'本地打车App'}]},
     {country:'亚美尼亚', apps:[{name:'Yandex Go', desc:'埃里温常用'},{name:'GG', desc:'本地打车App'}]},
-    {country:'土耳其', apps:[{name:'BiTaksi', desc:'土耳其本地打车App'},{name:'Uber', desc:'伊斯坦布尔等大城市'}]},
+{country:'土耳其', apps:[{name:'BiTaksi', desc:'土耳其本地打车App'},{name:'Uber', desc:'伊斯坦布尔等大城市'}]},
     {country:'塞尔维亚', apps:[{name:'Yandex Go', desc:'贝尔格莱德可用'},{name:'Pink Taxi', desc:'本地打车'},{name:'CarGo', desc:'本地打车'}]},
     {country:'波黑', apps:[{name:'Yandex Go', desc:'萨拉热窝可用'},{name:'Moj Taxi', desc:'萨拉热窝本地'}]},
     {country:'埃及', apps:[{name:'Uber', desc:'开罗/卢克索首选'},{name:'inDrive/Careem', desc:'备选'}]},
+    {country:'马尔代夫', apps:[{name:'Avas Ride', desc:'马累可用'},{name:'在居民岛靠步行/包船', desc:'居民岛交通简单'}]},
     {country:'泰国', apps:[{name:'Grab', desc:'东南亚打车首选'},{name:'Bolt', desc:'曼谷备选'},{name:'inDrive', desc:'曼谷可用'}]}
   ],
   hotel: [
@@ -4336,13 +4739,106 @@ function renderPrepareContent() {
   c.innerHTML = html;
 }
 
+// ===== 攻略页子标签切换 =====
+function bindGuideSubTabs() {
+  document.querySelectorAll('.sub-tab[data-gtab]').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.sub-tab[data-gtab]').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      var target = tab.dataset.gtab;
+      document.querySelectorAll('.sub-panel').forEach(function(p) {
+        p.classList.toggle('active', p.id === 'gpanel-' + target);
+      });
+    });
+  });
+}
+
+// ===== 攻略页：住宿折叠展开 =====
+function toggleCollapseV(el) {
+  var content = el.nextElementSibling;
+  if (!content) return;
+  if (content.classList.contains('open')) {
+    content.classList.remove('open');
+    el.classList.remove('open');
+  } else {
+    content.classList.add('open');
+    el.classList.add('open');
+  }
+}
+
+// ===== 攻略页：清单勾选（localStorage持久化）=====
+function toggleCheckV(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var cb = el.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  el.classList.toggle('checked', cb.checked);
+  var checks = JSON.parse(localStorage.getItem('guideChecks') || '{}');
+  checks[id] = cb.checked;
+  localStorage.setItem('guideChecks', JSON.stringify(checks));
+}
+
+function restoreGuideChecks() {
+  var checks = JSON.parse(localStorage.getItem('guideChecks') || '{}');
+  Object.keys(checks).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && checks[id]) {
+      var cb = el.querySelector('input[type="checkbox"]');
+      if (cb) {
+        cb.checked = true;
+        el.classList.add('checked');
+      }
+    }
+  });
+}
+
+// ===== 攻略页：预算记账计算（localStorage持久化）=====
+function calcBudget2() {
+  var total = 0;
+  document.querySelectorAll('.budget-input2').forEach(function(inp) {
+    total += parseFloat(inp.value) || 0;
+    inp.dataset.val = inp.value;
+  });
+  var budgetTarget = 25800;
+  var remain = budgetTarget - total;
+  var display = document.getElementById('budgetTotalDisplay2');
+  var remainEl = document.getElementById('budgetRemain2');
+  var barEl = document.getElementById('budgetBar2');
+  if (display) display.textContent = '总支出：¥' + total.toLocaleString();
+  if (remainEl) {
+    remainEl.textContent = '¥' + Math.max(0, remain).toLocaleString();
+    remainEl.style.color = remain >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+  if (barEl) {
+    var pct = Math.min(100, (total / budgetTarget) * 100);
+    barEl.style.width = pct + '%';
+    barEl.style.background = remain >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+  // 持久化
+  var budgetData = {};
+  document.querySelectorAll('.budget-input2').forEach(function(inp) {
+    budgetData[inp.id] = inp.value;
+  });
+  localStorage.setItem('guideBudget', JSON.stringify(budgetData));
+}
+
+function restoreGuideBudget() {
+  var data = JSON.parse(localStorage.getItem('guideBudget') || '{}');
+  document.querySelectorAll('.budget-input2').forEach(function(inp) {
+    if (data[inp.id] !== undefined) {
+      inp.value = data[inp.id];
+    }
+  });
+  calcBudget2();
+}
+
+
 function init() {
   loadState();
   bindTripInfo();
   updateCountdown();
   setInterval(updateCountdown, 1000);
   renderRoute();
-  initMap();
   renderGuideGrid();
   renderPrepare();
   renderPrepareContent();
@@ -4353,9 +4849,12 @@ function init() {
   renderVisa();
   renderWeatherQuickCities();
   renderWeatherCache();
-  initExchangeRate();
   renderTravelApps();
   bindNotes();
+  // 攻略页初始化
+  bindGuideSubTabs();
+  restoreGuideChecks();
+  restoreGuideBudget();
   // 恢复AI聊天记录
   if (state.aiChat && state.aiChat.length) {
     var area = document.getElementById('aiChatArea');
