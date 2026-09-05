@@ -638,6 +638,55 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 .sm-label { font-size:0.72rem; color:var(--text2); margin:2px 0 4px; }
 .sm-inline { display:flex; gap:8px; }
 .sm-inline .input[readonly] { background:var(--bg); color:var(--text); }
+/* ===== 备忘录式行李清单 ===== */
+.memo-picker { display:flex; flex-direction:column; gap:2px; }
+@media (min-width:768px) { .memo-picker { display:block; column-count:2; column-gap:12px; } .memo-item { break-inside:avoid; } }
+.memo-item {
+  display:flex; align-items:center; gap:12px;
+  padding:13px 6px; border-bottom:1px solid var(--border);
+  cursor:pointer; -webkit-tap-highlight-color:transparent;
+}
+.memo-item:last-child { border-bottom:none; }
+.memo-item .m-check {
+  width:22px; height:22px; border:2px solid var(--border); border-radius:50%;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  transition:all .15s; background:var(--card);
+}
+.memo-item.on .m-check { background:var(--green); border-color:var(--green); }
+.memo-item.on .m-check::after {
+  content:''; width:6px; height:3px; border-left:2px solid #fff; border-bottom:2px solid #fff;
+  transform:rotate(-45deg); margin-top:-2px;
+}
+.memo-item .m-name { flex:1; font-size:0.92rem; }
+.memo-item.on .m-name { color:var(--text3); text-decoration:line-through; }
+.memo-item .m-add {
+  width:26px; height:26px; border-radius:50%; border:none; flex-shrink:0;
+  background:var(--bg); color:var(--primary); font-size:1rem; font-weight:600;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.memo-item.on .m-add { background:var(--green); color:#fff; }
+.memo-cat-bar { display:flex; align-items:center; justify-content:space-between; margin:18px 0 8px; }
+.memo-cat-bar .cat-title { font-size:0.95rem; font-weight:700; }
+.memo-cat-bar .cat-count { font-size:0.72rem; color:var(--text2); }
+.memo-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.memo-board {
+  background:var(--bg); border-radius:12px; padding:12px 12px 8px;
+}
+.memo-board .board-head { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.memo-board .board-icon { font-size:1rem; }
+.memo-board .board-name { font-size:0.82rem; font-weight:700; flex:1; }
+.memo-board .board-count { font-size:0.68rem; color:var(--text2); }
+.board-item {
+  display:flex; align-items:center; gap:6px; padding:7px 0;
+  border-bottom:1px dashed var(--border); font-size:0.8rem;
+}
+.board-item:last-child { border-bottom:none; }
+.board-item .b-dot { width:5px; height:5px; border-radius:50%; background:var(--primary); flex-shrink:0; }
+.board-item .b-name { flex:1; color:var(--text2); }
+.board-item.done .b-name { text-decoration:line-through; color:var(--text3); }
+.board-item .b-del { background:none; border:none; color:var(--text3); font-size:0.85rem; padding:4px; cursor:pointer; }
+.board-empty { font-size:0.74rem; color:var(--text3); padding:4px 0 8px; }
+
 
 
 </style>
@@ -1292,34 +1341,26 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 
 <!-- ===== Page 3: 准备 ===== -->
 <div class="page" id="page-prepare">
-  <div class="prepare-grid">
   <!-- 行李清单 -->
   <div class="sec-title">行李清单 <span class="badge" id="luggageBadge">0/0</span></div>
   <div class="card">
-    <div class="luggage-presets">
-      <div style="font-size:0.82rem;font-weight:600;margin-bottom:8px">常用物品（点击添加）</div>
-      <div class="preset-chips" id="presetChips"></div>
+    <div class="memo-picker" id="memoPicker"></div>
+    <div style="display:flex;gap:6px;margin:12px 0 4px">
+      <button class="btn btn-sm btn-dark" onclick="addAllPresets()">全选推荐</button>
+      <button class="btn btn-sm btn-outline" onclick="clearLuggage()">清空已选</button>
     </div>
-    <div style="display:flex;gap:6px;margin-bottom:12px">
-      <button class="btn btn-sm btn-dark" onclick="addAllPresets()">一键全选推荐</button>
-      <button class="btn btn-sm btn-outline" onclick="clearLuggage()">清空</button>
-    </div>
-    <div class="filters" id="luggageFilters">
-      <button class="filter-btn active" data-filter="all">全部</button>
-      <button class="filter-btn" data-filter="clothes">衣物</button>
-      <button class="filter-btn" data-filter="toiletry">洗漱</button>
-      <button class="filter-btn" data-filter="electronics">电子</button>
-      <button class="filter-btn" data-filter="docs">证件</button>
-      <button class="filter-btn" data-filter="medicine">药品</button>
-      <button class="filter-btn" data-filter="other">其他</button>
-    </div>
-    <div class="add-row">
-      <input class="input" type="text" id="luggageInput" placeholder="输入物品名称..." oninput="suggestLuggageCat()" onkeydown="if(event.key==='Enter')addLuggage()">
+    <div class="add-row" style="margin-top:8px">
+      <input class="input" type="text" id="luggageInput" placeholder="添加自定义物品（自动分类）..." onkeydown="if(event.key==='Enter')addLuggage()">
       <button class="btn btn-dark" onclick="addLuggage()">添加</button>
     </div>
-    <div id="autoCatHint" style="display:none;font-size:0.78rem;color:var(--primary);margin-bottom:6px"></div>
-    <div id="luggageList"></div>
+    <div class="memo-cat-bar">
+      <span class="cat-title">🧳 我的行李</span>
+      <span class="cat-count" id="memoTotal">0 件</span>
+    </div>
+    <div class="memo-grid" id="memoBoards"></div>
   </div>
+<div class="prepare-grid">
+  
 
   <!-- 购物清单 -->
   <div class="sec-title" style="margin-top:20px">购物清单 <span class="badge" id="shopBadge">0/0</span></div>
@@ -3826,19 +3867,34 @@ function renderPrepare() {
 
 // ===== 行李清单 =====
 function renderLuggagePresets() {
-  const box = document.getElementById('presetChips');
+  // 备忘录式选品区：每行一件推荐物品，单击选中/取消
+  const box = document.getElementById('memoPicker');
   if (!box) return;
+  const CAT_ICON = { clothes:'👕', toiletry:'🧴', electronics:'🔌', docs:'📄', medicine:'💊', other:'📦' };
+  const CAT_NAME = { clothes:'衣物', toiletry:'洗漱', electronics:'电子设备', docs:'证件', medicine:'药品', other:'其他' };
   box.innerHTML = LUGGAGE_PRESETS.map((p, i) => {
-    const added = state.luggage.some(l => l.name === p.name);
-    return `<span class="preset-chip${added ? ' added' : ''}" onclick="addPresetLuggage(${i})">${added ? '✓ ' : ''}${p.name}</span>`;
+    const item = state.luggage.find(l => l.name === p.name);
+    const on = !!item;
+    return `<div class="memo-item${on ? ' on' : ''}" onclick="togglePresetItem(${i})">
+      <span class="m-check"></span>
+      <span class="m-name">${p.name}</span>
+      <span class="item-cat">${CAT_ICON[p.cat] || ''} ${CAT_NAME[p.cat] || ''}</span>
+      <span class="m-add">${on ? '✓' : '+'}</span>
+    </div>`;
   }).join('');
 }
 
-function addPresetLuggage(i) {
+function togglePresetItem(i) {
   const p = LUGGAGE_PRESETS[i];
-  if (state.luggage.some(l => l.name === p.name)) { showToast('已添加过了'); return; }
-  state.luggage.push({ name:p.name, cat:p.cat, checked:false });
-  saveState(); renderLuggage(); renderLuggagePresets(); showToast('已添加：' + p.name);
+  const exist = state.luggage.findIndex(l => l.name === p.name);
+  if (exist >= 0) {
+    state.luggage.splice(exist, 1);
+    showToast('已取消：' + p.name);
+  } else {
+    state.luggage.push({ name:p.name, cat:p.cat, checked:false });
+    showToast('已加入' + '：' + p.name);
+  }
+  saveState(); renderLuggagePresets(); renderLuggageBoards(); renderLuggage();
 }
 
 function addAllPresets() {
@@ -3868,39 +3924,48 @@ function autoCategorize(name) {
 }
 
 function suggestLuggageCat() {
-  const input = document.getElementById('luggageInput');
-  const hint = document.getElementById('autoCatHint');
-  const sel = document.getElementById('luggageCat');
-  const name = input.value.trim();
-  if (!name) { hint.style.display = 'none'; return; }
-  const cat = autoCategorize(name);
-  const catNames = { clothes:'衣物', toiletry:'洗漱', electronics:'电子', docs:'证件', medicine:'药品', other:'其他' };
-  hint.textContent = '自动识别分类：' + catNames[cat];
-  hint.style.display = 'block';
-  sel.value = cat;
+  // 新版UI已移除分类提示区；保留空实现防止旧引用报错
 }
 
-function renderLuggage() {
-  const list = document.getElementById('luggageList');
-  const badge = document.getElementById('luggageBadge');
-  const filtered = currentLuggageFilter === 'all'
-    ? state.luggage
-    : state.luggage.filter(l => l.cat === currentLuggageFilter);
-  const checked = state.luggage.filter(l => l.checked).length;
-  badge.textContent = `${checked} / ${state.luggage.length}`;
+function renderLuggage() { renderLuggageBoards(); renderLuggagePresets(); }
 
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty-hint">还没有添加物品${currentLuggageFilter !== 'all' ? '（当前分类）' : ''}</div>`;
-    return;
-  }
-  const catNames = { clothes:'衣物', toiletry:'洗漱', electronics:'电子', docs:'证件', medicine:'药品', other:'其他' };
-  list.innerHTML = filtered.map(l => {
-    const idx = state.luggage.indexOf(l);
-    return `<div class="list-item${l.checked ? ' checked' : ''}">
-      <div class="checkbox${l.checked ? ' checked' : ''}" onclick="toggleLuggage(${idx})"></div>
-      <span class="item-name">${l.name}</span>
-      <span class="item-cat">${catNames[l.cat] || l.cat}</span>
-      <button class="item-del" onclick="delLuggage(${idx})">✕</button>
+function renderLuggageBoards() {
+  const grid = document.getElementById('memoBoards');
+  const total = document.getElementById('memoTotal');
+  const badge = document.getElementById('luggageBadge');
+  if (!grid) return;
+  const CATS = [
+    { key:'electronics', name:'电子设备', icon:'🔌' },
+    { key:'clothes', name:'衣物', icon:'👕' },
+    { key:'toiletry', name:'洗漱', icon:'🧴' },
+    { key:'medicine', name:'药品', icon:'💊' },
+    { key:'docs', name:'证件', icon:'📄' },
+    { key:'other', name:'其他', icon:'📦' }
+  ];
+  const checked = state.luggage.filter(l => l.checked).length;
+  if (badge) badge.textContent = `${checked} / ${state.luggage.length}`;
+  if (total) total.textContent = state.luggage.length + ' 件';
+
+  grid.innerHTML = CATS.map(cat => {
+    const items = state.luggage.filter(l => l.cat === cat.key);
+    const done = items.filter(l => l.checked).length;
+    const inner = items.length
+      ? items.map(l => {
+          const idx = state.luggage.indexOf(l);
+          return `<div class="board-item${l.checked ? ' done' : ''}">
+            <span class="b-dot" onclick="toggleLuggage(${idx})" style="cursor:pointer"></span>
+            <span class="b-name" onclick="toggleLuggage(${idx})" style="cursor:pointer">${l.name}</span>
+            <button class="b-del" onclick="delLuggage(${idx})" title="移除">✕</button>
+          </div>`;
+        }).join('')
+      : '<div class="board-empty">从上面勾选物品</div>';
+    return `<div class="memo-board">
+      <div class="board-head">
+        <span class="board-icon">${cat.icon}</span>
+        <span class="board-name">${cat.name}</span>
+        <span class="board-count">${done}/${items.length}</span>
+      </div>
+      ${inner}
     </div>`;
   }).join('');
 }
@@ -3911,8 +3976,7 @@ function addLuggage() {
   const cat = autoCategorize(name); // 自动分类
   state.luggage.push({ name, cat, checked:false });
   document.getElementById('luggageInput').value = '';
-  document.getElementById('autoCatHint').style.display = 'none';
-  saveState(); renderLuggage(); renderLuggagePresets(); showToast('已添加：' + name);
+  saveState(); renderLuggage(); showToast('已添加：' + name + '（' + ({clothes:'衣物',toiletry:'洗漱',electronics:'电子设备',docs:'证件',medicine:'药品',other:'其他'})[cat] + '）');
 }
 
 function toggleLuggage(i) {
