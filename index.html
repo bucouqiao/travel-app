@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -578,6 +578,40 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
   .app-section h4 { display: block; }
   .page { padding-bottom: 80px; }
 }
+
+/* 长页面滚动安全区：确保最后一行能滚出底部导航 */
+.dp-days .dp-row:last-child { margin-bottom: 8px; }
+.dayplans-tail { height: 90px; }
+/* ===== 总路程+逐日行程样式 ===== */
+.ov-title { font-size:1.05rem; font-weight:700; margin-bottom:6px; cursor:pointer }
+.ov-title:active { opacity:.6 }
+.ov-edit { font-size:0.7rem; color:var(--text2); font-weight:normal }
+.ov-chain { font-size:0.8rem; color:var(--text2); line-height:1.6; margin-bottom:10px; cursor:pointer; background:var(--bg); border-radius:8px; padding:8px 10px; word-break:break-all }
+.ov-chain:active { opacity:.6 }
+.ov-stats { display:flex; gap:8px; flex-wrap:wrap }
+.ov-stat { flex:1; min-width:70px; text-align:center; background:var(--bg); border-radius:10px; padding:8px 4px }
+.ov-stat b { display:block; font-size:0.95rem; color:var(--primary) }
+.ov-stat span { font-size:0.68rem; color:var(--text2) }
+.ov-actions { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap }
+
+.dp-country { padding:12px 14px }
+.dp-country .country-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer }
+.dp-country .country-flag { font-size:1.15rem }
+.dp-country .country-name { font-weight:700; font-size:0.92rem; flex:1 }
+.dp-country .country-days { font-size:0.72rem; color:var(--text2) }
+.dp-country.dp-key { border:2px solid var(--orange) }
+.dp-days { display:flex; flex-direction:column; gap:2px }
+.dp-row { display:flex; gap:8px; padding:7px 0; border-bottom:1px dashed var(--border); align-items:flex-start }
+.dp-row:last-child { border-bottom:none }
+.dp-body { flex:1; min-width:0 }
+.dp-city { font-size:0.82rem; font-weight:600; margin-bottom:2px }
+.dp-text { font-size:0.78rem; color:var(--text2); line-height:1.55 }
+.dp-actions { display:flex; gap:4px; flex-shrink:0 }
+.dp-row .tip-box, .dp-row .warn-box { margin-top:4px; font-size:0.72rem }
+
+/* 已有样式兼容：collapse */
+.country-header { cursor:pointer }
+
 </style>
 </head>
 <body>
@@ -603,12 +637,11 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 
 <!-- ===== Page 1: 路线 ===== -->
 <div class="page active" id="page-route">
-  <div class="route-summary" id="routeSummary">
-    <div class="rs-box"><div class="rs-val" id="rsCountries">0</div><div class="rs-lbl">国家/地区</div></div>
-    <div class="rs-box"><div class="rs-val" id="rsDays">0</div><div class="rs-lbl">预计天数</div></div>
-    <div class="rs-box"><div class="rs-val" id="rsVisited">0</div><div class="rs-lbl">已到访</div></div>
-    <div class="rs-box"><div class="rs-val" id="rsBudget">¥0</div><div class="rs-lbl">预算</div></div>
-  </div>
+  <!-- 总路程卡片 -->
+  <div class="card" id="tripOverviewCard"></div>
+
+  <div class="sec-title">逐日行程 <span class="badge">63天</span></div>
+  <div id="dayPlansList"></div>
 
   <div class="sec-title">路线详情</div>
   <div id="routeList"></div>
@@ -2191,6 +2224,80 @@ function getRouteIcon(name) {
   return '📍';
 }
 
+// ===== 63天逐日行程数据（由攻略页迁移）=====
+const TRIP_OVERVIEW = {
+  title: '亚欧非大环线',
+  chain: '长沙→新疆→哈萨克斯坦→乌兹别克斯坦→阿塞拜疆→格鲁吉亚→亚美尼亚→土耳其→塞尔维亚→波黑→阿尔巴尼亚→埃及→马尔代夫→泰国→长沙',
+  totalDays: 63,
+  totalBudget: 25800
+};
+
+const DAY_PLANS = [
+  {day:1, country:'中国', city:'长沙→乌鲁木齐', flag:'🇨🇳', text:'长沙→乌鲁木齐，飞机约4.5小时（提前买约¥800-1500），落地换汇、买SIM卡'},
+  {day:2, country:'中国', city:'乌鲁木齐→伊宁', flag:'🇨🇳', text:'新疆博物馆（楼兰美女干尸）+国际大巴扎，傍晚高铁/动车去伊宁（约5小时）'},
+  {day:3, country:'中国', city:'赛里木湖', flag:'🇨🇳', text:'赛里木湖 — 伊宁拼车/包车约2小时，环湖拍照+果子沟大桥观景，宿伊宁'},
+  {day:4, country:'中国', city:'伊宁', flag:'🇨🇳', text:'伊宁喀赞其民俗村（蓝色小屋街拍），下午前往霍尔果斯口岸'},
+  {day:5, country:'中国', city:'霍尔果斯→阿拉木图', flag:'🇨🇳', text:'口岸过境→哈萨克斯坦（8:30开门，建议上午到），拼车/大巴去阿拉木图约5-6小时', tip:'口岸开关时间8:00-20:00（北京时间），建议上午到达避免排队。过境后直接坐车去阿拉木图'},
+  {day:6, country:'哈萨克斯坦', city:'阿拉木图', flag:'🇰🇿', text:'阿拉木图：绿色巴扎（干果/香料）、升天大教堂（全木结构无钉）'},
+  {day:7, country:'哈萨克斯坦', city:'大阿拉木图湖', flag:'🇰🇿', text:'大阿拉木图湖（高山蓝绿湖水）+科克托别山观景台（缆车俯瞰全城+雪山）'},
+  {day:8, country:'哈萨克斯坦', city:'恰伦峡谷→塔什干', flag:'🇰🇿', text:'恰伦峡谷（中亚大峡谷，拼团约15-24美元），傍晚出发去塔什干（夜巴16h/Talgo火车17h）', tip:'免签30天！当地用坚戈KZT，约1元≈63坚戈。火车票提前在bilet.railways.kz买'},
+  {day:9, country:'乌兹别克斯坦', city:'塔什干', flag:'🇺🇿', text:'塔什干：哈兹拉特伊玛目建筑群（最古老古兰经手抄本）、楚苏巴扎（吃抓饭）'},
+  {day:10, country:'乌兹别克斯坦', city:'塔什干→巴库', flag:'🇺🇿', text:'塔什干地铁巡礼（苏联风格深埋地铁）+应用艺术博物馆，下午飞巴库（约2.5小时，¥500-800）', tip:'免签30天！时间够可顺道去撒马尔罕（高铁2h），雷吉斯坦广场日落绝美'},
+  {day:11, country:'阿塞拜疆', city:'巴库', flag:'🇦🇿', text:'巴库：老城（少女塔+希尔万沙宫）、滨海大道+火焰塔，夜景超美'},
+  {day:12, country:'阿塞拜疆', city:'戈布斯坦', flag:'🇦🇿', text:'戈布斯坦岩画+泥火山一日游（史前岩画+冒泡泥火山，拼团约30-40美元）'},
+  {day:13, country:'阿塞拜疆', city:'舍基', flag:'🇦🇿', text:'舍基 — 大巴/拼车约5小时。舍基可汗宫（彩窗世界遗产）+老城，吃果仁蜜饼', tip:'免签30天！巴库是"里海迪拜"油价便宜。舍基→格鲁吉亚边境约3-4小时'},
+  {day:14, country:'格鲁吉亚', city:'西格纳吉', flag:'🇬🇪', text:'西格纳吉（爱情之城）—城墙小镇漫步+卡赫季酒庄品酒+城墙日落远眺高加索山'},
+  {day:15, country:'格鲁吉亚', city:'第比利斯', flag:'🇬🇪', text:'西格纳吉→第比利斯（大巴约2小时），老城漫步+硫磺浴区+缆车上纳里卡拉要塞看日落'},
+  {day:16, country:'格鲁吉亚', city:'第比利斯', flag:'🇬🇪', text:'第比利斯：圣三一大教堂（金顶）、姆茨赫塔古都一日游（生命之柱大教堂+Jvari修道院）'},
+  {day:17, country:'格鲁吉亚', city:'卡兹别克', flag:'🇬🇪', text:'卡兹别克—军事大道（俄格友谊纪念碑+安南努里城堡）拼车/小巴约2.5h'},
+  {day:18, country:'格鲁吉亚', city:'斯特潘茨明达', flag:'🇬🇪', text:'斯特潘茨明达圣三教堂（雪山下的孤独教堂）+冰川徒步约4h往返', tip:'免签30天！第比利斯物价极低青旅¥30-50/晚，格鲁吉亚葡萄酒世界遗产级'},
+  {day:19, country:'亚美尼亚', city:'埃里温', flag:'🇦🇲', text:'第比利斯→埃里温（小巴约5-6h，约¥60）。共和国广场+阶梯广场（远眺亚拉拉特山）'},
+  {day:20, country:'亚美尼亚', city:'塞凡湖', flag:'🇦🇲', text:'塞凡湖（湖边修道院）+Garni神庙+Geghard岩穴修道院', warn:'亚美尼亚→土耳其陆路边境关闭！须返回第比利斯，经格鲁吉亚北部入境土耳其'},
+  {day:21, country:'土耳其', city:'卡尔斯→安卡拉', flag:'🇹🇷', text:'格鲁吉亚→土耳其入境（卡尔斯口岸），安卡拉：国父陵+安纳托利亚文明博物馆'},
+  {day:22, country:'土耳其', city:'格雷梅（卡帕多奇亚）', flag:'🇹🇷', text:'热气球日出！（约$200-250提前预订）+红线游览：乌奇希萨尔城堡、爱情谷'},
+  {day:23, country:'土耳其', city:'格雷梅', flag:'🇹🇷', text:'绿线游览：代林库尤地下城（8层深！）、厄赫拉热峡谷、鸽子谷日落'},
+  {day:24, country:'土耳其', city:'格雷梅→安塔利亚', flag:'🇹🇷', text:'格雷梅→安塔利亚（飞机约1h或夜巴），夜宿安塔利亚'},
+  {day:25, country:'土耳其', city:'安塔利亚', flag:'🇹🇷', text:'安塔利亚老城Kaleici、哈德良门、瀑布'},
+  {day:26, country:'土耳其', city:'D400公路→卡什', flag:'🇹🇷', text:'D400海景公路（《国家地理》"封神路线"），安塔利亚→卡什（地中海小镇）'},
+  {day:27, country:'土耳其', city:'卡什', flag:'🇹🇷', text:'卡什小镇：地中海潜水/划皮划艇，沉没之城（Kekova）一日游'},
+  {day:28, country:'土耳其', city:'卡什→安塔利亚', flag:'🇹🇷', text:'卡什慵懒一日：海边咖啡馆、费特希耶方向远眺，下午回安塔利亚'},
+  {day:29, country:'土耳其', city:'伊斯坦布尔', flag:'🇹🇷', text:'安塔利亚飞伊斯坦布尔。圣索菲亚大教堂、蓝色清真寺、地下水宫'},
+  {day:30, country:'土耳其', city:'伊斯坦布尔', flag:'🇹🇷', text:'托普卡帕宫、大巴扎、香料巴扎'},
+  {day:31, country:'土耳其', city:'伊斯坦布尔', flag:'🇹🇷', text:'博斯普鲁斯海峡游船、多尔玛巴赫切宫、塔克西姆广场'},
+  {day:32, country:'土耳其', city:'伊斯坦布尔→贝尔格莱德', flag:'🇹🇷', text:'加拉塔塔、Karaköy街区、土耳其浴。傍晚飞贝尔格莱德（¥500-800）', tip:'2026年1月起土耳其免签！热气球务必提前在官网预订。卡帕洞穴酒店需提前2-3个月订'},
+  {day:33, country:'塞尔维亚', city:'贝尔格莱德', flag:'🇷🇸', text:'贝尔格莱德：卡莱梅格丹城堡日落（看多瑙河+萨瓦河交汇）、圣萨瓦大教堂'},
+  {day:34, country:'塞尔维亚', city:'贝尔格莱德', flag:'🇷🇸', text:'泽蒙小镇、阿达切甘利加岛散步、斯卡达尔利亚波西米亚街'},
+  {day:35, country:'塞尔维亚', city:'诺维萨德→萨拉热窝', flag:'🇷🇸', text:'诺维萨德（火车1小时）+彼德罗瓦拉丁要塞，傍晚大巴→萨拉热窝（约5-6h，¥60-80）', tip:'免签30天！贝尔格莱德夜生活欧洲顶级'},
+  {day:36, country:'波黑', city:'萨拉热窝', flag:'🇧🇦', text:'萨拉热窝老城、塞比利喷泉、波斯尼亚咖啡'},
+  {day:37, country:'波黑', city:'萨拉热窝', flag:'🇧🇦', text:'隧道博物馆、拉丁桥（一战导火索）、黄堡俯瞰全城'},
+  {day:38, country:'波黑', city:'莫斯塔尔→地拉那', flag:'🇧🇦', text:'莫斯塔尔老桥（世界遗产）+跳水表演，傍晚大巴→阿尔巴尼亚地拉那（约7-8h）', tip:'免签30天！"欧洲耶路撒冷"，多宗教共存'},
+  {day:39, country:'阿尔巴尼亚', city:'地拉那', flag:'🇦🇱', text:'地拉那：斯坎德培广场、恩德恩玛博物馆（地堡博物馆）、国家历史博物馆'},
+  {day:40, country:'阿尔巴尼亚', city:'培拉特', flag:'🇦🇱', text:'培拉特（"千窗之城"世界遗产）一日游，奥斯曼白墙古宅'},
+  {day:41, country:'阿尔巴尼亚', city:'地拉那→开罗', flag:'🇦🇱', text:'地拉那→埃及开罗（经伊斯坦布尔转机，约¥800-1200）', tip:'免签90天！物价极低的巴尔干国家，咖啡€1，海景超美'},
+  {day:42, country:'埃及', city:'开罗', flag:'🇪🇬', text:'抵达开罗办落地签（$25）。埃及博物馆（图坦卡蒙黄金面具！）'},
+  {day:43, country:'埃及', city:'吉萨', flag:'🇪🇬', text:'吉萨金字塔群——胡夫金字塔、狮身人面像。骑骆驼看日落'},
+  {day:44, country:'埃及', city:'开罗', flag:'🇪🇬', text:'大埃及博物馆（新开！）+开罗老城：悬空教堂、哈利利市场'},
+  {day:45, country:'埃及', city:'马特鲁', flag:'🇪🇬', text:'开罗大巴→马特鲁（约4-5h），克莉奥佩特拉海滩（梦幻蓝绿海水）'},
+  {day:46, country:'埃及', city:'锡瓦', flag:'🇪🇬', text:'马特鲁→锡瓦（约3h），盐湖漂浮（如死海）、沙里古城堡'},
+  {day:47, country:'埃及', city:'锡瓦', flag:'🇪🇬', text:'锡瓦神庙遗址+沙漠绿洲日落，晚上的星空超美'},
+  {day:48, country:'埃及', city:'锡瓦→赫尔格达', flag:'🇪🇬', text:'锡瓦→开罗→赫尔格达（大巴约7-8h全程）'},
+  {day:49, country:'埃及', city:'赫尔格达（红海）', flag:'🇪🇬', text:'出海追海豚！红海潜水世界顶级，Giftun岛浮潜'},
+  {day:50, country:'埃及', city:'赫尔格达', flag:'🇪🇬', text:'深海潜水体验（PADI约$60-80）+赫尔格达老城海鲜大餐'},
+  {day:51, country:'埃及', city:'卢克索', flag:'🇪🇬', text:'赫尔格达→卢克索（大巴约4h，¥50）。卡纳克神庙+卢克索神庙夜游'},
+  {day:52, country:'埃及', city:'卢克索西岸', flag:'🇪🇬', text:'西岸——帝王谷（图坦卡蒙墓）、女王庙、门农巨像。热气球日出（约$80-100）'},
+  {day:53, country:'埃及', city:'丹德拉→开罗', flag:'🇪🇬', text:'丹德拉神庙（保存最好的彩色浮雕）+哈布城，傍晚回开罗', tip:'落地签$25，备好美元现金。准备大量1美元零钞小费。进清真寺穿长裤带头巾', warn:'锡瓦在利比亚边境附近：需提前确认安全状况，建议找当地向导，不要夜间自驾'},
+  {day:54, country:'埃及', city:'开罗', flag:'🇪🇬', text:'回开罗采购纸莎草画、香料、香精瓶，准备飞马尔代夫'},
+  {day:55, country:'马尔代夫', city:'开罗→马累', flag:'🇲🇻', text:'开罗飞马累（约7.5小时，¥1500-2500），入住马累/机场岛'},
+  {day:56, country:'马尔代夫', city:'居民岛（Maafushi）', flag:'🇲🇻', text:'快艇/公共渡轮到居民岛（如Maafushi），水屋体验（¥400-800）'},
+  {day:57, country:'马尔代夫', city:'居民岛', flag:'🇲🇻', text:'浮潜看珊瑚+魔鬼鱼、沙滩躺平', tip:'免签30天！选居民岛+公共船，人均¥600/天就能住水草房，比度假岛便宜10倍'},
+  {day:58, country:'马尔代夫', city:'马累→曼谷', flag:'🇲🇻', text:'马累飞曼谷（约4.5小时，¥1000-1600）'},
+  {day:59, country:'泰国', city:'曼谷', flag:'🇹🇭', text:'曼谷：大皇宫+玉佛寺、卧佛寺、郑王庙（对岸渡轮看日落）'},
+  {day:60, country:'泰国', city:'曼谷→清迈', flag:'🇹🇭', text:'曼谷→清迈，飞机1.5h（¥150-200）或夜火车12h（¥80）'},
+  {day:61, country:'泰国', city:'清迈', flag:'🇹🇭', text:'清迈古城：双龙寺、周日夜市+大象保护区（ethical，不骑乘）'},
+  {day:62, country:'泰国', city:'清迈→曼谷', flag:'🇹🇭', text:'清迈→曼谷，最后采购庆祝，冬阴功+芒果糯米饭', tip:'免签60天！清迈物价更低、节奏更慢，适合收尾'},
+  {day:63, country:'泰国', city:'曼谷→长沙', flag:'🇹🇭', text:'曼谷飞长沙（约4小时，¥800-1500），回家！🎉'}
+];
+
 const PRESET_ROUTE = [
   {name:'长沙→新疆', visa:'free', days:5, budget:2200, notes:'长沙飞乌鲁木齐，赛里木湖+伊宁，霍尔果斯出境', dests:[
     {city:'乌鲁木齐', transport:'长沙飞乌鲁木齐（约4.5小时，提前买票约800-1500元）', days:[
@@ -2706,17 +2813,6 @@ function updateCountdown() {
 // ===== 路线规划（3层展开：站→子目的地→每日景点）=====
 function renderRoute() {
   var list = document.getElementById('routeList');
-  var totalDays = 0, totalBudget = 0, visited = 0, countries = new Set();
-  state.route.forEach(function(r) {
-    totalDays += parseInt(r.days) || 0;
-    totalBudget += parseInt(r.budget) || 0;
-    if (r.visited) visited++;
-    countries.add(r.name);
-  });
-  document.getElementById('rsCountries').textContent = countries.size;
-  document.getElementById('rsDays').textContent = totalDays;
-  document.getElementById('rsVisited').textContent = visited;
-  document.getElementById('rsBudget').textContent = '¥' + totalBudget;
 
   if (!state.route.length) {
     list.innerHTML = '<div class="empty-hint">还没有添加路线，点击下方按钮导入或手动添加</div>';
@@ -3095,6 +3191,143 @@ function delRoute(i) {
 function loadPresetRoute() {
   state.route = PRESET_ROUTE.map(r => ({...r, visited:false}));
   saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（13站）');
+}
+
+// ===== 总路程 + 逐日行程（路线模块顶部）=====
+function renderTripOverview() {
+  var ov = state.tripOverview || TRIP_OVERVIEW;
+  var days = state.dayPlans || DAY_PLANS;
+  var el = document.getElementById('tripOverviewCard');
+  if (!el) return;
+  var routeNames = state.route.map(function(r){ return r.name; });
+  var useChain = ov.chain;
+  // 若路线模块已有站点，展示站点链；否则展示总路程文字
+  var dayCount = days.length;
+  el.innerHTML =
+    '<div class="ov-title" onclick="editTripTitle()">' + (ov.title || '我的行程') + ' <span class="ov-edit">✏️</span></div>' +
+    '<div class="ov-chain" onclick="editTripChain()">' + useChain + '<span class="ov-edit">✏️</span></div>' +
+    '<div class="ov-stats">' +
+      '<div class="ov-stat"><b>' + dayCount + '</b><span>天</span></div>' +
+      '<div class="ov-stat"><b>13</b><span>站</span></div>' +
+      '<div class="ov-stat"><b>¥' + (ov.totalBudget || 0).toLocaleString() + '</b><span>总预算</span></div>' +
+      '<div class="ov-stat"><b>亚欧非</b><span>三大洲</span></div>' +
+    '</div>' +
+    '<div class="ov-actions">' +
+      '<button class="btn btn-sm btn-outline" onclick="editTripChain()">编辑总路线</button>' +
+      '<button class="btn btn-sm btn-outline" onclick="editTripBudget()">编辑预算</button>' +
+    '</div>';
+}
+
+function editTripTitle() {
+  var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
+  var v = prompt('行程名称：', ov.title);
+  if (v === null) return;
+  ov.title = v.trim() || ov.title;
+  saveState(); renderTripOverview(); showToast('标题已更新');
+}
+
+function editTripChain() {
+  var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
+  var v = prompt('总路线（用→分隔城市/国家）：', ov.chain);
+  if (v === null) return;
+  ov.chain = v.trim() || ov.chain;
+  saveState(); renderTripOverview(); showToast('总路线已更新');
+}
+
+function editTripBudget() {
+  var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
+  var v = prompt('总预算（元）：', ov.totalBudget);
+  if (v === null) return;
+  var b = parseInt(v);
+  if (isNaN(b) || b < 0) { showToast('请输入有效金额'); return; }
+  ov.totalBudget = b;
+  saveState(); renderTripOverview(); showToast('总预算已更新为¥' + b.toLocaleString());
+}
+
+// 渲染逐日行程（按国家分组）
+function renderDayPlans() {
+  var el = document.getElementById('dayPlansList');
+  if (!el) return;
+  var days = state.dayPlans || DAY_PLANS;
+  if (!days.length) { el.innerHTML = '<div class="empty-hint">暂无逐日行程</div>'; return; }
+
+  // 按连续国家分组
+  var groups = [];
+  days.forEach(function(d) {
+    var last = groups[groups.length - 1];
+    if (last && last.country === d.country) { last.days.push(d); }
+    else { groups.push({ country: d.country, flag: d.flag, days: [d] }); }
+  });
+
+  el.innerHTML = groups.map(function(g, gi) {
+    var startD = g.days[0].day, endD = g.days[g.days.length - 1].day;
+    var isKey = (g.country === '土耳其' || g.country === '埃及' || g.country === '马尔代夫');
+    return '<div class="card dp-country' + (isKey ? ' dp-key' : '') + '">' +
+      '<div class="country-header" onclick="toggleCollapseV(this)">' +
+        '<span class="country-flag">' + g.flag + '</span>' +
+        '<span class="country-name">' + g.country + (isKey ? ' ★重点' : '') + '</span>' +
+        '<span class="country-days">Day ' + startD + '-' + endD + ' · ' + g.days.length + '天</span>' +
+      '</div>' +
+      '<div class="dp-days">' +
+        g.days.map(function(d) {
+          return '<div class="dp-row">' +
+            '<span class="day-badge">D' + d.day + '</span>' +
+            '<div class="dp-body">' +
+              '<div class="dp-city">' + d.city + '</div>' +
+              '<div class="dp-text">' + d.text + '</div>' +
+              (d.tip ? '<div class="tip-box">💡 ' + d.tip + '</div>' : '') +
+              (d.warn ? '<div class="warn-box">⚠️ ' + d.warn + '</div>' : '') +
+            '</div>' +
+            '<div class="dp-actions">' +
+              '<button class="spot-btn" onclick="editDayPlan(' + (d.day - 1) + ')" title="编辑">✏️</button>' +
+              '<button class="spot-btn del" onclick="delDayPlan(' + (d.day - 1) + ')" title="删除">✕</button>' +
+            '</div>' +
+          '</div>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  }).join('') +
+  '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
+    '<button class="btn btn-sm btn-outline" onclick="addDayPlan()">+ 添加一天</button>' +
+  '</div>' +
+  '<div class="dayplans-tail"></div>';
+}
+
+function editDayPlan(idx) {
+  var days = state.dayPlans || (state.dayPlans = JSON.parse(JSON.stringify(DAY_PLANS)));
+  var d = days[idx];
+  if (!d) return;
+  var city = prompt('城市/地点：', d.city);
+  if (city === null) return;
+  var text = prompt('当日安排：', d.text);
+  if (text === null) return;
+  d.city = city.trim() || d.city;
+  d.text = text.trim() || d.text;
+  var tip = prompt('贴士（可留空）：', d.tip || '');
+  if (tip === null) return;
+  if (tip.trim()) d.tip = tip.trim(); else delete d.tip;
+  saveState(); renderDayPlans(); renderTripOverview(); showToast('Day ' + d.day + ' 已更新');
+}
+
+function delDayPlan(idx) {
+  var days = state.dayPlans || [];
+  if (!days[idx]) return;
+  if (!confirm('确定删除 Day ' + days[idx].day + ' 吗？')) return;
+  days.splice(idx, 1);
+  // 重新编号
+  days.forEach(function(d, i) { d.day = i + 1; });
+  saveState(); renderDayPlans(); renderTripOverview(); showToast('已删除并重新编号');
+}
+
+function addDayPlan() {
+  var days = state.dayPlans || (state.dayPlans = JSON.parse(JSON.stringify(DAY_PLANS)));
+  var next = days.length + 1;
+  var city = prompt('新一天的城市/地点：', '');
+  if (city === null || !city.trim()) return;
+  var text = prompt('当日安排：', '');
+  if (text === null) return;
+  days.push({ day: next, country: '自定义', city: city.trim(), flag: '📍', text: text.trim() || '待安排' });
+  saveState(); renderDayPlans(); renderTripOverview(); showToast('已添加 Day ' + next);
 }
 
 // ===== 攻略参考 =====
@@ -4839,6 +5072,8 @@ function init() {
   updateCountdown();
   setInterval(updateCountdown, 1000);
   renderRoute();
+  renderTripOverview();
+  renderDayPlans();
   renderGuideGrid();
   renderPrepare();
   renderPrepareContent();
