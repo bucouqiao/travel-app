@@ -628,6 +628,17 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 .hl-item .hl-fee { color:var(--orange); font-weight:600; font-size:0.72rem; }
 .hl-culture { background:var(--bg); border-radius:10px; padding:9px 11px; font-size:0.74rem; line-height:1.65; color:var(--text2); margin-top:8px; }
 .hl-culture b { color:var(--text); }
+/* ===== 编辑弹窗增强 ===== */
+.chain-editor { max-height:52vh; overflow-y:auto; margin-bottom:4px; }
+.chain-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+.chain-row .chain-idx { width:20px; text-align:center; font-size:0.72rem; color:var(--text2); flex-shrink:0; }
+.chain-row .input { flex:1; min-width:0; }
+.chain-row .chain-btn { border:none; background:none; font-size:0.9rem; padding:2px 4px; cursor:pointer; color:var(--text2); flex-shrink:0; }
+.chain-row .chain-btn:active { opacity:.5; }
+.sm-label { font-size:0.72rem; color:var(--text2); margin:2px 0 4px; }
+.sm-inline { display:flex; gap:8px; }
+.sm-inline .input[readonly] { background:var(--bg); color:var(--text); }
+
 
 </style>
 </head>
@@ -665,18 +676,12 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 
   <div class="card" style="margin-top:8px">
     <div class="sec-title" style="margin-bottom:8px">添加站点</div>
-    <div class="add-row">
-      <input class="input" type="text" id="routeName" placeholder="国家/城市名称..." onkeydown="if(event.key==='Enter')addRoute()">
-      <select class="input" id="routeVisa" style="max-width:100px">
-        <option value="free">免签</option><option value="evisa">电子签</option>
-        <option value="conditional">有条件免签</option><option value="other">其他</option>
-      </select>
-      <input class="input" type="number" id="routeDays" placeholder="天数" style="max-width:70px" onkeydown="if(event.key==='Enter')addRoute()">
-      <input class="input" type="number" id="routeBudget" placeholder="预算¥" style="max-width:90px" onkeydown="if(event.key==='Enter')addRoute()">
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-dark" onclick="addRoute()">添加站点</button>
-      <button class="btn btn-outline" onclick="loadPresetRoute()">导入亚欧非大环线（13站）</button>
+    <div class="add-row" style="flex-direction:column;align-items:stretch">
+      <div style="font-size:0.78rem;color:var(--text2);margin-bottom:8px">点下方按钮打开表单，填名称、签证、天数、预算和第一个城市</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-dark" onclick="addRoute()">+ 添加站点</button>
+        <button class="btn btn-outline" onclick="loadPresetRoute()">导入亚欧非大环线（13站）</button>
+      </div>
     </div>
   </div>
 
@@ -3063,35 +3068,85 @@ function toggleDest(routeIdx, destIdx) {
   }
 }
 
-// 编辑站点天数
+// 编辑站点天数（弹窗）
 function editRouteDays(routeIdx) {
   var cur = state.route[routeIdx].days || 0;
-  var val = prompt('修改游玩天数：', cur);
-  if (val === null) return;
-  var d = parseInt(val);
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>游玩天数：' + (state.route[routeIdx].name || '') + '</h3>' +
+      '<div class="sm-row"><input class="input" id="rdDays" type="number" min="0" value="' + cur + '" placeholder="天数"></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveRouteDays(' + routeIdx + ')">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  var inp = document.getElementById('rdDays'); inp.focus(); inp.select();
+}
+
+function saveRouteDays(routeIdx) {
+  var d = parseInt(document.getElementById('rdDays').value);
   if (isNaN(d) || d < 0) { showToast('请输入有效天数'); return; }
   state.route[routeIdx].days = d;
-  saveState(); renderRoute(); showToast('天数已更新为' + d + '天');
+  saveState(); closeSpotModal(); renderRoute();
+  showToast('天数已更新为' + d + '天');
 }
 
-// 编辑站点预算
+// 编辑站点预算（弹窗）
 function editRouteBudget(routeIdx) {
   var cur = state.route[routeIdx].budget || 0;
-  var val = prompt('修改预算（元）：', cur);
-  if (val === null) return;
-  var b = parseInt(val);
-  if (isNaN(b) || b < 0) { showToast('请输入有效金额'); return; }
-  state.route[routeIdx].budget = b;
-  saveState(); renderRoute(); showToast('预算已更新为¥' + b);
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>站点预算：' + (state.route[routeIdx].name || '') + '</h3>' +
+      '<div class="sm-row"><input class="input" id="rdBudget" type="number" min="0" value="' + cur + '" placeholder="预算（元）"></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveRouteBudget(' + routeIdx + ')">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  var inp = document.getElementById('rdBudget'); inp.focus(); inp.select();
 }
 
-// 编辑日程日期标签
+function saveRouteBudget(routeIdx) {
+  var b = parseInt(document.getElementById('rdBudget').value);
+  if (isNaN(b) || b < 0) { showToast('请输入有效金额'); return; }
+  state.route[routeIdx].budget = b;
+  saveState(); closeSpotModal(); renderRoute();
+  showToast('预算已更新为¥' + b);
+}
+
+// 编辑日程日期标签（行内contenteditable式弹窗）
 function editDayDate(routeIdx, destIdx, dayIdx) {
   var day = state.route[routeIdx].dests[destIdx].days[dayIdx];
-  var val = prompt('修改日期标签：', day.date);
-  if (val === null || !val.trim()) return;
-  day.date = val.trim();
-  saveState(); renderRoute(); showToast('日期已更新');
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>修改日期标签</h3>' +
+      '<div class="sm-row"><input class="input" id="ddDate" value="' + (day.date || '').replace(/"/g, '&quot;') + '" placeholder="如：第1天 / 7月30日"></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveDayDate(' + routeIdx + ',' + destIdx + ',' + dayIdx + ')">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  var inp = document.getElementById('ddDate'); inp.focus(); inp.select();
+}
+
+function saveDayDate(routeIdx, destIdx, dayIdx) {
+  var v = document.getElementById('ddDate').value.trim();
+  if (!v) { showToast('日期标签不能为空'); return; }
+  state.route[routeIdx].dests[destIdx].days[dayIdx].date = v;
+  saveState(); closeSpotModal(); renderRoute();
+  showToast('日期已更新');
 }
 
 // 添加一天日程
@@ -3264,15 +3319,22 @@ function addRoute() {
   overlay.innerHTML =
     '<div class="spot-modal" style="border-radius:16px;max-height:85vh;overflow-y:auto">' +
       '<h3>添加新行程</h3>' +
-      '<div class="sm-row"><input class="input" id="arName" type="text" placeholder="国家/地区名称"></div>' +
+      '<div class="sm-label">国家/地区 *</div>' +
+      '<div class="sm-row"><input class="input" id="arName" type="text" placeholder="如：日本"></div>' +
+      '<div class="sm-label">签证类型</div>' +
       '<div class="sm-row" style="display:flex;gap:8px">' +
         '<select class="input" id="arVisa" style="flex:1"><option value="free">免签</option><option value="evisa">电子签</option><option value="conditional">有条件免签</option><option value="other">其他</option></select>' +
-        '<input class="input" id="arDays" type="number" placeholder="天数" style="max-width:70px">' +
-        '<input class="input" id="arBudget" type="number" placeholder="预算¥" style="max-width:80px">' +
       '</div>' +
-      '<div class="sm-row"><input class="input" id="arCity" type="text" placeholder="第一个城市/景点（如：东京）"></div>' +
-      '<div class="sm-row"><input class="input" id="arTransport" type="text" placeholder="到达交通方式（可选）"></div>' +
-      '<div class="sm-row"><textarea class="input" id="arNotes" placeholder="备注（可选）" rows="2" style="resize:vertical;min-height:40px"></textarea></div>' +
+      '<div class="sm-inline" style="display:flex;gap:8px;margin-bottom:10px">' +
+        '<div style="flex:1"><div class="sm-label">游玩天数</div><input class="input" id="arDays" type="number" min="1" value="1"></div>' +
+        '<div style="flex:1"><div class="sm-label">预算（元）</div><input class="input" id="arBudget" type="number" min="0" value="0"></div>' +
+      '</div>' +
+      '<div class="sm-label">第一个城市/地点</div>' +
+      '<div class="sm-row"><input class="input" id="arCity" type="text" placeholder="如：东京（不填默认同国家名）"></div>' +
+      '<div class="sm-label">到达交通方式（可选）</div>' +
+      '<div class="sm-row"><input class="input" id="arTransport" type="text" placeholder="如：飞机/火车"></div>' +
+      '<div class="sm-label">备注（可选）</div>' +
+      '<div class="sm-row"><textarea class="input" id="arNotes" placeholder="住宿、注意事项等" rows="2" style="resize:vertical;min-height:40px"></textarea></div>' +
       '<div class="sm-row" style="font-size:0.8rem;color:var(--text3)">将自动创建第1天空白日程，之后可自由编辑</div>' +
       '<div class="sm-actions">' +
         '<button class="btn btn-dark" onclick="saveAddRoute()">添加行程</button>' +
@@ -3344,28 +3406,121 @@ function renderTripOverview() {
 
 function editTripTitle() {
   var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
-  var v = prompt('行程名称：', ov.title);
-  if (v === null) return;
-  ov.title = v.trim() || ov.title;
-  saveState(); renderTripOverview(); showToast('标题已更新');
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>行程名称</h3>' +
+      '<div class="sm-row"><input class="input" id="ttTitle" value="' + (ov.title || '') + '" placeholder="行程名称"></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveTripTitle()">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  var inp = document.getElementById('ttTitle'); inp.focus(); inp.select();
+}
+
+function saveTripTitle() {
+  var v = document.getElementById('ttTitle').value.trim();
+  if (!v) { showToast('名称不能为空'); return; }
+  var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
+  ov.title = v;
+  saveState(); closeSpotModal(); renderTripOverview();
+  showToast('标题已更新');
 }
 
 function editTripChain() {
   var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
-  var v = prompt('总路线（用→分隔城市/国家）：', ov.chain);
-  if (v === null) return;
-  ov.chain = v.trim() || ov.chain;
-  saveState(); renderTripOverview(); showToast('总路线已更新');
+  var stops = ov.chain.split('→').map(function(s){ return s.trim(); }).filter(Boolean);
+  if (!stops.length) stops = [''];
+
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>编辑总路线（' + stops.length + '站）</h3>' +
+      '<div class="chain-editor" id="chainEditor"></div>' +
+      '<button class="btn btn-sm btn-outline" onclick="addChainRow()">+ 加一站</button>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveChainEditor()">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  window._chainStops = stops;
+  renderChainEditor();
+}
+
+function renderChainEditor() {
+  var box = document.getElementById('chainEditor');
+  box.innerHTML = window._chainStops.map(function(s, i) {
+    return '<div class="chain-row">' +
+      '<span class="chain-idx">' + (i + 1) + '</span>' +
+      '<input class="input" value="' + s.replace(/"/g, '&quot;') + '" oninput="window._chainStops[' + i + ']=this.value" placeholder="城市/国家">' +
+      '<button class="chain-btn" onclick="moveChainStop(' + i + ',-1)" title="上移">↑</button>' +
+      '<button class="chain-btn" onclick="moveChainStop(' + i + ',1)" title="下移">↓</button>' +
+      '<button class="chain-btn" onclick="delChainStop(' + i + ')" title="删除">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+function addChainRow() {
+  window._chainStops.push('');
+  renderChainEditor();
+  var rows = document.querySelectorAll('#chainEditor .chain-row .input');
+  if (rows.length) rows[rows.length - 1].focus();
+}
+
+function delChainStop(i) {
+  window._chainStops.splice(i, 1);
+  renderChainEditor();
+}
+
+function moveChainStop(i, dir) {
+  var j = i + dir;
+  if (j < 0 || j >= window._chainStops.length) return;
+  var t = window._chainStops[i]; window._chainStops[i] = window._chainStops[j]; window._chainStops[j] = t;
+  renderChainEditor();
+}
+
+function saveChainEditor() {
+  var stops = window._chainStops.map(function(s){ return s.trim(); }).filter(Boolean);
+  if (!stops.length) { showToast('至少保留一站'); return; }
+  var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
+  ov.chain = stops.join('→');
+  window._chainStops = null;
+  saveState(); closeSpotModal(); renderTripOverview();
+  showToast('总路线已更新（' + stops.length + '站）');
 }
 
 function editTripBudget() {
   var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
-  var v = prompt('总预算（元）：', ov.totalBudget);
-  if (v === null) return;
-  var b = parseInt(v);
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal">' +
+      '<h3>编辑总预算</h3>' +
+      '<div class="sm-row"><input class="input" id="tbBudget" type="number" min="0" value="' + (ov.totalBudget || 0) + '" placeholder="总预算（元）"></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveTripBudget()">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  document.getElementById('tbBudget').focus();
+}
+
+function saveTripBudget() {
+  var b = parseInt(document.getElementById('tbBudget').value);
   if (isNaN(b) || b < 0) { showToast('请输入有效金额'); return; }
+  var ov = state.tripOverview || (state.tripOverview = JSON.parse(JSON.stringify(TRIP_OVERVIEW)));
   ov.totalBudget = b;
-  saveState(); renderTripOverview(); showToast('总预算已更新为¥' + b.toLocaleString());
+  saveState(); closeSpotModal(); renderTripOverview();
+  showToast('总预算已更新为¥' + b.toLocaleString());
 }
 
 // 渲染国家亮点区
@@ -3441,16 +3596,39 @@ function editDayPlan(idx) {
   var days = state.dayPlans || (state.dayPlans = JSON.parse(JSON.stringify(DAY_PLANS)));
   var d = days[idx];
   if (!d) return;
-  var city = prompt('城市/地点：', d.city);
-  if (city === null) return;
-  var text = prompt('当日安排：', d.text);
-  if (text === null) return;
-  d.city = city.trim() || d.city;
-  d.text = text.trim() || d.text;
-  var tip = prompt('贴士（可留空）：', d.tip || '');
-  if (tip === null) return;
-  if (tip.trim()) d.tip = tip.trim(); else delete d.tip;
-  saveState(); renderDayPlans(); renderTripOverview(); showToast('Day ' + d.day + ' 已更新');
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal" style="max-height:85vh;overflow-y:auto">' +
+      '<h3>编辑 Day ' + d.day + ' <span style="font-size:0.75rem;color:var(--text2);font-weight:normal">' + (d.flag || '') + ' ' + (d.country || '') + '</span></h3>' +
+      '<div class="sm-label">城市/地点</div>' +
+      '<div class="sm-row"><input class="input" id="dpCity" value="' + (d.city || '').replace(/"/g, '&quot;') + '" placeholder="如：赛里木湖"></div>' +
+      '<div class="sm-label">当日安排</div>' +
+      '<div class="sm-row"><textarea class="input" id="dpText" rows="3" style="resize:vertical;min-height:60px" placeholder="当天怎么玩">' + (d.text || '') + '</textarea></div>' +
+      '<div class="sm-label">贴士（可留空）</div>' +
+      '<div class="sm-row"><textarea class="input" id="dpTip" rows="2" style="resize:vertical;min-height:40px" placeholder="交通/门票/注意事项">' + (d.tip || '') + '</textarea></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveDayPlanEdit(' + idx + ')">保存</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  document.getElementById('dpCity').focus();
+}
+
+function saveDayPlanEdit(idx) {
+  var days = state.dayPlans || (state.dayPlans = JSON.parse(JSON.stringify(DAY_PLANS)));
+  var d = days[idx];
+  if (!d) return;
+  var city = document.getElementById('dpCity').value.trim();
+  var text = document.getElementById('dpText').value.trim();
+  var tip = document.getElementById('dpTip').value.trim();
+  if (city) d.city = city;
+  d.text = text || d.text;
+  if (tip) d.tip = tip; else delete d.tip;
+  saveState(); closeSpotModal(); renderDayPlans(); renderTripOverview();
+  showToast('Day ' + d.day + ' 已更新');
 }
 
 function delDayPlan(idx) {
@@ -3466,12 +3644,39 @@ function delDayPlan(idx) {
 function addDayPlan() {
   var days = state.dayPlans || (state.dayPlans = JSON.parse(JSON.stringify(DAY_PLANS)));
   var next = days.length + 1;
-  var city = prompt('新一天的城市/地点：', '');
-  if (city === null || !city.trim()) return;
-  var text = prompt('当日安排：', '');
-  if (text === null) return;
-  days.push({ day: next, country: '自定义', city: city.trim(), flag: '📍', text: text.trim() || '待安排' });
-  saveState(); renderDayPlans(); renderTripOverview(); showToast('已添加 Day ' + next);
+  var overlay = document.createElement('div');
+  overlay.className = 'spot-modal-overlay';
+  overlay.innerHTML =
+    '<div class="spot-modal" style="max-height:85vh;overflow-y:auto">' +
+      '<h3>添加 Day ' + next + '</h3>' +
+      '<div class="sm-label">城市/地点</div>' +
+      '<div class="sm-row"><input class="input" id="dpCity" placeholder="如：伊斯坦布尔"></div>' +
+      '<div class="sm-label">当日安排</div>' +
+      '<div class="sm-row"><textarea class="input" id="dpText" rows="3" style="resize:vertical;min-height:60px" placeholder="当天怎么玩"></textarea></div>' +
+      '<div class="sm-label">贴士（可留空）</div>' +
+      '<div class="sm-row"><textarea class="input" id="dpTip" rows="2" style="resize:vertical;min-height:40px" placeholder="交通/门票/注意事项"></textarea></div>' +
+      '<div class="sm-actions">' +
+        '<button class="btn btn-dark" onclick="saveNewDayPlan()">添加</button>' +
+        '<button class="btn btn-outline" onclick="closeSpotModal()">取消</button>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSpotModal(); });
+  document.getElementById('dpCity').focus();
+}
+
+function saveNewDayPlan() {
+  var days = state.dayPlans || (state.dayPlans = JSON.parse(JSON.stringify(DAY_PLANS)));
+  var city = document.getElementById('dpCity').value.trim();
+  if (!city) { showToast('请输入城市/地点'); return; }
+  var text = document.getElementById('dpText').value.trim();
+  var tip = document.getElementById('dpTip').value.trim();
+  var next = days.length + 1;
+  var nd = { day: next, country: '自定义', city: city, flag: '📍', text: text || '待安排' };
+  if (tip) nd.tip = tip;
+  days.push(nd);
+  saveState(); closeSpotModal(); renderDayPlans(); renderTripOverview();
+  showToast('已添加 Day ' + next);
 }
 
 // ===== 攻略参考 =====
