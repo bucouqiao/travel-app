@@ -7,7 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="format-detection" content="telephone=no">
 <title>追寻旅迹 · 亚欧非大环线</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12/dist/pptxgen.bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.5/build/index.umd.js"></script>
 <style>
@@ -24,6 +23,28 @@
   --red: #FF3B30;
   --purple: #AF52DE;
   --radius: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --glass-bg: rgba(255,255,255,0.72);
+  --glass-blur: blur(20px) saturate(180%);
+}
+[data-theme="dark"] {
+  --bg: #0B0B0F;
+  --card: #1C1C1E;
+  --text: #F5F5F7;
+  --text2: #98989F;
+  --text3: #636368;
+  --border: #2A2A2E;
+  --primary: #0A84FF;
+  --green: #30D158;
+  --orange: #FF9F0A;
+  --red: #FF453A;
+  --purple: #BF5AF2;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+  --glass-bg: rgba(28,28,30,0.72);
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -39,12 +60,23 @@ body {
 
 /* ===== Header & Nav ===== */
 .app-header {
-  background: var(--card);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   padding: calc(env(safe-area-inset-top, 0px) + 12px) 20px 12px;
   border-bottom: 1px solid var(--border);
   position: sticky; top: 0; z-index: 50;
   text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
+.theme-toggle {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent; transition: all .2s; z-index: 51;
+}
+.theme-toggle:active { transform: translateY(-50%) scale(0.9); }
 .app-header h1 { font-size: 1.1rem; font-weight: 700; }
 .app-header .subtitle { font-size: 0.78rem; color: var(--text2); margin-top: 2px; }
 
@@ -52,7 +84,9 @@ body {
 .bottom-nav {
   position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
   max-width: 640px; width: 100%;
-  background: var(--card);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   display: flex;
   justify-content: center;
   border-top: 1px solid var(--border);
@@ -71,7 +105,8 @@ body {
 
 /* ===== Pages ===== */
 .page { display: none; max-width: 640px; margin: 0 auto; padding: 16px; padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); }
-.page.active { display: block; }
+.page.active { display: block; animation: pageFadeUp .35s cubic-bezier(0.4,0,0.2,1); }
+@keyframes pageFadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ===== Section Title ===== */
 .sec-title {
@@ -90,7 +125,10 @@ body {
   padding: 16px;
   margin-bottom: 12px;
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .25s, transform .25s, border-color .25s;
 }
+.card:active { transform: scale(0.985); }
 .card-sm { padding: 12px 14px; }
 
 /* ===== Sub Tabs (攻略页内) ===== */
@@ -471,45 +509,18 @@ select.input { max-width: 120px; appearance: auto; }
 
 /* ===== Countdown ===== */
 .countdown { display:flex; gap:8px; justify-content:center; padding:8px 0; margin-bottom:8px; }
-
-/* ===== 行程进度追踪 ===== */
-.trip-progress-card { background:linear-gradient(135deg,#007AFF 0%,#0A84FF 60%,#5AC8FA 100%); border-radius:16px; padding:16px; color:#fff; margin-bottom:12px; }
-.trip-progress-card .tp-title { font-size:0.8rem; opacity:.9; margin-bottom:10px; font-weight:600; letter-spacing:.5px; }
-.trip-progress-stats { display:flex; gap:12px; align-items:center; }
-.trip-progress-stats .tp-stat { flex:1; text-align:center; }
-.trip-progress-stats .tp-num { font-size:1.5rem; font-weight:800; line-height:1.2; }
-.trip-progress-stats .tp-label { font-size:0.68rem; opacity:.85; }
-.tp-progress-track { height:8px; background:rgba(255,255,255,.3); border-radius:6px; margin-top:14px; overflow:hidden; }
-.tp-progress-fill { height:100%; background:#fff; border-radius:6px; transition:width .5s ease; }
-.tp-progress-txt { font-size:0.7rem; text-align:center; margin-top:6px; opacity:.9; }
-.tp-now { background:rgba(255,255,255,.18); border-radius:10px; padding:8px 12px; margin-top:12px; display:flex; align-items:center; gap:8px; font-size:0.82rem; }
-.tp-now .tp-flag { font-size:1.1rem; }
-
-/* ===== 旅行记账 ===== */
-.trip-ledger { display:flex; flex-direction:column; gap:10px; }
-.ledger-summary { display:flex; gap:8px; }
-.ledger-summary .ls-box { flex:1; background:var(--bg); border-radius:12px; padding:10px; text-align:center; }
-.ledger-summary .ls-box .ls-num { font-size:1.15rem; font-weight:700; }
-.ledger-summary .ls-box .ls-num.good { color:var(--green); }
-.ledger-summary .ls-box .ls-num.warn { color:var(--red); }
-.ledger-summary .ls-box .ls-label { font-size:0.68rem; color:var(--text2); }
-.ledger-form { display:flex; gap:6px; flex-wrap:wrap; }
-.ledger-form input,.ledger-form select { border:1px solid var(--border); border-radius:10px; padding:8px; font-size:0.8rem; font-family:inherit; background:var(--card); color:var(--text); }
-.ledger-form input:focus,.ledger-form select:focus { outline:none; border-color:var(--primary); }
-.ledger-list { display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto; }
-.ledger-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; background:var(--bg); font-size:0.8rem; }
-.ledger-item .lg-cat { font-size:0.72rem; padding:2px 8px; border-radius:10px; background:var(--card); color:var(--primary); white-space:nowrap; }
-.ledger-item .lg-name { flex:1; color:var(--text); }
-.ledger-item .lg-amt { font-weight:700; color:var(--red); }
-.ledger-item .lg-del { background:none; border:none; color:var(--text3); font-size:0.9rem; cursor:pointer; padding:2px 4px; }
 .cd-box { text-align:center; flex:1; }
 .cd-num { font-size:1.3rem; font-weight:800; }
 .cd-label { font-size:0.65rem; color:var(--text3); }
 .cd-colon { font-size:1.1rem; font-weight:800; color:var(--border); display:flex; align-items:center; }
 
 /* ===== Toast ===== */
-#toast { position:fixed; bottom:calc(72px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(60px); background:var(--text); color:#fff; padding:8px 20px; border-radius:20px; font-size:0.82rem; opacity:0; transition:all .3s; z-index:999; pointer-events:none; max-width:90vw; }
+#toast { position:fixed; bottom:calc(72px + env(safe-area-inset-bottom,0px)); left:50%; transform:translateX(-50%) translateY(60px); background:var(--text); color:#fff; padding:10px 20px; border-radius:24px; font-size:0.82rem; opacity:0; transition:all .3s cubic-bezier(0.4,0,0.2,1); z-index:9999; pointer-events:none; max-width:90vw; display:flex; align-items:center; gap:6px; box-shadow:var(--shadow-md); }
 #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+#toast.toast-success { background:var(--green); }
+#toast.toast-warn { background:var(--orange); }
+#toast.toast-error { background:var(--red); }
+#toast .toast-icon { font-size:1rem; }
 
 /* ===== Misc ===== */
 .empty-hint { text-align:center; color:var(--text3); font-size:0.82rem; padding:20px 0; }
@@ -719,7 +730,14 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 .board-item .b-del { background:none; border:none; color:var(--text3); font-size:0.85rem; padding:4px; cursor:pointer; }
 .board-empty { font-size:0.74rem; color:var(--text3); padding:4px 0 8px; }
 
-
+/* ===== Trip 统计面板 ===== */
+.stat-mini { text-align:center; background:var(--bg); border-radius:10px; padding:10px 4px; }
+.stat-mini .sm-num { font-size:1.15rem; font-weight:800; line-height:1.2; }
+.stat-mini .sm-label { font-size:0.65rem; color:var(--text2); margin-top:2px; }
+.stat-mini .sm-icon { font-size:1rem; margin-bottom:2px; }
+@media (max-width:480px) {
+  #tripStatsGrid { grid-template-columns:repeat(2,1fr) !important; }
+}
 
 </style>
 </head>
@@ -727,8 +745,13 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 
 <!-- 顶部标题 -->
 <header class="app-header">
-  <h1>追寻旅迹</h1>
-  <div class="subtitle">亚欧非大环线</div>
+  <div style="flex:1"></div>
+  <div>
+    <h1>追寻旅迹</h1>
+    <div class="subtitle">亚欧非大环线</div>
+  </div>
+  <div style="flex:1"></div>
+  <button class="theme-toggle" id="themeToggleBtn" title="切换主题"></button>
 </header>
 
 <!-- 主内容区 -->
@@ -746,54 +769,17 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
 
 <!-- ===== Page 1: 路线 ===== -->
 <div class="page active" id="page-route">
-  <!-- 行程进度追踪（设置出发日期后自动启用） -->
-  <div class="trip-progress-card" id="tripProgressCard" style="display:none">
-    <div class="tp-title">🗺 行程进度</div>
-    <div class="trip-progress-stats">
-      <div class="tp-stat"><div class="tp-num" id="tpDayNum">0</div><div class="tp-label">已出发</div></div>
-      <div class="tp-stat"><div class="tp-num" id="tpNow">--</div><div class="tp-label">当前所在</div></div>
-      <div class="tp-stat"><div class="tp-num" id="tpLeft">0</div><div class="tp-label">剩余天数</div></div>
-    </div>
-    <div class="tp-progress-track"><div class="tp-progress-fill" id="tpFill" style="width:0%"></div></div>
-    <div class="tp-progress-txt" id="tpTxt">0%</div>
-    <div class="tp-now" id="tpNowDetail" style="display:none"></div>
-  </div>
-
   <!-- 总路程卡片 -->
   <div class="card" id="tripOverviewCard"></div>
 
+  <!-- Trip 统计面板 -->
+  <div class="card" id="tripStatsCard">
+    <div class="sec-title" style="margin-bottom:10px">📊 旅途统计</div>
+    <div id="tripStatsGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
+  </div>
+
   <div class="sec-title">逐日行程 <span class="badge">63天</span></div>
   <div id="dayPlansList"></div>
-
-  <!-- 旅行记账 -->
-  <div class="card">
-    <div class="sec-title" style="margin-bottom:10px">💰 旅行记账 <span class="badge">行中</span></div>
-    <div class="trip-ledger">
-      <div class="ledger-summary">
-        <div class="ls-box"><div class="ls-num" id="ledgerTotal">¥0</div><div class="ls-label">已花费</div></div>
-        <div class="ls-box"><div class="ls-num" id="ledgerBudget">¥0</div><div class="ls-label">总预算</div></div>
-        <div class="ls-box"><div class="ls-num good" id="ledgerLeft">¥0</div><div class="ls-label">剩余</div></div>
-      </div>
-      <div class="ledger-form">
-        <input type="text" id="ledgerName" placeholder="花费项目，如：热气球" style="flex:2;min-width:120px">
-        <input type="number" id="ledgerAmount" placeholder="金额" style="flex:1;min-width:70px" min="0">
-        <select id="ledgerCat">
-          <option value="交通">交通</option>
-          <option value="住宿">住宿</option>
-          <option value="餐饮">餐饮</option>
-          <option value="门票">门票</option>
-          <option value="购物">购物</option>
-          <option value="其他">其他</option>
-        </select>
-        <button class="btn btn-dark" onclick="addLedger()" style="padding:8px 14px">记一笔</button>
-      </div>
-      <div class="ledger-list" id="ledgerList"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:0.72rem;color:var(--text3)" id="ledgerCount">共 0 笔</span>
-        <button class="btn btn-sm btn-outline" onclick="clearLedger()" style="color:var(--red);border-color:var(--red)">清空记账</button>
-      </div>
-    </div>
-  </div>
 
   <div class="sec-title">路线详情</div>
   <div id="routeList"></div>
@@ -1505,7 +1491,7 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
       <!-- 汇率速查 -->
       <div class="sec-title">💰 货币汇率速查</div>
       <div class="card">
-        <div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">参考值（2026-09 更新），实际以兑换时为准。100人民币约等于：</div>
+        <div style="font-size:0.82rem;color:var(--text2);margin-bottom:8px">参考值（2026），实际以兑换时为准。100人民币约等于：</div>
         <table class="sim-table"><thead><tr><th>国家</th><th>币种</th><th>100元≈</th><th>当地1元≈人民币</th></tr></thead><tbody>
           <tr><td>哈萨克斯坦</td><td>坚戈KZT</td><td>6,800坚戈</td><td>1坚戈≈0.015元</td></tr>
           <tr><td>乌兹别克斯坦</td><td>苏姆UZS</td><td>175,000苏姆</td><td>1,000苏姆≈0.57元</td></tr>
@@ -1519,6 +1505,19 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
           <tr><td>泰国</td><td>泰铢THB</td><td>500泰铢</td><td>1泰铢≈0.2元</td></tr>
         </tbody></table>
         <div style="font-size:0.78rem;color:var(--text3);margin-top:8px">💡 到当地ATM直接取当地货币汇率最优。带一张免境外取款费的银行卡（华夏银行等）。美元现金在各国兑换点通用。</div>
+      </div>
+
+      <!-- 交互式汇率换算器 -->
+      <div class="sec-title" style="margin-top:20px">💱 汇率换算器</div>
+      <div class="card">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+          <input type="number" id="exFromAmount" value="100" style="flex:1;min-width:80px;padding:8px 12px;border:1px solid var(--border);border-radius:10px;font-size:0.9rem;background:var(--card);color:var(--text)" oninput="calcExchange()">
+          <select id="exFromCur" style="padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:0.85rem;background:var(--card);color:var(--text)" onchange="calcExchange()"></select>
+          <button onclick="swapExchange()" style="border:none;background:var(--bg);border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer;color:var(--primary);flex-shrink:0">⇄</button>
+          <select id="exToCur" style="padding:8px 10px;border:1px solid var(--border);border-radius:10px;font-size:0.85rem;background:var(--card);color:var(--text)" onchange="calcExchange()"></select>
+        </div>
+        <div id="exResult" style="font-size:1.05rem;font-weight:700;text-align:center;padding:10px;background:var(--bg);border-radius:10px"></div>
+        <div style="font-size:0.72rem;color:var(--text3);text-align:center;margin-top:6px">汇率参考值，实际以兑换时为准</div>
       </div>
 
       <!-- 天气查询 -->
@@ -1617,7 +1616,7 @@ footer { text-align:center; padding:16px; font-size:0.72rem; color:var(--text3);
   </div>
 </div>
 
-<footer>追寻旅迹 · 数据保存在本地浏览器 · 攻略整合自环线SILKLOOP · v2.1</footer>
+<footer>追寻旅迹 · 数据保存在本地浏览器 · 攻略整合自环线SILKLOOP · v3.0</footer>
 
 </div><!-- main-content -->
 
@@ -2985,8 +2984,7 @@ let state = {
   notes: '',
   visa: [],
   weatherCache: [],
-  aiChat: [],
-  ledger: []
+  aiChat: []
 };
 
 let currentLuggageFilter = 'all';
@@ -3002,11 +3000,18 @@ function loadState() {
 }
 
 // ===== Toast =====
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
+var _toastTimer = { id: null };
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  var icons = { success: '\u2714\uFE0F', warn: '\u26A0\uFE0F', error: '\u274C' };
+  t.className = '';
+  void t.offsetWidth;
+  var icon = type ? (icons[type] || '') : '';
+  t.innerHTML = (icon ? '<span class="toast-icon">' + icon + '</span>' : '') + msg;
+  if (type) t.classList.add('toast-' + type);
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
+  if (_toastTimer.id) clearTimeout(_toastTimer.id);
+  _toastTimer.id = setTimeout(function(){ t.classList.remove('show'); }, 2200);
 }
 
 // ===== 底部导航切换 =====
@@ -3021,6 +3026,97 @@ document.querySelectorAll('.nav-btn').forEach(item => {
   });
 });
 
+// ===== 暗色模式切换 =====
+function initThemeToggle() {
+  var saved = localStorage.getItem('travelApp_theme');
+  if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  var btn = document.getElementById('themeToggleBtn');
+  if (btn) {
+    updateThemeIcon();
+    btn.addEventListener('click', function() {
+      var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('travelApp_theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('travelApp_theme', 'dark');
+      }
+      updateThemeIcon();
+    });
+  }
+}
+function updateThemeIcon() {
+  var btn = document.getElementById('themeToggleBtn');
+  if (!btn) return;
+  var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.textContent = isDark ? '\u2600\uFE0F' : '\u{1F319}';
+}
+
+// ===== 汇率换算器 =====
+function initExchangeConverter() {
+  var fromSel = document.getElementById('exFromCur');
+  var toSel = document.getElementById('exToCur');
+  if (!fromSel || !toSel) return;
+  var keys = Object.keys(EXCHANGE_RATES);
+  var opts = '';
+  keys.forEach(function(k) {
+    opts += '<option value="' + k + '">' + EXCHANGE_RATES[k].name + ' (' + k + ')</option>';
+  });
+  fromSel.innerHTML = opts;
+  toSel.innerHTML = opts;
+  fromSel.value = 'CNY';
+  toSel.value = 'USD';
+  calcExchange();
+}
+function calcExchange() {
+  var amt = parseFloat(document.getElementById('exFromAmount').value) || 0;
+  var from = document.getElementById('exFromCur').value;
+  var to = document.getElementById('exToCur').value;
+  var fromRate = EXCHANGE_RATES[from].rate;
+  var toRate = EXCHANGE_RATES[to].rate;
+  var cny = amt * fromRate;
+  var result = cny / toRate;
+  var resEl = document.getElementById('exResult');
+  resEl.innerHTML = amt + ' ' + from + ' = <span style="color:var(--primary)">' + result.toFixed(2) + '</span> ' + to;
+}
+function swapExchange() {
+  var fromSel = document.getElementById('exFromCur');
+  var toSel = document.getElementById('exToCur');
+  var tmp = fromSel.value;
+  fromSel.value = toSel.value;
+  toSel.value = tmp;
+  calcExchange();
+}
+
+// ===== Trip 统计面板 =====
+function renderTripStats() {
+  var grid = document.getElementById('tripStatsGrid');
+  if (!grid) return;
+  var route = state.route || [];
+  var luggage = state.luggage || [];
+  var visitedCount = route.filter(function(r) { return r.visited; }).length;
+  var totalDays = route.reduce(function(s, r) { return s + (parseInt(r.days) || 0); }, 0);
+  var totalBudget = route.reduce(function(s, r) { return s + (parseFloat(r.budget) || 0); }, 0);
+  var luggageChecked = luggage.filter(function(l) { return l.checked; }).length;
+  var ledgerTotal = (state.ledger || []).reduce(function(s, l) { return s + (parseFloat(l.amount) || 0); }, 0);
+  var stats = [
+    { icon:'\u{1F3DB}', num: route.length, label: '站点数' },
+    { icon:'\u2705', num: visitedCount, label: '已访问' },
+    { icon:'\u{1F4C5}', num: totalDays, label: '总天数' },
+    { icon:'\u{1F4B0}', num: '\u00A5' + totalBudget.toLocaleString(), label: '总预算' },
+    { icon:'\u{1F392}', num: luggageChecked + '/' + luggage.length, label: '行李' },
+    { icon:'\u{1F9FE}', num: '\u00A5' + ledgerTotal.toLocaleString(), label: '已记账' },
+    { icon:'\u{1F30D}', num: '13', label: '国家' },
+    { icon:'\u2708', num: '63', label: '行程天' }
+  ];
+  var html = '';
+  stats.forEach(function(s) {
+    html += '<div class="stat-mini"><div class="sm-icon">' + s.icon + '</div><div class="sm-num">' + s.num + '</div><div class="sm-label">' + s.label + '</div></div>';
+  });
+  grid.innerHTML = html;
+}
+
 // ===== 首页子Tab切换 =====
 // (子Tab逻辑已移除——新设计无子Tab)
 
@@ -3033,64 +3129,8 @@ function bindTripInfo() {
   date.value = state.trip.date || '';
   days.value = state.trip.days || '';
   dest.addEventListener('input', e => { state.trip.dest = e.target.value; saveState(); });
-  date.addEventListener('input', e => { state.trip.date = e.target.value; saveState(); updateCountdown(); renderTripProgress(); });
+  date.addEventListener('input', e => { state.trip.date = e.target.value; saveState(); updateCountdown(); });
   days.addEventListener('input', e => { state.trip.days = e.target.value; saveState(); });
-}
-
-// ===== 行程进度追踪 =====
-function getDayPlansFlat() {
-  // 从 DAY_PLANS 取每一天，返回 {day, country, city, flag}
-  return (typeof DAY_PLANS !== 'undefined' && DAY_PLANS.length) ? DAY_PLANS : [];
-}
-function renderTripProgress() {
-  var card = document.getElementById('tripProgressCard');
-  if (!card) return;
-  var start = state.trip.date;
-  if (!start) { card.style.display = 'none'; return; }
-  var startDate = new Date(start + 'T00:00:00');
-  var now = new Date();
-  var totalDays = parseInt(state.trip.days) || 63;
-  var diff = Math.floor((now - startDate) / 86400000); // 已出发天数（当天为0）
-  var dayNum = diff + 1; // 今天处于行程第几天（1-based）
-  card.style.display = 'block';
-
-  // 总天数使用行程总天数
-  var tpTotal = totalDays;
-  // 当前第几天（若未出发或已结束，显示对应状态）
-  var todayNum = dayNum;
-  document.getElementById('tpDayNum').textContent = diff >= 0 ? dayNum : 0;
-  document.getElementById('tpLeft').textContent = diff >= 0 ? Math.max(0, tpTotal - diff) : tpTotal;
-
-  var plans = getDayPlansFlat();
-  // 当前所在：按 day 找到对应行程
-  var cur = null;
-  if (plans.length && todayNum >= 1) {
-    var d = plans.find(function(p) { return p.day === todayNum; });
-    if (d) cur = d;
-    else if (todayNum > plans[plans.length - 1].day) cur = plans[plans.length - 1];
-    else if (todayNum < plans[0].day) cur = plans[0];
-  }
-  var nowEl = document.getElementById('tpNow');
-  var detailEl = document.getElementById('tpNowDetail');
-  if (diff < 0) {
-    nowEl.textContent = '未出发';
-    detailEl.style.display = 'none';
-  } else if (diff >= tpTotal) {
-    nowEl.textContent = '已结束';
-    detailEl.style.display = 'none';
-  } else if (cur) {
-    nowEl.textContent = 'D' + todayNum;
-    detailEl.style.display = 'flex';
-    detailEl.innerHTML = '<span class="tp-flag">' + (cur.flag || '📍') + '</span><span>' + (cur.country || '') + ' · ' + (cur.city || '') + '</span>';
-  } else {
-    nowEl.textContent = '--';
-    detailEl.style.display = 'none';
-  }
-
-  // 进度条
-  var pct = Math.max(0, Math.min(100, Math.round(diff / tpTotal * 100)));
-  document.getElementById('tpFill').style.width = pct + '%';
-  document.getElementById('tpTxt').textContent = '已走过 ' + Math.max(0, diff) + '/' + tpTotal + ' 天';
 }
 
 // ===== 倒计时 =====
@@ -3205,10 +3245,9 @@ function renderRoute() {
     // 添加子目的地按钮
     html += '<button class="add-dest-btn" onclick="addDest(' + i + ')">+ 添加子目的地</button>';
 
-// 站点操作按钮
+    // 站点操作按钮
     html += '<div class="r-actions" style="margin-top:8px">' +
         '<button class="btn btn-sm ' + (r.visited ? 'btn-green' : 'btn-outline') + '" onclick="toggleVisited(' + i + ')">' + (r.visited ? '✓ 已到访' : '标记到访') + '</button>' +
-        '<button class="btn btn-sm btn-outline" onclick="copyRoute(' + i + ')">📋 复制行程</button>' +
         '<button class="btn btn-sm btn-outline" onclick="delRoute(' + i + ')" style="color:var(--red);border-color:var(--red)">删除站点</button>' +
       '</div>' +
     '</div></div>'; // route-detail, route-item
@@ -3534,122 +3573,23 @@ function saveAddRoute() {
     notes: notes, visited: false,
     dests: [{ city: city, transport: transport, days: [{ date: '第1天', spots: [] }] }]
   });
-  saveState(); closeSpotModal(); renderRoute();
+  saveState(); closeSpotModal(); renderRoute(); renderTripStats();
   showToast('已添加行程：' + name);
 }
 
 function toggleVisited(i) {
   state.route[i].visited = !state.route[i].visited;
-  saveState(); renderRoute();
+  saveState(); renderRoute(); renderTripStats();
 }
 
 function delRoute(i) {
   state.route.splice(i, 1);
-  saveState(); renderRoute(); showToast('已删除');
-}
-
-// 复制某站行程为纯文本（方便发微信/笔记）
-function copyRoute(i) {
-  var r = state.route[i];
-  if (!r) return;
-  var lines = [];
-  lines.push('📍 ' + r.name + (r.days ? '（' + r.days + '天）' : ''));
-  if (r.notes) lines.push('💬 ' + r.notes);
-  var dests = r.dests || [];
-  dests.forEach(function(d) {
-    var head = (d.city || '') + (d.transport ? ' — ' + d.transport : '');
-    lines.push('🏙 ' + head);
-    if (d.notes) lines.push('   ' + d.notes);
-    (d.days || []).forEach(function(day) {
-      var s = '  📅 ' + (day.date || '');
-      (day.spots || []).forEach(function(sp) {
-        s += '\n    · ' + (sp.time ? sp.time + ' ' : '') + (sp.name || '') + (sp.note ? '（' + sp.note + '）' : '');
-      });
-      if (s.trim()) lines.push(s.trim());
-    });
-  });
-  var text = lines.join('\n');
-  copyText(text);
-  showToast('已复制「' + r.name + '」行程');
-}
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).catch(function() { fallbackCopy(text); });
-  } else {
-    fallbackCopy(text);
-  }
-}
-function fallbackCopy(text) {
-  var ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed'; ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try { document.execCommand('copy'); } catch(e) {}
-  document.body.removeChild(ta);
+  saveState(); renderRoute(); renderTripStats(); showToast('已删除');
 }
 
 function loadPresetRoute() {
   state.route = PRESET_ROUTE.map(r => ({...r, visited:false}));
-  saveState(); renderRoute(); showToast('已导入亚欧非大环线标准路线（13站）');
-}
-
-// ===== 旅行记账 =====
-var LEDGER_CATS = ['交通','住宿','餐饮','门票','购物','其他'];
-function renderLedger() {
-  var list = document.getElementById('ledgerList');
-  var totalEl = document.getElementById('ledgerTotal');
-  var budgetEl = document.getElementById('ledgerBudget');
-  var leftEl = document.getElementById('ledgerLeft');
-  var countEl = document.getElementById('ledgerCount');
-  if (!list) return;
-  var items = state.ledger || [];
-  var total = items.reduce(function(s, it) { return s + (parseFloat(it.amount) || 0); }, 0);
-  var budget = parseFloat(state.tripOverview && state.tripOverview.totalBudget) || TRIP_OVERVIEW.totalBudget || 0;
-  if (budgetEl) budgetEl.textContent = '¥' + budget.toLocaleString();
-  if (totalEl) totalEl.textContent = '¥' + total.toLocaleString();
-  if (leftEl) {
-    var left = budget - total;
-    leftEl.textContent = '¥' + left.toLocaleString();
-    leftEl.className = 'ls-num ' + (left >= 0 ? 'good' : 'warn');
-  }
-  if (countEl) countEl.textContent = '共 ' + items.length + ' 笔';
-  if (!items.length) {
-    list.innerHTML = '<div class="board-empty">还没有记账，出发后随手记一笔～</div>';
-    return;
-  }
-  list.innerHTML = items.map(function (it, i) {
-    return '<div class="ledger-item">' +
-      '<span class="lg-cat">' + (it.cat || '其他') + '</span>' +
-      '<span class="lg-name">' + (it.name || '') + '</span>' +
-      '<span class="lg-amt">-¥' + (parseFloat(it.amount) || 0).toLocaleString() + '</span>' +
-      '<button class="lg-del" onclick="delLedger(' + i + ')" title="删除">✕</button>' +
-      '</div>';
-  }).join('');
-}
-function addLedger() {
-  var nameEl = document.getElementById('ledgerName');
-  var amtEl = document.getElementById('ledgerAmount');
-  var catEl = document.getElementById('ledgerCat');
-  var name = (nameEl.value || '').trim();
-  var amount = parseFloat(amtEl.value);
-  if (!name || !(amount > 0)) { showToast('请填写项目和金额'); return; }
-  if (!state.ledger) state.ledger = [];
-  state.ledger.unshift({ name: name, amount: amount, cat: catEl.value || '其他', time: Date.now() });
-  saveState();
-  nameEl.value = ''; amtEl.value = '';
-  renderLedger();
-  showToast('已记账 ¥' + amount.toLocaleString());
-}
-function delLedger(i) {
-  state.ledger.splice(i, 1);
-  saveState(); renderLedger();
-}
-function clearLedger() {
-  if (!state.ledger || !state.ledger.length) { showToast('还没有记账'); return; }
-  if (!confirm('确定清空全部记账记录？')) return;
-  state.ledger = [];
-  saveState(); renderLedger(); showToast('已清空记账');
+  saveState(); renderRoute(); renderTripStats(); showToast('已导入亚欧非大环线标准路线（13站）');
 }
 
 // ===== 总路程 + 逐日行程（路线模块顶部）=====
@@ -4126,7 +4066,7 @@ function togglePresetItem(i) {
     state.luggage.push({ name:p.name, cat:p.cat, checked:false });
     showToast('已加入' + '：' + p.name);
   }
-  saveState(); renderLuggagePresets(); renderLuggageBoards(); renderLuggage();
+  saveState(); renderLuggagePresets(); renderLuggageBoards(); renderLuggage(); renderTripStats();
 }
 
 function addAllPresets() {
@@ -4137,14 +4077,14 @@ function addAllPresets() {
       count++;
     }
   });
-  saveState(); renderLuggage(); renderLuggagePresets();
+  saveState(); renderLuggage(); renderLuggagePresets(); renderTripStats();
   showToast(count > 0 ? `已添加 ${count} 件推荐物品` : '推荐物品已全部添加');
 }
 
 function clearLuggage() {
   if (!state.luggage.length) { showToast('清单已空'); return; }
   state.luggage = [];
-  saveState(); renderLuggage(); renderLuggagePresets();
+  saveState(); renderLuggage(); renderLuggagePresets(); renderTripStats();
   showToast('已清空行李清单');
 }
 
@@ -4208,17 +4148,17 @@ function addLuggage() {
   const cat = autoCategorize(name); // 自动分类
   state.luggage.push({ name, cat, checked:false });
   document.getElementById('luggageInput').value = '';
-  saveState(); renderLuggage(); showToast('已添加：' + name + '（' + ({clothes:'衣物',toiletry:'洗漱',electronics:'电子设备',docs:'证件',medicine:'药品',other:'其他'})[cat] + '）');
+  saveState(); renderLuggage(); renderTripStats(); showToast('已添加：' + name + '（' + ({clothes:'衣物',toiletry:'洗漱',electronics:'电子设备',docs:'证件',medicine:'药品',other:'其他'})[cat] + '）');
 }
 
 function toggleLuggage(i) {
   state.luggage[i].checked = !state.luggage[i].checked;
-  saveState(); renderLuggage();
+  saveState(); renderLuggage(); renderTripStats();
 }
 
 function delLuggage(i) {
   state.luggage.splice(i, 1);
-  saveState(); renderLuggage();
+  saveState(); renderLuggage(); renderTripStats();
 }
 
 // 行李筛选
@@ -5569,9 +5509,8 @@ function renderPrepareContent() {
   if (!c) return;
   var html = '';
 
-// 签证速查
+  // 签证速查
   html += '<div class="card"><div class="sec-title" style="margin-bottom:8px">签证速查</div>';
-  html += '<div style="font-size:0.72rem;color:var(--text2);margin-bottom:6px">政策截至 2026-09，出行前请再次确认最新政策</div>';
   PREPARE.visa.forEach(function(v) {
     html += '<div style="font-size:0.84rem;margin-bottom:6px"><strong>' + v.country + '</strong> — <span style="color:var(--primary)">' + v.type + '</span>：' + v.note + '</div>';
   });
@@ -5722,15 +5661,14 @@ function restoreGuideBudget() {
 
 
 function init() {
-loadState();
+  loadState();
+  initThemeToggle();
   bindTripInfo();
   updateCountdown();
   setInterval(updateCountdown, 1000);
-  renderTripProgress();
   renderRoute();
   renderTripOverview();
   renderDayPlans();
-  renderLedger();
   renderGuideGrid();
   renderPrepare();
   renderPrepareContent();
@@ -5743,6 +5681,8 @@ loadState();
   renderWeatherCache();
   renderTravelApps();
   bindNotes();
+  initExchangeConverter();
+  renderTripStats();
   // 攻略页初始化
   bindGuideSubTabs();
   restoreGuideChecks();
